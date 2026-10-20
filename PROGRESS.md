@@ -79,6 +79,7 @@ Done when: Home matches the spec at three widths in both themes; local Lighthous
 - [x] Lighthouse mobile, applied throttling, 3 runs: performance 0.98–0.99, accessibility 1, best practices 0.96, SEO 1, LCP 1.8 s, CLS 0.001 (decisions.md explains why not simulated).
 - [x] Links: in-page anchors exist; external links resolve; internal links go to built pages or §7 routes still to come (Phases 4–6).
 - [x] CLS 0.001 on load and 0 while scrolling; Home JS 147 KB gzipped.
+- CI runner (slower CPU): LCP 1.6–1.8 s; performance 0.93–0.94 is below the §13 production target of 0.95 and is a CI warning, checked on production in Phase 8.
 - Deferred: the header search (⌘K) button arrives with the palette in Phase 7; bento micro-demos in Phase 5.
 
 ## Phase 4 — Work index and case studies

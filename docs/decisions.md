@@ -328,3 +328,12 @@ The page chrome is built from these primitives in the phase that specifies its b
 One rejected finding was reinstated: §21 keeps the CGPA off Home.
 
 A flaky WebKit reduced-motion test (one idle frame) traced to the header's scroll handler. Under reduced motion it no longer schedules frames.
+
+**First CI run.** The CI runner benchmarks at about half this machine's CPU speed (Lighthouse benchmark index about 2,400, against 4,900 here), so its 4× slowdown models a slower phone.
+
+- **CLS 0.31 on two of three runs,** all from the hero glow. It was anchored at `top: 40%` of the hero. On Linux (and Android) there is no Arial for next/font's size-adjusted fallback, so the web font swap changed the hero's height and moved the 48rem glow. It is now anchored at `min(40svh, 24rem)`, and `moveGlow` reads its layout position.
+  - LHCI's default "optimistic" aggregation (the best run) had hidden this, so LCP and CLS are now checked on the median run.
+- **Performance 0.93–0.94 on that hardware** (TBT 140–260 ms, LCP 1.6–1.8 s). At an 8× slowdown here: 0.93, LCP 2.3 s, TBT about 200 ms.
+  - Most of the blocking time is React's own evaluation and hydration; the rest is the first style and layout pass. The page's own JS is small.
+  - CI fails on LCP and CLS (median), on accessibility, best practices and SEO, but only **warns** on the performance score (0.95) and TBT (200 ms), because they move with the runner's hardware.
+  - §13's production budget (performance ≥ 0.95) is measured on production in Phase 8 (PSI and Speed Insights). Hydration cost is the item to watch as Phases 4–7 add JS.
