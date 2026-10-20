@@ -65,15 +65,21 @@ From §5.7, Header, MobileMenu and Footer (Phase 3), ReadingProgress and TOC (Ph
 
 ## Phase 3 — Global layout and Home
 
-- [ ] Header (hides on scroll), mobile menu, footer, skip link.
-- [ ] Home sections in §8.2 order with A.2 copy: hero signature moment, proof strip, bento tiles (static covers), company band, experience, open source, principles, stack with linked highlighting, education, contact CTA.
-- [ ] Hero LCP: photo `preload` (Next 16's replacement for `priority`) and sized; text renders immediately.
-- [ ] Lighthouse CI in the pipeline (§13 budgets).
-- [ ] ↔ Per-device layouts from the doc's §5: menu button below 1024 px (full-screen `<dialog>`), stacked phone hero with the photo glide, phone-landscape hero, proof strip 5 rows / 3 + 2 / one row from xl, bento spans per breakpoint, tap-to-pin stack.
-- [ ] ↔ Hero: CSS-only entrance from first paint, photo from opacity 0.01; drift and glow stop after 5 s and restart on tap, pointer move or return to view; touch glow drift + tap-to-move.
-- [ ] ↔ Tests: hero and reveals work with app JS blocked; mobile menu by touch; header hide/return + anchor offset; honesty labels visible at 360 px; visual screenshots per device in both themes; LHCI mobile on PRs and desktop on main with the LCP element recorded at 412×823 and 375×667; `perf-phone` / `perf-desktop` projects (scroll CLS, Home JS ≤ 150 KB).
+- [x] Header (hides on scroll), mobile menu, footer, skip link.
+- [x] Home sections in §8.2 order with A.2 copy: hero signature moment, proof strip, bento tiles (static covers), company band, experience, open source, principles, stack with linked highlighting, education, contact CTA.
+- [x] Hero LCP: photo `preload` (Next 16's replacement for `priority`) and sized; text renders immediately.
+- [x] Lighthouse CI in the pipeline (§13 budgets).
+- [x] ↔ Per-device layouts from the doc's §5: menu button below 1024 px (full-screen `<dialog>`), stacked phone hero with the photo glide, phone-landscape hero, proof strip 5 rows / 3 + 2 / one row from xl, bento spans per breakpoint, tap-to-pin stack.
+- [x] ↔ Hero: CSS-only entrance from first paint, photo from opacity 0.01; drift and glow stop after 5 s and restart on tap, pointer move or return to view; touch glow drift + tap-to-move.
+- [x] ↔ Tests: hero and reveals work with app JS blocked; mobile menu by touch; header hide/return + anchor offset; honesty labels visible at 360 px; visual screenshots per device in both themes; LHCI mobile on PRs and desktop on main with the LCP element recorded at 412×823 and 375×667; `perf-phone` / `perf-desktop` projects (scroll CLS, Home JS ≤ 150 KB).
 
 Done when: Home matches the spec at three widths in both themes; local Lighthouse mobile LCP < 2.0 s; every link resolves; no layout shift from fonts or images.
+
+- [x] Home at 375, 768 and 1440 px in both themes (screenshots in the Playwright report).
+- [x] Lighthouse mobile, applied throttling, 3 runs: performance 0.98–0.99, accessibility 1, best practices 0.96, SEO 1, LCP 1.8 s, CLS 0.001 (decisions.md explains why not simulated).
+- [x] Links: in-page anchors exist; external links resolve; internal links go to built pages or §7 routes still to come (Phases 4–6).
+- [x] CLS 0.001 on load and 0 while scrolling; Home JS 147 KB gzipped.
+- Deferred: the header search (⌘K) button arrives with the palette in Phase 7; bento micro-demos in Phase 5.
 
 ## Phase 4 — Work index and case studies
 

@@ -241,3 +241,90 @@ The page chrome is built from these primitives in the phase that specifies its b
   - `check:content` fails if the repo appears in content, or if a metric sourced from it or from the staging site is linked. Downloads, releases and the live version come from the public `vyro-releases` repo and are unaffected.
 - **MenuMesh "How this was built"** (Tanishq left the text to me): "I designed the product — the guest, waiter, kitchen and counter flows — and made the architecture and product decisions. Claude Code wrote much of the implementation." It uses only §1's account of how the AI-native projects are built and A.4.4's role. Nothing about testing is claimed.
 - **VDR and MyCounselHub** figures cite `/resume`, as Tanishq confirmed. The Bosch figures also cite `/resume`, still awaiting confirmation.
+
+## Phase 3 — Global layout and Home — 20 Oct 2026
+
+**No content in the browser bundle.** Content modules parse their data with Zod when they load, so a client component that imports one ships Zod (37 KB gzipped) and the data. The header, theme toggle and stack are server components or receive their copy as props; `header-client.tsx` and `stack.tsx` import no content. Home's first-load JS fell from 193 KB to 147 KB gzipped (147,085 bytes, preloaded chunks included; the budget of 150 KB is checked as 150,000 bytes by `perf.spec.ts`).
+
+**Header (§8.1, cross-device §4, §5).**
+
+- It hides on scroll down past its own height and returns after 8 px up. It stays put near the top, while focus is inside it, while the menu is open and under reduced motion. Overscroll is clamped, so a rubber-band bounce doesn't toggle it.
+- From 1024 px: wordmark, the five links, the theme toggle and "Resume". Tablets: wordmark, toggle, "Resume" and the menu button. Phones: wordmark and the menu button; the toggle is inside the menu.
+- **The search (⌘K) button waits for the command palette in Phase 7,** rather than shipping a button that does nothing.
+- **Mobile menu:** a full-screen modal `<dialog>` below 1024 px with the five links plus "Resume", the email address as the contact line, and the theme toggle. The links rise in with the stagger and sit in the lower half; phone landscape puts them in two columns. The close button sits where the menu button was, and its two bars turn into an X. Esc fades it out; following a link closes it at once.
+
+**New UI strings, for Tanishq's approval** (`content/microcopy.ts`, `landmarks`): "Skip to content" (the skip link), "Menu" (the menu dialog's name), "Main" and "Footer" (the two navigation landmarks). A.13 has none of these. They name controls and add no claims.
+
+**Footer.** The nav lists the five header links plus Uses, Resume and Contact, because nothing else links to `/uses`; their labels are the A.1 page titles. Social links: GitHub, LinkedIn and Medium (X stays hidden). "Last updated" is the build date in IST, written "20 Oct 2026".
+
+**Hero (§6.3).**
+
+- The section's min-height (`min(100svh, 60rem)` minus the header) includes the signal line, so the line draws in the first view on desktop. The photo's height is capped to fit, cropping from the bottom.
+- The photo's edges are masked so its black backdrop melts into the stage.
+- The glow drifts once (4.9 s, like the signal line). The pointer moves it on desktop and a tap moves it on touch. A pointer move, a tap or the hero coming back into view replays both drifts with the Web Animations `play()` call.
+- "See my work" is `/#work` in content; on Home it renders as `#work`, so Lenis or CSS scrolls in place.
+- **A 768 px photo variant** (72 KB AVIF) was added for phones around DPR 1.75, which used to download the 960 px file (101 KB). The photo is the mobile LCP element.
+
+**Sections.**
+
+- **Proof strip:** values are `h3`-sized on phones and readout-sized from 768 px; hairlines come from a 1 px grid gap, so they follow each layout. "0.27 → 0.78" wraps after the arrow in the five-column row.
+- **Bento:** Baby and VYRO show crops of `baby-brain-idle` and `vyro-dashboard`; their images are decorative (`alt=""`) because the tile's text names the link. The four small tiles are text and readout only until the Phase 5 micro-demos. At 1024 px the small tiles sit 2 × 2, and from 1280 px in one row. Tiles tilt up to 4° toward a fine pointer.
+- **Company band:** each product card links to its case study. "Visit Jainav Infotech" stays hidden while `jainavLive` is false.
+- **Experience:** the four A.5 entries in their A.5 casing, then the degree; `{{FOUNDED}}` shows "2026".
+- **Stack:** skills with no linked project (Python, Terraform, AWS…) are dashed, inert pills. Below 1024 px a pinned skill lists its projects inline as "Rust →" followed by links, so no new words are needed. Kubernetes, Docker and Jenkins light up the Bosch entry in Experience, and R lights up GSoC.
+- **Bento readouts link each number to its source,** so A.2's "Every number links to where it was measured" holds for the tiles. The title's link stretches over the whole tile and the readout's links sit above it, so no link is nested in another.
+- **Education** shows the degree, school and dates; the CGPA stays on About and the resume (§21).
+- **Contact:** "Copy email" is the primary, magnetic button.
+- Sections below the hero use `content-visibility: auto` (`defer-render`). The first layout was mostly text shaping for the whole page; skipping off-screen sections shortens it on slow phones. Scroll CLS stays at 0 (`perf.spec.ts`).
+
+**Performance (§13).**
+
+- **Lighthouse CI uses applied (devtools) throttling.** Lantern's simulated LCP counts every script that ran before the observed paint. On localhost the JS arrives within about 25 ms and runs before the first frame, so the simulation adds all of it (about 145 KB at 1.6 Mbps) to the LCP: 3.3 s on any setup. Applied throttling loads the page over the throttled network, where the photo and fonts arrive while the async scripts are still downloading. Local mobile results over 3 runs: performance 0.98–0.99, accessibility 1, best practices 0.96, SEO 1, **LCP 1.8 s**, CLS 0.001, TBT 40 ms. Desktop: performance 1. Production field data (Speed Insights) and PSI come in Phase 8.
+- **Tried and dropped:** `experimental.inlineCss` moved FCP to 1.1 s, but the photo then finished later (LCP 2.9 s), because the first paint no longer waited for it.
+- Only Plus Jakarta Sans is preloaded (§13 "preload the display weight"); JetBrains Mono loads when used.
+- Best practices is 0.96, not 1: Next prefetches the routes that don't exist until Phases 4–6, and the 404s are logged to the console. This goes away once every route exists.
+- External links on Home all resolve (checked 20 Oct 2026). Medium and LinkedIn answer scripted requests with 403 and 999, as they always do.
+
+**Tests.**
+
+- `chrome.spec.ts`:
+  - the skip link;
+  - the header hiding and returning, and staying pinned under reduced motion;
+  - "See my work" landing clear of the header;
+  - the mobile menu by touch (open, close, navigate) and by keyboard (inert page, Esc, focus return);
+  - the footer's date and Privacy link.
+- `home.spec.ts`:
+  - axe in both themes with every section rendered;
+  - the theme persisting before hydration;
+  - the hero and reveals with the app's JS blocked (the photo's entrance ends by 600 ms);
+  - the count-up;
+  - stack highlighting by hover, focus, click and tap;
+  - honesty labels at 360 px;
+  - every link going to a built page, a §7 route or a well-formed https URL;
+  - full-page screenshots in both themes on every device project, kept in the Playwright report.
+- `perf.spec.ts` on two new projects, `perf-phone` (Pixel 10, CPU 4× throttled) and `perf-desktop`: Home JS ≤ 150 KB, scroll CLS < 0.05, and the LCP element at 412 × 823 and 375 × 667, which must be in the hero.
+- CI runs Lighthouse mobile on every push and PR, and desktop on main and nightly. Reports are kept as artifacts.
+- WebKit in Playwright can't Tab to links (Safari needs Option+Tab), so the skip-link test runs on Chromium and Firefox.
+
+**Review.** A three-lens review (spec, code, content) with a skeptical verifier confirmed 17 findings, all fixed:
+
+- the stack's highlight classes lost to the chip's own;
+- Lenis subtracted the header twice on anchors;
+- the bento readouts had no source links;
+- proof-strip source links were 41 px tall on touch, so TextLink's hit area is now exactly 44 px;
+- section headers had no grid texture;
+- the timeline dot still scaled under reduced motion (`transition-ui` is now instant there);
+- the bento `sizes` were wrong;
+- the JS budget test missed preloaded chunks;
+- the header stayed pinned after a tap left focus in it;
+- the footer date came from ISR regeneration, so it is now fixed at build through `BUILD_DATE`;
+- the drift replay used `play()`, which escapes `[data-paused]`, so it now seeks to 0;
+- the Resume button's overrides didn't apply;
+- the phone-landscape variant could match short desktop windows;
+- the Privacy link and the current nav item relied on colour, so both are now underlined;
+- a scroll swipe moved the hero glow, so it now moves on tap release;
+- after pinning a skill, its projects had no text equivalent, so each chip now describes its links.
+
+One rejected finding was reinstated: §21 keeps the CGPA off Home.
+
+A flaky WebKit reduced-motion test (one idle frame) traced to the header's scroll handler. Under reduced motion it no longer schedules frames.
