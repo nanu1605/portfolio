@@ -41,13 +41,6 @@ function Strip({ children }: { children: ReactNode }) {
   );
 }
 
-/** Maps v from the data's range onto [a, b]. */
-const scale = (vs: number[], a: number, b: number) => {
-  const lo = Math.min(...vs);
-  const hi = Math.max(...vs);
-  return (v: number) => a + ((v - lo) / (hi - lo)) * (b - a);
-};
-
 const star = (x: number, y: number, r: number) =>
   Array.from({ length: 10 }, (_, i) => {
     const a = (Math.PI / 5) * i - Math.PI / 2;
@@ -57,18 +50,11 @@ const star = (x: number, y: number, r: number) =>
 
 /** Reservoir RL: the eight agents and the rule curve pop in; "balanced" pulses. */
 function Reservoir() {
-  // Supply against ecological deficit, as on the Work cover (Appendix B).
+  // Supply against ecological deficit on the Work cover's zero-based axes
+  // (src/components/work/figures.tsx), so the runs sit where they do there.
   const points = rlPoints("supply", "eco");
-  const sx = scale(
-    points.map((p) => p.x),
-    56,
-    288,
-  );
-  const sy = scale(
-    points.map((p) => p.y),
-    92,
-    20,
-  );
+  const sx = (v: number) => 32 + (v / 280) * 256;
+  const sy = (v: number) => 100 - (v / 25) * 84;
   // Plain dots first, then the rule's star and the balanced ring.
   const ordered = [
     ...points.filter((p) => !p.mark),
