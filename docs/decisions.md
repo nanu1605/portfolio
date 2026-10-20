@@ -487,3 +487,200 @@ Screens placed in the MDX:
   - videos.
 - `traceability.test.ts`: metric values against C.1, and the numbers in each case study against its A.4 copy.
 - The overflow sweep and the link check now include /work and the case studies.
+
+## Phase 5 — Centerpieces and micro-demos — 20 Oct 2026
+
+**Islands, not a bundle.**
+- Each centerpiece has its own folder in `src/components/centerpieces/<slug>/`:
+  - `index.tsx`, a server component, renders the poster and the "View data" table;
+  - interactive ones add a pure `view.tsx`, a client `live.tsx`, and an `island.tsx` made with the shared `island()` factory.
+- The island loads its chunk with `React.lazy` once the box comes within 200 px of the viewport (§10). The server poster shows until the chunk is ready.
+- The poster and the live version render the same view component, so the swap shifts nothing.
+- The box gets `[data-ready]` when the live version mounts; tests wait on it.
+- Client code imports no `@content/*` module. Data and copy are passed down as props, so Zod stays out of the browser.
+
+**No Motion, no d3.**
+- §2 names Motion and d3. Neither is needed:
+  - every sequence here is CSS, the Web Animations API, or one time-based rAF loop;
+  - the drag uses pointer events with pointer capture;
+  - the charts keep Phase 4's hand-written linear scales.
+- This keeps each lazy chunk well under 60 KB and adds no packages. If a later centerpiece needs springs, it would be `m` + `LazyMotion` (cross-device §2).
+
+**Worktree-safe config.**
+- `turbopack.root` is pinned to the project.
+- `.claude/` is excluded from ESLint and tsc, and `.claude/worktrees/` is gitignored, so parallel checkouts inside this one don't leak into its builds.
+- Playwright reads `PORT`, so parallel checkouts can each run their own server.
+
+**MLOps per-batch export (§10.7).**
+- **How it ran.** The repo was cloned to a scratch folder (outside this repo) at commit `0a0b95f`. One line was added to `src/mlops_drift/experiments/run.py` to write `timeline` to `timeline.json`. There is no `make` on Windows, so the Makefile's targets were run directly:
+  - `uv sync --extra dev`
+  - `uv run python -m mlops_drift.data.ingest`
+  - `uv run python -m mlops_drift.experiments.run`
+- **Data.** The ingest step used the repo's synthetic generator, its default when no CICIDS2017 CSVs are present.
+- **Result:** 20 batches of 400.
+  - The mean F1 up to promotion is 0.2682 and after it 0.7797, matching the README's documented ≈ 0.27 → ≈ 0.78.
+  - Drift was detected, and the challenger promoted, on the same controller tick (t = 13,799.5, the fifth batch). Version 2 serves from the sixth batch.
+- **Not in the repo yet.** The permission check blocked writing the exported series into `content/data/` ("Code from External"). The per-batch chart waits for Tanishq. Until then the case study keeps the loop diagram and the two documented levels.
+
+**C.4 item 2 (forecasting test windows).**
+- Checked `src/probforecast/evaluation/rolling.py` and its callers (`pipelines/run_baselines.py`, `run_deepar.py`, `run_recalibration.py`) at commit `d0b3ce0`.
+- Each test window's history is the training data (to 30 Jun 2016) plus the test hours before the window's origin. The validation months (Jul–Dec 2016) are left out of every test history.
+- So the first test windows forecast January 2017 from a context that ends in June 2016. This applies to every model alike.
+- A.4.6's shift explanation doesn't mention it. The wording change is a question for Tanishq (copy meaning, §0).
+
+**CSS Modules don't work here.**
+- The Turbopack rule in `next.config.ts` (`"*.css"` through `@tailwindcss/turbopack`, `as: "*.css"`) turns `x.module.css` into plain global CSS.
+- So the CSS-only flows use plain colocated stylesheets whose class names carry a prefix (`vdr-*`, `mch-*`).
+- The bento demos use one commented section of `globals.css`.
+
+**Baby — "Follow a turn" (§10.1).**
+- **Layout breakpoints.** The horizontal graph and the open ladder start at the lg viewport breakpoint (1024 px). The case-study column is only 712–904 px wide, so a 1024 px container would never get them. The phone/tablet split uses the container width: two columns from 36rem.
+- **The ladder on desktop** hangs off the router node: its column's left edge is computed from the graph geometry, and a hairline leader joins it to the router. On phones and tablets it collapses to the deciding rule, with the full ladder in a `<details>`.
+- **Privacy pin path.** Router → Cloud → Tools → Gate (`read_file` ALLOW), then back to the router on an agent-loop edge with a chevron. There rule 1 fires and the rest of the turn runs on Local 9B. A "Redacted" tag and a transcript note show the redaction.
+- **Verdicts.** ALLOW is a circled tick in the site accent and CONFIRM a triangle in `warn`, always with the word and the tool name. No scenario uses DENY.
+- **Motion.** The view is the final state; `live.tsx` adds Web Animations API "from hidden" animations. Only transform, opacity and stroke-dashoffset animate, one draw-in path at a time.
+- **When it plays.**
+  - The first scenario plays once when 85% of the graph is in view (about 3.1 s), then holds.
+  - If the graph is already on screen, or above the viewport, when the chunk arrives, the final state stays. It never goes from final to empty (the count-up rule).
+  - The transcript types in by whole words once half of it is in view.
+  - Each chip plays its scenario once.
+- **Light theme.** The lit route has an `fg` core over a 30% baby glow. Baby-blue alone is 2.2:1 on light surfaces; with the core it is 17.9:1.
+- **Interaction cost.** Edge geometry is measured once at idle after mount, never inside a tap.
+- **Scenario table.** The §10.1 table, verbatim, sits in a "View data" `<details>`.
+- **Announcements.** The final reply is announced politely once, when a chosen turn reaches Voice.
+
+**VYRO — "Gauge panel" (§10.2).**
+- **Animation loop.** One rAF loop eases toward each new poll (time constant 0.22 s) and rests once the values settle.
+  - The settle thresholds are set by what is visible: usage 0.25%, clocks 5 MHz, temperature 0.1 °C, fan 2 RPM. Finer thresholds never settle inside a 1 s poll.
+  - The loop rests for about 0.2 s of every second.
+- **Needles and value arcs move by transform only.** Each arc is two halves shown through rotating half-plane clip paths, so no `stroke-dashoffset` is needed.
+- **Simulated values.**
+  - They are a seeded random walk. The poster's state is computed on the server and handed to the live panel, so the swap shifts nothing.
+  - The bounds keep every reading at a fixed digit count, so the readings never change width: usage 10–94%, CPU clock 3,600–5,450 MHz, GPU clock 1,000–2,900 MHz, temperature 34–84 °C, fan 1,000–2,200 RPM. The ranges are plausible, not measured, and are labelled "Simulated values — VYRO reads the real ones."
+- **Pause and reduced motion.** Pause freezes the needles where they are; going off-screen or into a hidden tab does the same. Under reduced motion the panel starts paused on the poster's values; Play polls once a second and jumps straight to each value.
+- **Formatting.** Numbers go through one module-level `Intl.NumberFormat`. Calling `toLocaleString` on every frame caused long tasks at 4× throttle.
+- **Sparkline.** It gets a visually hidden summary (low and high over the last 60 s) rather than a data table, since its values are simulated.
+- **Footprint card.** The four real metrics, with their versions and the private-repo source shown as text. Only the installer release links. Its "View data" table is Appendix B's footprint rows.
+- **"What your browser can see"** is a toggle. It reads the values only on click, and a test asserts that no request is sent.
+
+**Reservoir RL — "Weight mixer" (§10.5).**
+- **The 2-D picker.**
+  - The handle is `role="slider"`: `aria-valuenow` is the flood weight, and `aria-valuetext` gives all three weights and the nearest agent.
+  - The native `<select>` is the equivalent control. A polite live region speaks when the nearest agent changes.
+- **Input.**
+  - A mouse drags from anywhere in the triangle. Touch drags only the 44 px handle (`touch-action: none` there), and a tap places the cursor.
+  - The triangle keeps `pan-y pinch-zoom`. Pointer moves are coalesced into one render per frame.
+  - The click that ends a drag is ignored, so the grab offset holds.
+- **Axes.** Every axis maximum is derived (`axisMax`: the rule's mean or the largest agent mean + sd, rounded up to a clean tick) and shared by the case study, the Work cover and the bento strip. No axis number is typed.
+- **"Drier climate"** always shows the separate balanced seed-42 run, with its definition and a Source link to `rl.dry`. Its rows are in "View data".
+
+**Probabilistic forecasting — "Calibration explorer" (§10.6).**
+- **Seed choice.** Seeds are native radios, and the chart updates in `startTransition`.
+- **Switching seeds.** All six DeepAR polylines stay in the SVG and cross-fade by opacity. The markers glide by transform, and end-label leaders glide with their labels.
+- **"Mean of 5" cards** use the results table's DeepAR (raw) row, written as value ± sd (coverage "74% ± 4%"). The one-seed recalibrated row is never used, and the Recalibration tab uses only `recalibration_same_run`, with a Source link to `fc.recal`.
+- **ARIMA reference.** Every metric card shows ARIMA's value: DeepAR wins on CRPS and loses on ECE, which is the case study's point.
+- **Horizon bars.** They grow once by WAAPI `scaleX`. Bars already on screen when the chunk arrives stay full.
+  - The MDX's `<HorizonFigure />` was removed, because the explorer shows the same bars.
+- **Line labels.** Direct line labels from a 896 px container; a dash + name key below that.
+
+**Jainav — "From order to licence" (§10.3) and the shared Stepper.**
+- **Stepper.** It is hook-free: a pure view plus `followTrack()`, wired by about ten lines in each `live.tsx`, so no React state reaches the server graph through the posters.
+- **Phones.** The track scroll-snaps, the buttons scroll only the track, and a test asserts `window.scrollY` doesn't change. Below an 18rem container, Previous and Next show only their icons, with the approved labels as their names.
+- **Without JS**, the poster shows every step readable. Once live, panels that aren't current are `inert`, so a "View data" table lists all seven steps.
+- **Schematics.** They quote only strings from their own Appendix B step. The content file throws at load if one isn't found, so a stale diagram fails the build. The schematics are `aria-hidden`; each step's sentence is its text alternative.
+- **Keys inside a step.** Arrow, Home and End keys from controls inside a step call `preventDefault`. Otherwise the browser scrolls the snap track itself and drops focus.
+
+**MenuMesh — "Table to bill" (§10.4).**
+- **Which version shows.** Both the sticky story and the stepper are rendered, and CSS picks one at `(min-width: 768px) and (min-height: 600px)`. With no `matchMedia` in JS, there is no hydration mismatch. The story's step comes from an IntersectionObserver band at 40–45% of the viewport height.
+- **The language toggle compares like with like.**
+  - On the Order step it switches the same start menu between `start-guest` and `start-guest-hindi`.
+  - Scan shows that start screen too.
+  - The `ordered-guest` capture is no longer used.
+- **Phone legibility.** Crops are done in CSS (a `detail` box per screen, in capture pixels), so no new image files were needed.
+  - **Still small:** the landscape kitchen and counter captures read at about 7–8 px on 360 px phones. Narrower captures would need a new capture run.
+- **Accent.** The Stepper's `tone="menumesh"` uses the product accent for fills only. The current step number stays `fg`.
+
+**Virtual Dressing Room (§10.8) and MyCounselHub (§10.9).**
+- Both are CSS only, started by the shared reveal script, with no island.
+- **VDR layout.** VDR switches between 3 × 2 and one row at the md/lg viewport breakpoints. The case-study column is 712–975 px on both tablets and desktops, so the container width can't tell them apart.
+- **MyCounselHub layout.** MyCounselHub uses a 36rem container query.
+- **Sequence.** It plays one pass in under 5 s and holds. Reduced motion and print show the final state.
+
+**Home bento micro-demos (§10.10).**
+- **Markup.** The markup is each demo's final frame. Each moving part is a `.demo-a` element whose keyframes come from custom properties. The play rules sit under `prefers-reduced-motion: no-preference`, so reduced motion and print keep the final frame.
+- **Triggers.**
+  - On a fine pointer, a pass starts when the pointer or focus enters a tile. It runs to the end even if the pointer leaves (`data-demo-play` is cleared when the pass's animations finish).
+  - On touch, `src/lib/touch-effects.ts` plays it once at 50% in view, then holds. It sits there rather than in the inline head script, which stays under 1 KB.
+- **Baby and VYRO.** Their demos sit in a small dark panel over the existing screenshot; no new images load.
+- **VYRO's needle** settles on the real `vyro.cpu` (0.46%), with that metric's label as the readout. The same metric, with its version and source, is in Home's proof strip on the same page. **Awaiting Tanishq:** this, or illustrative needles with the "Simulated values" label.
+- **MLOps** shows only the two documented levels (0.27 → 0.78). **Jainav** uses §10.10's four step names.
+- **Budget.** Home's first-load JS is 147,425 bytes against the 150,000 budget, up 340 bytes from Phase 3.
+
+**Budget tests run on their own.**
+- **The problem.** Under the full parallel run (8 workers on 16 cores) five of the 4×-throttled long-task checks failed. With one worker, all of them passed with no long task, so the failures came from other tests competing for the CPU.
+- **The fix.** Those tests are tagged `@budget`. Normal runs skip them (`grepInvert` in `playwright.config.ts`). `pnpm test:budget` runs them one at a time on desktop-chromium and phone-android, and CI runs it as its own step after the e2e tests.
+
+**Tests.**
+- **New specs**, one per area:
+  - `centerpiece-baby.spec.ts`
+  - `centerpiece-vyro.spec.ts`
+  - `centerpiece-charts.spec.ts`
+  - `centerpiece-steps.spec.ts`
+  - `micro-demos.spec.ts`
+- **What they cover:**
+  - mouse, touch (taps, CDP swipes and finger drags on Chromium) and keyboard;
+  - reduced-motion final states;
+  - the lazy chunk ≤ 60,000 bytes and a poster-to-live shift < 0.001;
+  - a stepper's Prev/Next leaving `window.scrollY` alone;
+  - the throttled budgets.
+- **Shared helpers** live in `tests/e2e/lib/centerpiece.ts`.
+- **Traceability.** `traceability.test.ts` now also checks that every number written in a centerpiece's copy (`content/centerpieces/*.ts`) appears in that project's §10 subsection, its A.4 case study or its Appendix B data.
+
+**Two Phase 4 defects found by the Phase 5 Lighthouse sweep.** Phase 4 measured five pages; this time all nine case studies were measured.
+- **Mono fallback reflow.**
+  - The symptom: MLOps showed CLS 0.129 and VDR 0.051 on mobile.
+  - The cause: the mono fallback was Arial scaled to JetBrains Mono's average width. On those two pages it wrapped the stack tags one row taller, and everything below moved up 38 px when the font swapped in.
+  - The fix: the fallback is now a system monospace face (Courier New, Liberation Mono, Menlo, Roboto Mono, Droid Sans Mono or DejaVu Sans Mono). These share JetBrains Mono's 0.6 em advance, so wrapping is identical. Its ascent and descent overrides match JetBrains Mono (1020 / 300).
+  - The result: hero heights are now identical with the font blocked and loaded on every page checked, and CLS is ≤ 0.001.
+- **TL;DR behind a reveal.**
+  - The symptom: Forecasting's LCP was 2.6 s.
+  - The cause: on pages without hero media the TL;DR sits in the first viewport, and its long paragraph was the LCP element, hidden behind the scroll reveal until the observer ran.
+  - The fix: the TL;DR has no reveal now (as with the /work cards). LCP is 1.78 s.
+- **Lighthouse CI** now also checks `/work/mlops-drift-loop`, a case study without hero media.
+
+**Measurements (20 Oct 2026, local).**
+- **Lighthouse mobile, applied throttling, one run each:**
+
+  | Page | Performance | LCP | CLS | TBT |
+  |---|---|---|---|---|
+  | Home | 98 | 1.93 s | 0.001 | 47 ms |
+  | /work | 98 | 1.84 s | 0 | 42 ms |
+  | Case studies | 97–99 | 1.65–1.93 s | ≤ 0.001 | 41–155 ms |
+
+  Accessibility 100, best practices 96 and SEO 100 on every page. VYRO's 155 ms TBT is the highest, under the 200 ms warning.
+- **Interaction at 4× CPU throttle** (`pnpm test:budget`, Chromium; this is the Performance-panel record §19 asks for):
+
+  | Interaction | Longest task (desktop / phone) | Slowest event (desktop / phone) |
+  |---|---|---|
+  | Baby chip | 0 / 0 ms | 40 / 32 ms |
+  | Reservoir select, toggle and keys | 0 / 0 ms | 24 / 24 ms |
+  | Reservoir drag | 0 / 0 ms | 16 / 0 ms |
+  | Forecasting seeds and tabs | 0 / 0 ms | 32 / 32 ms |
+  | Jainav step | 0 / 0 ms | 24 / 24 ms |
+  | MenuMesh language toggle | 0 / 0 ms | 24 / 24 ms |
+  | VYRO panel | 0 / 0 ms | 32–40 / 40 ms |
+  | Bento hover | 0 ms (desktop) | 24 ms (desktop) |
+
+- **Lazy JS per centerpiece** (gzipped, as served, desktop / phone):
+
+  | Centerpiece | Desktop | Phone |
+  |---|---|---|
+  | Baby | 11.2 KB | 9.3 KB |
+  | VYRO | 8.2 KB | 6.3 KB |
+  | Reservoir | 17.8 KB | 8.7 KB |
+  | Forecasting | 16.4 KB | 7.3 KB |
+  | Jainav | 8.8 KB | 7.2 KB |
+  | MenuMesh | 8.5 KB | 7.0 KB |
+
+  The budget is 60 KB each. VDR, MyCounselHub and the bento demos ship no component JS.
+- **Poster-to-live layout shift:** 0 on every project.

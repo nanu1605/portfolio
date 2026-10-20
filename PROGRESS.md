@@ -101,13 +101,21 @@ Done when: all 9 pages render with correct metadata; every number traces to Appe
 
 ## Phase 5 — Centerpieces and micro-demos
 
-- [ ] Centerpieces §10.1–10.9.
-- [ ] Export the MLOps per-batch data (§10.7), or record the fallback.
-- [ ] Home bento micro-demos (§10.10).
-- [ ] ↔ Centerpieces per the doc's §6: container-query layouts; scroll-snap steppers that scroll only their track; MenuMesh and MLOps sticky versions at `(min-width: 768px) and (min-height: 600px)`; reservoir handle-only drag + tap-to-place; VYRO Pause/Play; Baby first scenario plays once; micro-demos once in view on touch.
-- [ ] ↔ Tests: mouse, touch (tap, CDP swipe, PointerEvent drags) and keyboard per centerpiece; poster swap with zero layout shift; INP < 200 ms at 4x throttle; no long tasks during interaction.
+- [x] Centerpieces §10.1–10.6 and §10.8–10.9: Baby "Follow a turn", VYRO gauge panel, Jainav stepper + build timeline, MenuMesh "Table to bill", Reservoir weight mixer, Forecasting calibration explorer, VDR pipeline strip, MyCounselHub flow. Each lazy island loads within 200 px of view over a same-box server poster; "View data" tables kept.
+- [~] §10.7 MLOps: `make experiment` ran (scratch clone at 0a0b95f, synthetic data): 20 batches, mean F1 0.268 before promotion and 0.780 after. Copying the series into `content/data/` was blocked by the permission check; until Tanishq decides, the case study keeps the loop and the two documented levels.
+- [x] Home bento micro-demos (§10.10): CSS/SVG, hover or focus on fine pointers, once at 50% in view on touch, static under reduced motion.
+- [x] ↔ Container-query layouts; scroll-snap steppers that scroll only their track; MenuMesh sticky story at `(min-width: 768px) and (min-height: 600px)`; reservoir handle-only touch drag + tap-to-place; VYRO Pause/Play; Baby's first scenario plays once in view; micro-demos once in view on touch.
+- [x] ↔ Tests: mouse, touch (tap, CDP swipe and finger drags) and keyboard per centerpiece; poster swap shift 0; chunks ≤ 60 KB; 4× throttle budgets in `pnpm test:budget` (run alone, also in CI).
+- [x] C.4 item 2 (forecasting test windows): the test histories skip the validation months for every model. Wording for A.4.6 awaits Tanishq.
+- [x] Phase 4 defects fixed: mono fallback reflow (CLS 0.129 on MLOps) and the TL;DR reveal delaying LCP (2.6 s on Forecasting).
 
 Done when: each centerpiece works with mouse, touch and keyboard; data matches Appendix B; lazy chunks within budget; no main-thread tasks over 50 ms during interaction.
+
+- [x] Mouse, touch and keyboard e2e for every centerpiece on desktop-chromium, phone-android, phone-ios and tablet-landscape-ios.
+- [x] Data from Appendix B via `@content/charts` and `@content/metrics`; every number in centerpiece copy traces to its §10 subsection, A.4 or Appendix B (`tests/unit/traceability.test.ts`).
+- [x] Lazy chunks 6.3–17.8 KB gzipped (budget 60 KB).
+- [x] Longest task 0 ms on every interaction at 4× throttle; slowest event 16–40 ms (INP budget 200 ms).
+- Lighthouse mobile, all 11 pages: performance 97–99, accessibility 100, best practices 96, SEO 100, LCP 1.65–1.93 s, CLS ≤ 0.001.
 
 ## Phase 6 — Remaining pages
 
