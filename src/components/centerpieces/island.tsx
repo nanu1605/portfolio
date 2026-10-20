@@ -8,12 +8,19 @@ import {
   useState,
   type ComponentType,
   type ReactNode,
+  type RefObject,
 } from "react";
 
 // A centerpiece's interactive version loads once it comes within 200 px of
 // the viewport (§10). Until then, and while its chunk downloads, the
 // server-rendered poster holds the same box, so the swap shifts nothing.
 // The poster and the live version render the same view component.
+
+/** Marks the box [data-ready] once the live version has mounted (tests wait on it). */
+function Ready({ target }: { target: RefObject<HTMLDivElement | null> }) {
+  useEffect(() => target.current?.setAttribute("data-ready", ""), [target]);
+  return null;
+}
 
 /** Binds one centerpiece's lazy chunk; call it at module level in a "use client" file. */
 export function island<P extends object>(
@@ -49,6 +56,7 @@ export function island<P extends object>(
         {near ? (
           <Suspense fallback={poster}>
             <Live {...(props as P)} />
+            <Ready target={ref} />
           </Suspense>
         ) : (
           poster
