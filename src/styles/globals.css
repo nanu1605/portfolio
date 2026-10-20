@@ -1,15 +1,100 @@
 @import "tailwindcss";
 @import "./tokens.css";
+@import "lenis/dist/lenis.css";
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
+/* Page gutters that also clear notches and rounded corners (viewport-fit=cover). */
+@utility px-page {
+  padding-left: max(var(--gutter), env(safe-area-inset-left));
+  padding-right: max(var(--gutter), env(safe-area-inset-right));
+}
+
+/* Faint 1 px grid behind the hero and section headers (§5.5). */
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 48px 48px;
+
+  @media (prefers-contrast: more), (forced-colors: active) {
+    background-image: none;
+  }
+}
+
+/* Blurred bar (header). Opaque without backdrop-filter or when the reader
+   asks for less transparency. Keep it to small bars (cross-device §7). */
+@utility glass {
+  background-color: var(--glass);
+  backdrop-filter: blur(12px);
+
+  @supports not (backdrop-filter: blur(1px)) {
+    background-color: var(--bg-raised);
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    background-color: var(--bg-raised);
+    backdrop-filter: none;
+  }
+}
+
+/* Depth (§5.5): a faint inner highlight in dark, a soft shadow in light. */
+@utility depth {
+  box-shadow: inset 0 1px 0 var(--grid-line);
+
+  [data-theme="light"] & {
+    box-shadow:
+      0 1px 2px var(--grid-line),
+      0 8px 24px -8px var(--grid-line);
+  }
+}
+
+/* Sideways scrollers: a fade on the edge that has more to show, from
+   backgrounds alone (covers scroll with the content, shades stay put). */
+@utility scroll-fade {
+  background:
+    linear-gradient(to left, var(--bg) 40%, transparent) right / 2rem 100%
+      no-repeat local,
+    radial-gradient(farthest-side at 100% 50%, var(--scrim), transparent)
+      right / 0.75rem 100% no-repeat scroll;
+}
+
+/* Colour, fill and press transitions shared by every control. */
+@utility transition-ui {
+  transition-property:
+    color, background-color, border-color, opacity, transform;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-out);
+}
+
 @layer base {
   html {
+    --header-h: 56px;
     -webkit-text-size-adjust: 100%;
+    /* iOS tints its toolbars from the root background. */
+    background-color: var(--bg);
+    scroll-padding-top: var(--header-h);
+  }
+
+  @media (min-width: 1024px) {
+    html {
+      --header-h: 64px;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  html.lenis {
+    scroll-behavior: auto;
   }
 
   body {
     background-color: var(--bg);
+    /* Static film grain, a 64 px tile made by scripts/images.ts. */
+    background-image: url("/media/grain.png");
     color: var(--fg);
     font-family: var(--font-sans);
     font-size: var(--text-body);
@@ -17,8 +102,290 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  @media (prefers-contrast: more), (forced-colors: active) {
+    body {
+      background-image: none;
+    }
+  }
+
   :focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
+  }
+
+  /* No double-tap zoom on repeated taps; never on page scrolling. */
+  :where(button, [role="button"], [role="tab"], summary, select, label) {
+    touch-action: manipulation;
+  }
+
+  /* One shared press style for everything tappable (cross-device §2).
+     Normal specificity, to beat preflight's `button { opacity: 1 }`; a
+     component's own `active:` utilities still win from the later layer. */
+  :is(a[href], button, summary, select, [role="button"], [role="tab"]) {
+    transition: opacity var(--duration-fast) var(--ease-out);
+  }
+  :is(a[href], button, summary, select, [role="button"], [role="tab"]):active {
+    opacity: 0.7;
+  }
+
+  /* Dialogs only: popovers (tooltips) leave the page as it is. */
+  dialog::backdrop {
+    background-color: var(--scrim);
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    dialog::backdrop {
+      background-color: var(--bg);
+    }
+  }
+}
+
+/* ── Scroll reveal ──────────────────────────────────────────────────────
+   The inline script in src/lib/reveal-script.ts adds html.js and marks
+   [data-reveal] elements [data-revealed] as they enter view. Without that
+   script, nothing is hidden. */
+
+html.js [data-reveal="fade"]:not([data-revealed]) {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+[data-reveal="fade"] {
+  transition:
+    opacity var(--duration-reveal) var(--ease-out),
+    transform var(--duration-reveal) var(--ease-out);
+}
+
+[data-reveal-i="1"] {
+  transition-delay: var(--stagger);
+}
+[data-reveal-i="2"] {
+  transition-delay: calc(2 * var(--stagger));
+}
+[data-reveal-i="3"] {
+  transition-delay: calc(3 * var(--stagger));
+}
+[data-reveal-i="4"] {
+  transition-delay: calc(4 * var(--stagger));
+}
+[data-reveal-i="5"] {
+  transition-delay: calc(5 * var(--stagger));
+}
+
+/* Headline words: each word rises inside a mask padded for descenders. */
+.word-mask {
+  display: inline-block;
+  overflow: clip;
+  padding-block: 0.06em 0.16em;
+  margin-block: -0.06em -0.16em;
+  vertical-align: top;
+}
+
+.word {
+  display: inline-block;
+  transition: transform var(--duration-reveal) var(--ease-out);
+  transition-delay: calc(var(--i, 0) * var(--stagger));
+}
+
+html.js [data-reveal="words"]:not([data-revealed]) .word {
+  transform: translateY(110%);
+}
+
+/* On load (the hero): from first paint, partly painted on frame 1 so the
+   text stays an LCP candidate. */
+[data-reveal="words-load"] .word {
+  animation: word-rise var(--duration-reveal) var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * var(--stagger));
+}
+
+@keyframes word-rise {
+  from {
+    opacity: 0.01;
+    transform: translateY(40%);
+  }
+}
+
+[data-revealed="instant"],
+[data-revealed="instant"] .word {
+  transition: none;
+}
+
+/* ── Signal line (§5.5) ─────────────────────────────────────────────────
+   The hero draws it, then drifts once; both end within 5 s of first paint
+   (WCAG 2.2.2). Everywhere else it is static. */
+
+.signal-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: signal-draw calc(2 * var(--duration-reveal)) var(--ease-in-out)
+    forwards;
+}
+
+.signal-drift {
+  animation: signal-drift calc(5 * var(--duration-reveal)) var(--ease-in-out)
+    calc(2 * var(--duration-reveal)) both;
+}
+
+@keyframes signal-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes signal-drift {
+  50% {
+    transform: translateX(-1.5%);
+  }
+}
+
+/* usePauseWhenHidden marks off-screen or hidden-tab elements. */
+[data-paused],
+[data-paused] * {
+  animation-play-state: paused !important;
+}
+
+/* ── Spotlight and magnetic (cross-device §3) ───────────────────────────
+   src/lib/pointer-effects.ts (fine pointers) and src/lib/touch-effects.ts
+   (touch bloom) only set --spot-*, --mag-* and data-spot. */
+
+[data-spot-layer] {
+  position: absolute;
+  top: calc(var(--spot-size) / -2);
+  left: calc(var(--spot-size) / -2);
+  z-index: -1;
+  width: var(--spot-size);
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  background: radial-gradient(closest-side, var(--accent-soft), transparent);
+  opacity: 0;
+  transform: translate3d(var(--spot-x, 0), var(--spot-y, 0), 0)
+    scale(var(--spot-s, 1));
+  transition: opacity var(--duration-base) var(--ease-out);
+  pointer-events: none;
+  --spot-size: 24rem;
+}
+
+[data-spot="on"] > [data-spot-layer] {
+  opacity: 1;
+}
+
+[data-spot="bloom"] > [data-spot-layer] {
+  opacity: 1;
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
+}
+
+[data-magnetic-inner] {
+  display: inline-flex;
+  align-items: center;
+  gap: inherit;
+  transform: translate3d(var(--mag-x, 0), var(--mag-y, 0), 0);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+@media (prefers-contrast: more), (forced-colors: active) {
+  [data-spot-layer],
+  [data-glow] {
+    display: none;
+  }
+}
+
+/* ── Overlays ───────────────────────────────────────────────────────────
+   Enter with @starting-style; exit through closeWithExit() in
+   src/lib/overlay.ts, which waits for this animation (Safari and Firefox
+   have no overlay exit transitions). */
+
+dialog[open] {
+  opacity: 1;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+[popover]:popover-open {
+  opacity: 1;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+@starting-style {
+  dialog[open] {
+    opacity: 0;
+  }
+}
+
+@starting-style {
+  [popover]:popover-open {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  dialog[open] {
+    transition:
+      opacity var(--duration-fast) var(--ease-out),
+      transform var(--duration-fast) var(--ease-out);
+  }
+
+  @starting-style {
+    dialog[open] {
+      transform: scale(0.98);
+    }
+  }
+}
+
+[data-closing] {
+  animation: fade-out var(--duration-fast) var(--ease-out) forwards;
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* ── Final states: reduced motion and print ─────────────────────────────
+   CSS sets them before any script runs (§3 Motion). */
+
+@media (prefers-reduced-motion: reduce) {
+  html.js [data-reveal]:not([data-revealed]),
+  html.js [data-reveal]:not([data-revealed]) .word {
+    opacity: 1;
+    transform: none;
+  }
+
+  [data-reveal],
+  .word,
+  [data-reveal="words-load"] .word,
+  .signal-drift,
+  [data-magnetic-inner] {
+    transition: none;
+    animation: none;
+  }
+
+  .signal-draw {
+    stroke-dashoffset: 0;
+    animation: none;
+  }
+
+  [data-spot-layer] {
+    display: none;
+  }
+}
+
+@media print {
+  html.js [data-reveal]:not([data-revealed]),
+  html.js [data-reveal]:not([data-revealed]) .word,
+  [data-reveal="words-load"] .word {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .signal-draw {
+    stroke-dashoffset: 0;
+    animation: none;
+  }
+
+  body {
+    background-image: none;
   }
 }

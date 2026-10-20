@@ -206,6 +206,25 @@ async function main() {
     ),
   };
 
+  // Film grain (§5.5): a static noise tile, rasterised here so the page runs
+  // no feTurbulence filter (cross-device §7). Grey noise at ~3% opacity reads
+  // on both themes. Seeded, so re-runs write the same file.
+  const grain = `${OUT}/grain.png`;
+  if (force || !existsSync(grain)) {
+    console.log("grain");
+    const size = 64;
+    const pixels = Buffer.alloc(size * size * 4);
+    let seed = 1;
+    for (let i = 0; i < pixels.length; i += 4) {
+      seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+      pixels.fill((seed >>> 16) & 255, i, i + 3);
+      pixels[i + 3] = 8;
+    }
+    await sharp(pixels, { raw: { width: size, height: size, channels: 4 } })
+      .png({ compressionLevel: 9 })
+      .toFile(grain);
+  }
+
   const index = {
     photo: { hero, about, share: { width: 600, height: 600, jpg: url(share) } },
     screens,

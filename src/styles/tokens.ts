@@ -25,6 +25,11 @@ export const colors = {
   menumesh: { dark: "#FF6606", light: "#FF6606" },
   vyro: { dark: "#4CC9F0", light: "#4CC9F0" },
   baby: { dark: "#6EA8FE", light: "#6EA8FE" },
+  // Texture and overlays (decorative; not text). fg at 4% for the hairline
+  // grid (§5.5); bg-raised at 80% for blurred bars; the dialog backdrop.
+  "grid-line": { dark: "#EDEDEF0A", light: "#0B0B0C0A" },
+  glass: { dark: "#111113CC", light: "#FFFFFFCC" },
+  scrim: { dark: "#0A0A0BCC", light: "#0B0B0C66" },
 } as const satisfies Record<string, Record<Theme, string>>;
 
 export type ColorToken = keyof typeof colors;
