@@ -78,6 +78,7 @@ const raw = [
     howBuilt:
       "I wrote the plan and made the calls — 155 of them are logged in the repo's decision record. I ran the model benchmarks and every field test on my own PC, and reviewed each phase. Claude Code wrote much of the implementation.",
     cover: { kind: "demo", screen: "baby/baby-brain-idle.png" },
+    heroMedia: "baby/baby-turn-hinglish.mp4",
   },
   {
     slug: "vyro",
@@ -149,6 +150,7 @@ const raw = [
     howBuilt:
       "I wrote the product plan and the V2 plan, made the architecture and product decisions, and checked every release on real hardware. That included reference readings against HWMonitor (power matched the 88 W limit under Cinebench) and anti-cheat checks with real games. Claude Code wrote most of the implementation.",
     cover: { kind: "demo", screen: "vyro/vyro-dashboard.png" },
+    heroMedia: "vyro/vyro-dashboard.mp4",
   },
   {
     slug: "reservoir-rl",
@@ -432,7 +434,9 @@ const raw = [
     // A.4.4 gives no text; drafted from §1 and the A.4.4 role (decisions.md).
     howBuilt:
       "I designed the product — the guest, waiter, kitchen and counter flows — and made the architecture and product decisions. Claude Code wrote much of the implementation.",
-    cover: { kind: "schematic" },
+    // Captured from the staging demo by scripts/capture/menumesh.ts (§15.2).
+    cover: { kind: "image", screen: "menumesh/menumesh-home-hero.png" },
+    heroMedia: "menumesh/menumesh-demo.mp4",
   },
   {
     slug: "virtual-dressing-room",
@@ -556,6 +560,17 @@ export const archive = z.array(ArchiveItem).parse([
     repo: "https://github.com/nanu1605/flutter_calculator",
   },
 ]);
+
+/** The Work index chips (§8.3), in order; "all" shows everything. */
+export const workFilters = [
+  { id: "all", label: "All" },
+  { id: "ml", label: "ML" },
+  { id: "products", label: "Products" },
+  { id: "infra", label: "Infrastructure" },
+  { id: "client", label: "Client work" },
+  { id: "archive", label: "Archive" },
+] as const;
+export type WorkFilter = (typeof workFilters)[number]["id"];
 
 export const workIntro =
   "Case studies first, then the archive. Every number links to where it was measured.";

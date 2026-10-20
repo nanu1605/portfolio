@@ -60,6 +60,26 @@ export const microcopy = z
       mainNav: z.string(),
       footerNav: z.string(),
     }),
+    work: z.object({
+      filter: z.string(),
+      shown: z.string().includes("{n}").includes("{total}"),
+      archive: z.string(),
+    }),
+    caseStudy: z.object({
+      meta: z.object({
+        role: z.string(),
+        context: z.string(),
+        period: z.string(),
+        status: z.string(),
+        platform: z.string(),
+      }),
+      tldr: z.string(),
+      howBuilt: z.string(),
+      toc: z.string(),
+      previous: z.string(),
+      next: z.string(),
+      back: z.string(),
+    }),
   })
   .parse({
     footer: {
@@ -118,5 +138,28 @@ export const microcopy = z
       menu: "Menu",
       mainNav: "Main",
       footerNav: "Footer",
+    },
+    // Phase 4: the Work filter and the case-study template. Section names
+    // are the spec's own (§8.3, §8.4, A.4 meta); "Filter", "Showing…",
+    // "On this page" and "Back to Work" are listed in decisions.md.
+    work: {
+      filter: "Filter",
+      shown: "Showing {n} of {total}",
+      archive: "Archive",
+    },
+    caseStudy: {
+      meta: {
+        role: "Role",
+        context: "Context",
+        period: "Timeline",
+        status: "Status",
+        platform: "Platform",
+      },
+      tldr: "TL;DR",
+      howBuilt: "How this was built",
+      toc: "On this page",
+      previous: "Previous",
+      next: "Next",
+      back: "Back to Work",
     },
   });

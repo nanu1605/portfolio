@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Hero } from "@/components/home/hero";
 import {
   CompanyBand,
@@ -11,6 +12,8 @@ import {
   StackSection,
 } from "@/components/home/sections";
 import { liveMetrics } from "@/lib/github";
+
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 // Home, in the order of §8.2.
 export default async function Home() {

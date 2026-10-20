@@ -91,7 +91,9 @@ async function compileMdx(source: string) {
     ) => Promise<unknown>;
   };
   const { default: remarkGfm } = await import("remark-gfm");
-  await compile(source, { remarkPlugins: [remarkGfm] });
+  const { default: remarkHeadings } =
+    await import("../../src/lib/remark-headings.mjs");
+  await compile(source, { remarkPlugins: [remarkGfm, remarkHeadings] });
 }
 
 export async function runChecks() {
@@ -186,6 +188,14 @@ export async function runChecks() {
       fail(
         `projects.ts ${p.slug}: cover screen "${p.cover.screen}" isn't in the manifest's generated media`,
       );
+    if (
+      p.heroMedia &&
+      !media.screens[p.heroMedia] &&
+      !media.videos[p.heroMedia]
+    )
+      fail(
+        `projects.ts ${p.slug}: hero media "${p.heroMedia}" isn't in the manifest's generated media`,
+      );
   }
   for (const item of home.proof)
     if (!ids.has(item.metric))
@@ -194,6 +204,10 @@ export async function runChecks() {
   // Case-study MDX: one compiling file per case study, nothing extra.
   const mdxDir = path.join(CONTENT, "case-studies");
   const mdxFiles = (await readdir(mdxDir)).filter((f) => f.endsWith(".mdx"));
+  const mediaFiles = new Set([
+    ...Object.keys(media.screens),
+    ...Object.keys(media.videos),
+  ]);
   const wanted = new Set(
     projects.filter((p) => p.caseStudy).map((p) => `${p.slug}.mdx`),
   );
@@ -203,11 +217,18 @@ export async function runChecks() {
   for (const file of mdxFiles) {
     if (!wanted.has(file))
       fail(`content/case-studies/${file} has no case-study project`);
+    const source = await readFile(path.join(mdxDir, file), "utf8");
     try {
-      await compileMdx(await readFile(path.join(mdxDir, file), "utf8"));
+      await compileMdx(source);
     } catch (error) {
       fail(`content/case-studies/${file}: ${String(error)}`);
     }
+    // <Screen file="…" /> and <ScreenVideo file="…" /> name real media.
+    for (const [, media] of source.matchAll(/file="([^"]+)"/g))
+      if (!mediaFiles.has(media))
+        fail(
+          `content/case-studies/${file}: "${media}" isn't in the generated media`,
+        );
   }
 
   // Open source: 16 PRs, and the PEcAn groups cover each of the 15 once.

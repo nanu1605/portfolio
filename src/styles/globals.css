@@ -542,6 +542,58 @@ dialog .menu-bar:last-child {
   }
 }
 
+/* ── Work index (§8.3, §6.3) ────────────────────────────────────────────
+   One attribute on the index decides what shows, so a ?filter= link
+   applies before first paint (the inline script in work-index.tsx) and
+   nothing is hidden without JS. A filter change runs in a View
+   Transition: the cards that stay glide to their new places. */
+
+[data-filter="ml"] [data-filters]:not([data-filters~="ml"]),
+[data-filter="products"] [data-filters]:not([data-filters~="products"]),
+[data-filter="infra"] [data-filters]:not([data-filters~="infra"]),
+[data-filter="client"] [data-filters]:not([data-filters~="client"]),
+[data-filter="archive"] [data-work-grid],
+[data-filter]:not([data-filter="all"], [data-filter="archive"]) [data-archive] {
+  display: none;
+}
+
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-group(.work-card) {
+  animation-duration: var(--duration-slow);
+  animation-timing-function: var(--ease-out);
+}
+
+/* ── Case studies (§8.4) ────────────────────────────────────────────────
+   The reading-progress bar: transform only, on a scroll timeline where
+   there is one (reading-progress.tsx covers the rest). */
+
+[data-progress] {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 50;
+  height: 2px;
+  background-color: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  pointer-events: none;
+}
+
+@supports (animation-timeline: scroll()) {
+  [data-progress] {
+    animation: progress linear both;
+    animation-timeline: scroll(root);
+  }
+}
+
+@keyframes progress {
+  to {
+    transform: scaleX(1);
+  }
+}
+
 /* ── Final states: reduced motion and print ─────────────────────────────
    CSS sets them before any script runs (§3 Motion). */
 
@@ -604,5 +656,9 @@ dialog .menu-bar:last-child {
 
   body {
     background-image: none;
+  }
+
+  [data-progress] {
+    display: none;
   }
 }

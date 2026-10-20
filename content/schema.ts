@@ -109,6 +109,8 @@ export const Project = z
       /** A screen from `assets/source/screens/manifest.json`. */
       screen: Text.optional(),
     }),
+    /** The case-study hero's screen or video (a manifest file). */
+    heroMedia: Text.optional(),
   })
   .refine((p) => !p.howBuilt || p.aiNative, {
     message: "howBuilt is only shown when aiNative is true",

@@ -10,6 +10,8 @@ import { colors } from "@/styles/tokens";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
+  // Canonical URLs resolve against the production domain (§11).
+  metadataBase: new URL("https://tanishq.website"),
   title: {
     default: "Tanishq Jain — ML & systems engineer",
     template: "%s — Tanishq Jain",

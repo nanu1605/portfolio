@@ -51,6 +51,7 @@ export function Figure({
   caption,
   source,
   label,
+  bleed = false,
   className,
   children,
 }: {
@@ -58,15 +59,33 @@ export function Figure({
   source?: { href: string; label: string };
   /** "Illustrative screens.", "Simulated values…" (§3): next to the content. */
   label?: string;
+  /** Edge to edge on phones (screens, cross-device §5); the caption keeps the gutter. */
+  bleed?: boolean;
   className?: string;
   children: ReactNode;
 }) {
   return (
-    <figure className={cx("flex flex-col gap-3", className)}>
-      <div className="overflow-clip rounded-lg border border-border">
+    <figure
+      className={cx(
+        "flex flex-col gap-3",
+        bleed && "max-md:-mx-(--gutter)",
+        className,
+      )}
+    >
+      <div
+        className={cx(
+          "overflow-clip rounded-lg border border-border",
+          bleed && "max-md:rounded-none max-md:border-x-0",
+        )}
+      >
         {children}
       </div>
-      <figcaption className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-small text-fg-muted">
+      <figcaption
+        className={cx(
+          "flex flex-wrap items-baseline gap-x-3 gap-y-1 text-small text-fg-muted",
+          bleed && "max-md:px-(--gutter)",
+        )}
+      >
         <span>{caption}</span>
         {label && (
           <span

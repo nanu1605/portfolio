@@ -6,6 +6,8 @@
 - Kokoro speaks the reply sentence by sentence, in English or Hindi. If you start talking, it stops within about 100 ms.
 - The same agent also answers typed chat, a Telegram bot (locked to one chat), and background tasks.
 
+<Screen file="baby/baby-turn-thinking.png" />
+
 ## Four brains, one router
 
 - **The brains:**
@@ -17,12 +19,16 @@
 - **Language and connectivity:** Hindi written in Devanagari goes local, and so does everything when the PC is offline.
 - **Failover:** a health state machine (cloud → degraded → offline) fails over mid-turn without losing the conversation.
 
+<Screen file="baby/baby-turn-hinglish.png" />
+
 ## A gate, not a guess
 
 - Every tool call is classified allow, confirm or deny by a deterministic classifier, not a model, so it's predictable, auditable and testable (65 test cases).
 - Chained commands are judged by their most dangerous part, protected folders and system processes are denied, and unknown commands ask first.
 - Confirmations come from the screen, the CLI or Telegram buttons — never by voice — and silence for 60 seconds means no.
 - Every action, routing decision and first-token time goes into an audit log.
+
+<Screen file="baby/baby-activity.png" />
 
 ## More than a chatbot
 
@@ -32,6 +38,8 @@
 - **Memory.** Retrieval uses sqlite-vec.
 - **Game mode.** Unloads the local model to free about 5.5 GB of VRAM.
 - **"The Brain."** A live 3-D view that traces the path of every turn.
+
+<Screen file="baby/baby-inspector.png" />
 
 ## Key decisions
 

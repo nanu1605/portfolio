@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { SpotlightLayer } from "@/components/motion/motion";
 import { cx } from "@/lib/cx";
 
-type Accent = "menumesh" | "vyro" | "baby";
+export type Accent = "menumesh" | "vyro" | "baby";
 
 // A soft radial glow in the product's accent: a static gradient, no blur
 // filter (cross-device §2).
@@ -13,7 +13,7 @@ const glows: Record<Accent, string> = {
   baby: "[--glow:var(--baby)]",
 };
 
-function Glow({ accent }: { accent: Accent }) {
+export function Glow({ accent }: { accent: Accent }) {
   return (
     <span
       data-glow=""
@@ -61,11 +61,11 @@ export function Card({ href, accent, className, children }: CardProps) {
 }
 
 /**
- * A Home bento tile (§8.2): a Card that lays out from its own width
- * (`@container`), with an optional product-accent glow. It tilts toward a
- * fine pointer (src/lib/pointer-effects.ts); micro-demos arrive in Phase 5.
- * The title's link stretches over the whole tile, so the readout can hold
- * its own source links without nesting links.
+ * A Home bento tile (§8.2) or a Work card (§8.3): a Card that lays out from
+ * its own width (`@container`), with an optional product-accent glow. Bento
+ * tiles alone tilt toward a fine pointer (src/lib/pointer-effects.ts);
+ * micro-demos arrive in Phase 5. The title's link stretches over the whole
+ * tile, so the readout can hold its own source links without nesting links.
  */
 export function BentoTile({
   href,
@@ -75,7 +75,10 @@ export function BentoTile({
   accent,
   media,
   badges,
+  tilt = true,
+  heading: Heading = "h3",
   className,
+  children,
 }: {
   href: string;
   title: string;
@@ -84,12 +87,17 @@ export function BentoTile({
   accent?: Accent;
   media?: ReactNode;
   badges?: ReactNode;
+  tilt?: boolean;
+  /** h2 where the tiles sit right under the page's h1 (/work). */
+  heading?: "h2" | "h3";
   className?: string;
+  /** Extra lines under the one-liner (the Work card's period and stack). */
+  children?: ReactNode;
 }) {
   return (
     <div
       data-spotlight=""
-      data-tilt=""
+      data-tilt={tilt ? "" : undefined}
       className={cx(surface, "@container", className)}
     >
       <SpotlightLayer />
@@ -99,15 +107,16 @@ export function BentoTile({
       )}
       <div className="flex flex-1 flex-col gap-2 p-5 @md:p-6">
         {badges}
-        <h3 className="text-h3">
+        <Heading className="text-h3">
           <Link
             href={href}
             className="after:absolute after:inset-0 after:content-['']"
           >
             {title}
           </Link>
-        </h3>
+        </Heading>
         <p className="text-small text-fg-muted">{oneLiner}</p>
+        {children}
         {readout && (
           <p className="relative mt-auto pt-3 font-mono text-mono-label text-fg-subtle">
             {readout}
