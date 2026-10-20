@@ -7,6 +7,7 @@ import type {
 } from "react";
 import type { ReservoirCopy } from "@content/centerpieces/reservoir-rl";
 import { Chip } from "@/components/ui/tag";
+import { TextLink } from "@/components/ui/text-link";
 import { Scatter, type ScatterPoint } from "@/components/viz/charts";
 import { cx } from "@/lib/cx";
 
@@ -38,6 +39,8 @@ export type ReservoirData = {
     drier: Penalties;
     definition: string;
     title: string;
+    /** Its own results file, apart from the agents' (the figure's source). */
+    source: { href: string; label: string };
   };
   /** Bar scales: the largest mean + sd on each penalty. */
   max: Record<Key, number>;
@@ -316,7 +319,10 @@ export function ReservoirView({
             </p>
             {state.drier && (
               <p className="font-mono text-mono-label text-fg-subtle">
-                {`${copy.drier}: ${headline.definition}`}
+                {`${copy.drier}: ${headline.definition} `}
+                <TextLink href={headline.source.href}>
+                  {headline.source.label}
+                </TextLink>
               </p>
             )}
           </div>

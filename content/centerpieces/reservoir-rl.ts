@@ -1,5 +1,5 @@
 // §10.5 "Weight mixer". Strings from the spec say where they come from;
-// the rest are new and listed in docs/decisions.md for Tanishq to approve.
+// the ones marked "New" still need Tanishq's approval.
 // Every number comes from Appendix B (@content/charts) or C.1 (metrics).
 
 export const reservoirCopy = {
@@ -31,6 +31,9 @@ export const reservoirCopy = {
   // Phase 4's figure caption and scatter names.
   caption:
     "Eight PPO agents (dots) and the rule curve (star), over 100 shared evaluation episodes; lower is better on every axis.",
+  // New: the "View data" table's caption (Phase 4's, plus the headline run).
+  table:
+    "Pareto agents, the rule curve and the balanced headline run: mean ± sd over 100 episodes",
   charts: {
     floodSupply: "Flood penalty against supply deficit",
     supplyEco: "Supply deficit against ecological deficit",

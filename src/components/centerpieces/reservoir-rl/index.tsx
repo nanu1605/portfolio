@@ -19,6 +19,14 @@ import {
 const pm = ([m, sd]: readonly number[]) => `${m} ± ${sd}`;
 const RULE = copy.rule;
 const BALANCED = "Balanced (seed 45)";
+/** An axis maximum at or above `v` whose half is a round tick. */
+const nice = (v: number) => {
+  const m = 10 ** Math.floor(Math.log10(v)) / 10;
+  return (
+    [10, 12, 15, 20, 25, 30, 40, 50, 60, 80, 90, 100].find((f) => f * m >= v)! *
+    m
+  );
+};
 const penalties = (p: Penalties): Penalties => ({
   flood: p.flood,
   supply: p.supply,
@@ -54,36 +62,44 @@ export function Centerpiece() {
     };
   });
   const run = reservoir.balanced_headline_seed42;
-  const all = [
-    ...agents,
-    reservoir.rule_baseline,
-    run.nominal,
-    run.drier_climate,
-  ];
+  const rule = reservoir.rule_baseline;
+  const all = [...agents, rule, run.nominal, run.drier_climate];
+  const measured = metrics["rl.flood"].measuredOn ?? "";
+  // The scatters: every agent's mean + sd (the selected one's whiskers) and
+  // the rule's mean (a star, no whiskers).
+  const axis = (k: (typeof KEYS)[number]) => ({
+    label: copy.penalties[k],
+    max: nice(Math.max(rule[k][0], ...agents.map((a) => a[k][0] + a[k][1]))),
+  });
   const data: ReservoirData = {
     agents,
-    rule: penalties(reservoir.rule_baseline),
+    rule: penalties(rule),
     headline: {
       nominal: penalties(run.nominal),
       drier: penalties(run.drier_climate),
       definition: run.drier_climate_definition,
-      title: `${copy.balanced} · ${metrics["rl.flood"].measuredOn ?? ""}`,
+      title: `${copy.balanced} · ${measured}`,
+      source: source("rl.dry"),
     },
     max: {
       flood: Math.max(...all.map((p) => p.flood[0] + p.flood[1])),
       supply: Math.max(...all.map((p) => p.supply[0] + p.supply[1])),
       eco: Math.max(...all.map((p) => p.eco[0] + p.eco[1])),
     },
-    axes: {
-      flood: { label: copy.penalties.flood, max: 90 },
-      supply: { label: copy.penalties.supply, max: 280 },
-      eco: { label: copy.penalties.eco, max: 25 },
-    },
+    axes: { flood: axis("flood"), supply: axis("supply"), eco: axis("eco") },
     copy,
     limitsHref: "#limitations-and-whats-next",
   };
   const initial = agents.findIndex((a) => a.name === "balanced");
-  const rule = reservoir.rule_baseline;
+  // The headline run: seed 42 (C.1), with the balanced weights (§10.5 footnote).
+  const head = `${copy.balanced}, ${measured.match(/seed \d+/)?.[0] ?? ""}`;
+  const headRow = (name: string, p: Penalties) => ({
+    name: `${head} (${name.toLowerCase()})`,
+    weights: agents[initial]!.weights.join(", "),
+    flood: pm(p.flood),
+    supply: pm(p.supply),
+    eco: pm(p.eco),
+  });
 
   return (
     <div className="flex flex-col gap-3">
@@ -105,7 +121,7 @@ export function Centerpiece() {
         />
       </Figure>
       <ViewData
-        caption="Pareto agents and the rule curve: mean ± sd over 100 episodes"
+        caption={copy.table}
         columns={[
           { key: "name", label: "Policy" },
           { key: "weights", label: "Weights (flood, supply, eco)" },
@@ -130,6 +146,8 @@ export function Centerpiece() {
             supply: pm(rule.supply),
             eco: pm(rule.eco),
           },
+          headRow(copy.nominal, run.nominal),
+          headRow(copy.drier, run.drier_climate),
         ]}
       />
     </div>
