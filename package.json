@@ -8,7 +8,7 @@
   "scripts": {
     "predev": "pnpm tokens:build",
     "dev": "next dev",
-    "prebuild": "pnpm tokens:build",
+    "prebuild": "pnpm tokens:build && pnpm check:content",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -19,7 +19,8 @@
     "check:tokens": "tsx scripts/check-tokens.ts",
     "check:content": "tsx scripts/check-content.ts",
     "format": "prettier --write .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "images": "tsx scripts/images.ts"
   },
   "lint-staged": {
     "*.{ts,tsx,js,mjs}": [
@@ -29,10 +30,16 @@
     "*.{css,json,yml,yaml}": "prettier --write"
   },
   "dependencies": {
+    "@mdx-js/loader": "^3.1.1",
+    "@mdx-js/react": "^3.1.1",
+    "@next/mdx": "^16.4.2",
+    "@types/mdx": "^2.0.14",
     "next": "16.4.2",
     "next-themes": "^0.4.6",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "remark-gfm": "^4.0.1",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
@@ -44,9 +51,11 @@
     "culori": "^4.0.2",
     "eslint": "^9",
     "eslint-config-next": "16.4.2",
+    "ffmpeg-static": "^5.3.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.6.0",
     "prettier": "^3.9.10",
+    "sharp": "^0.35.5",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5",

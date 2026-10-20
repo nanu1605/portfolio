@@ -1,0 +1,97 @@
+{
+  "reference_pc": "AMD Ryzen 7 9700X, MSI B650M GAMING PLUS WIFI, 2x16 GB DDR5-5600, NVIDIA RTX 5060 Ti 8 GB, Windows 11",
+  "footprint": [
+    {
+      "metric": "CPU, window visible",
+      "target": "< 1.5%",
+      "v0_1_4": "0.68%",
+      "v0_2_0": "0.46%"
+    },
+    {
+      "metric": "RAM, window visible",
+      "target": "< 120 MB",
+      "v0_1_4": "120 MB",
+      "v0_2_0": "125 MB"
+    },
+    {
+      "metric": "Startup to first data",
+      "target": "< 2 s",
+      "v0_1_4": "0.76 s",
+      "v0_2_0": "1.02 s"
+    },
+    {
+      "metric": "RAM, closed to tray",
+      "target": "-",
+      "v0_1_4": "~40 MB (service 33 + app 7)",
+      "v0_2_0": "-"
+    }
+  ],
+  "installer_mb": {
+    "0.1.4": 9.5,
+    "0.2.0": 9.7,
+    "0.3.0": 9.9,
+    "1.0.0": 11.3,
+    "1.1.0": 11.4,
+    "1.2.0": 11.4,
+    "1.4.0": 11.6,
+    "1.4.1": 11.6
+  },
+  "optimisations": [
+    {
+      "change": "WebView2 --in-process-gpu + 60 fps cap",
+      "before": "RAM 131 MB, peak 208 MB, CPU 1.0%",
+      "after": "RAM 120 MB, peak 132 MB, CPU 0.68%"
+    },
+    {
+      "change": "History lists stored outside Svelte reactivity",
+      "before": "History view JS heap 53.5 MB; highest total across tabs 295 MB",
+      "after": "JS heap 8.6 MB; highest total 167 MB"
+    }
+  ],
+  "releases": [
+    {
+      "v": "0.2.0",
+      "date": "2026-10-13",
+      "name": "Control",
+      "what": "Fan and pump control"
+    },
+    {
+      "v": "0.3.0",
+      "date": "2026-10-15",
+      "name": "Gaming",
+      "what": "Game profiles, overlay 2.0, session replay"
+    },
+    {
+      "v": "1.0.0",
+      "date": "2026-10-16",
+      "what": "All of V2"
+    },
+    {
+      "v": "1.0.1",
+      "date": "2026-10-16",
+      "what": "Fixes"
+    },
+    {
+      "v": "1.1.0",
+      "date": "2026-10-17",
+      "what": "New look, laptop 3-D model, desktop widgets"
+    },
+    {
+      "v": "1.2.0",
+      "date": "2026-10-17",
+      "what": "Widget snapping and click-through, airflow view"
+    },
+    {
+      "v": "1.4.0",
+      "date": "2026-10-18",
+      "what": "Phone app from anywhere (end-to-end encrypted), device names and batteries, Bluetooth, colour wheel"
+    },
+    {
+      "v": "1.4.1",
+      "date": "2026-10-20",
+      "what": "Patch release"
+    }
+  ],
+  "release_tags_total": 11,
+  "note": "Footprint was formally recorded only for 0.1.4 and 0.2.0 (README); later releases were 'within target, not written down'. Earlier tags 0.1.2-0.1.4 have no recorded dates."
+}

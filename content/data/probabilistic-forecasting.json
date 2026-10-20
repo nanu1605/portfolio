@@ -1,0 +1,140 @@
+{
+  "source": "github.com/nanu1605/probabilistic-forecasting metrics/*.json (test: Jan-Feb 2017, 59 x 24h windows; PM2.5 Aotizhongxin)",
+  "levels": [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
+  "table": [
+    {
+      "Model": "Seasonal Naive",
+      "MAE": 88.475,
+      "RMSE": 137.533,
+      "CRPS": 68.353,
+      "Cov@50": 0.4,
+      "Cov@80": 0.679,
+      "Cov@90": 0.786,
+      "ECE": 0.084
+    },
+    {
+      "Model": "ARIMA",
+      "MAE": 59.937,
+      "RMSE": 103.454,
+      "CRPS": 47.418,
+      "Cov@50": 0.554,
+      "Cov@80": 0.741,
+      "Cov@90": 0.804,
+      "ECE": 0.072
+    },
+    {
+      "Model": "ETS",
+      "MAE": 61.267,
+      "RMSE": 104.946,
+      "CRPS": 47.487,
+      "Cov@50": 0.656,
+      "Cov@80": 0.839,
+      "Cov@90": 0.879,
+      "ECE": 0.109
+    },
+    {
+      "Model": "DeepAR (raw)",
+      "MAE": "59.70±2.67",
+      "RMSE": "99.52±2.26",
+      "CRPS": "43.62±1.75",
+      "Cov@50": "0.35±0.03",
+      "Cov@80": "0.62±0.04",
+      "Cov@90": "0.74±0.04",
+      "ECE": "0.13±0.03"
+    },
+    {
+      "Model": "DeepAR (recalibrated)",
+      "MAE": 57.667,
+      "RMSE": 96.564,
+      "CRPS": 42.871,
+      "Cov@50": 0.378,
+      "Cov@80": 0.656,
+      "Cov@90": 0.797,
+      "ECE": 0.098
+    }
+  ],
+  "calibration_curves": {
+    "seasonal_naive": [
+      0.097, 0.169, 0.244, 0.326, 0.4, 0.472, 0.571, 0.679, 0.786
+    ],
+    "arima": [0.187, 0.32, 0.405, 0.48, 0.554, 0.624, 0.677, 0.741, 0.804],
+    "ets": [0.173, 0.34, 0.472, 0.58, 0.656, 0.72, 0.781, 0.839, 0.879],
+    "deepar_seed_42": [
+      0.065, 0.118, 0.177, 0.25, 0.313, 0.383, 0.474, 0.571, 0.679
+    ],
+    "deepar_seed_123": [
+      0.069, 0.131, 0.201, 0.261, 0.34, 0.409, 0.504, 0.592, 0.722
+    ],
+    "deepar_seed_456": [
+      0.066, 0.141, 0.21, 0.291, 0.376, 0.47, 0.558, 0.663, 0.768
+    ],
+    "deepar_seed_789": [
+      0.075, 0.136, 0.207, 0.279, 0.352, 0.429, 0.512, 0.615, 0.739
+    ],
+    "deepar_seed_1337": [
+      0.088, 0.167, 0.238, 0.311, 0.392, 0.478, 0.571, 0.677, 0.797
+    ]
+  },
+  "deepar_per_seed": {
+    "42": {
+      "crps": 46.207,
+      "rmse": 100.273,
+      "mae": 62.746,
+      "ece": 0.163,
+      "cov90": 0.679
+    },
+    "123": {
+      "crps": 42.674,
+      "rmse": 100.283,
+      "mae": 58.259,
+      "ece": 0.141,
+      "cov90": 0.722
+    },
+    "456": {
+      "crps": 45.055,
+      "rmse": 101.381,
+      "mae": 62.945,
+      "ece": 0.106,
+      "cov90": 0.768
+    },
+    "789": {
+      "crps": 42.712,
+      "rmse": 100.603,
+      "mae": 58.223,
+      "ece": 0.128,
+      "cov90": 0.739
+    },
+    "1337": {
+      "crps": 41.439,
+      "rmse": 95.073,
+      "mae": 56.31,
+      "ece": 0.087,
+      "cov90": 0.797
+    }
+  },
+  "best_seed_curve_ece": 0.087,
+  "per_horizon_ece_best_seed": {
+    "1": 0.032,
+    "6": 0.06,
+    "12": 0.116,
+    "24": 0.167
+  },
+  "recalibration_same_run": {
+    "test_ece": [0.09, 0.098],
+    "val_ece": [0.014, 0.016],
+    "cov90": [0.804, 0.797],
+    "crps": [42.048, 42.871],
+    "width90": [156.2, 164.3],
+    "oracle_test_fit_ece": 0.02
+  },
+  "winkler90": {
+    "seasonal_naive": 690.8,
+    "arima": 547.1,
+    "ets": 514.1
+  },
+  "notes": [
+    "ECE here = mean |nominal - observed| interval coverage over the 9 levels (not classifier ECE).",
+    "DeepAR (raw) table row = mean ± sd over 5 seeds. The 'recalibrated' table row is ONE seed (1337) and must not be compared with the 5-seed mean; use recalibration_same_run for before/after.",
+    "per_horizon_ece_best_seed and best_seed_curve_ece are for seed 1337 (lowest test CRPS)."
+  ]
+}

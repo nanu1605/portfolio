@@ -1,0 +1,117 @@
+{
+  "source": "GitHub API (gh pr list --author nanu1605 --state merged), fetched 20 Oct 2026",
+  "prs": [
+    {
+      "repo": "PecanProject/pecan",
+      "number": 2960,
+      "title": "Fixed some warnings and notes from PEcAn.DB package.",
+      "opened": "2022-07-14",
+      "merged": "2022-07-18"
+    },
+    {
+      "repo": "PecanProject/pecan",
+      "number": 2966,
+      "title": "Fixed vignettes warnings in PEcAn.DB package",
+      "opened": "2022-07-17",
+      "merged": "2022-07-18"
+    },
+    {
+      "repo": "PecanProject/pecan",
+      "number": 2965,
+      "title": "fixed some global variables in PEcAn.MA package",
+      "opened": "2022-07-17",
+      "merged": "2022-07-20"
+    },
+    {
+      "repo": "PecanProject/pecan",
+      "number": 2984,
+      "title": "Changes in the Rcheck_reference.log file",
+      "opened": "2022-07-24",
+      "merged": "2022-07-25"
+    },
+    {
+      "repo": "PecanProject/pecan",
+      "number": 2971,
+      "title": "Fixed some global variables in PEcAn.DB package",
+      "opened": "2022-07-20",
+      "merged": "2022-08-01"
+    },
+    {
+      "repo": "PecanProject/pecan",
+      "number": 2973,
+      "title": "Fixed remaining Notes in PEcAn.MA",
+      "opened": "2022-07-20",
+      "merged": "2022-08-01"
+    },
+    {
+      "repo": "PecanProject/pecan",
+      "number": 2989,
+      "title": "Replace udunits2 with units",
+      "opened": "2022-07-27",
+      "merged": "2022-08-01"
+    },
+    {
+      "repo": "PecanProject/pecan",
+      "number": 3001,
+      "title": "removed udunits2 usages in `shiny/` and `scripts/`",
+      "opened": "2022-08-02",
+      "merged": "2022-08-05"
+    },
+    {
+      "repo": "PecanProject/pecan",
+      "number": 3002,
+      "title": "Replace udunits2::ud.is.parseable with PEcAn.utils::unit_is_parseable",
+      "opened": "2022-08-02",
+      "merged": "2022-08-05"
+    },
+    {
+      "repo": "PecanProject/pecan",
+      "number": 3007,
+      "title": "removed udunits2::ud.is.parseable usages from PEcAn",
+      "opened": "2022-08-05",
+      "merged": "2022-08-05"
+    },
+    {
+      "repo": "PecanProject/pecan",
+      "number": 2983,
+      "title": "Fixed Documentation warnings from PEcAn.emulator",
+      "opened": "2022-07-24",
+      "merged": "2022-09-02"
+    },
+    {
+      "repo": "PecanProject/pecan",
+      "number": 3000,
+      "title": "Change in Rcheck_reference.log files",
+      "opened": "2022-08-02",
+      "merged": "2022-09-06"
+    },
+    {
+      "repo": "PecanProject/pecan",
+      "number": 3026,
+      "title": "Shifted convert.input.R from utils to DB",
+      "opened": "2022-08-31",
+      "merged": "2022-09-22"
+    },
+    {
+      "repo": "PecanProject/pecan",
+      "number": 3027,
+      "title": "Shifting minimize.GP.R from emulator to assim.batch",
+      "opened": "2022-09-02",
+      "merged": "2022-10-12"
+    },
+    {
+      "repo": "PecanProject/pecan",
+      "number": 2982,
+      "title": "Fixed Global function and variables from PEcAn.emulator",
+      "opened": "2022-07-24",
+      "merged": "2022-10-23"
+    },
+    {
+      "repo": "litmuschaos/litmus",
+      "number": 4186,
+      "title": "Added some text occurrences in UI",
+      "opened": "2023-09-22",
+      "merged": "2023-10-27"
+    }
+  ]
+}

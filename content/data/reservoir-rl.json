@@ -1,0 +1,119 @@
+{
+  "source": "github.com/nanu1605/reservoir-rl results/*.json (100 eval episodes, lower is better)",
+  "rule_baseline": {
+    "flood": [82.4, 29.1],
+    "supply": [194.7, 10],
+    "eco": [0, 0],
+    "reward": -13.287
+  },
+  "pareto_agents": [
+    {
+      "name": "flood_focused",
+      "seed": 42,
+      "weights": [0.8, 0.1, 0.1],
+      "flood": [0, 0],
+      "supply": [269.2, 25.1],
+      "eco": [22.9, 2.1]
+    },
+    {
+      "name": "supply_focused",
+      "seed": 43,
+      "weights": [0.1, 0.8, 0.1],
+      "flood": [28.6, 23.8],
+      "supply": [137.9, 11.8],
+      "eco": [17.9, 2]
+    },
+    {
+      "name": "ecology_focused",
+      "seed": 44,
+      "weights": [0.1, 0.1, 0.8],
+      "flood": [0.1, 0.7],
+      "supply": [157.9, 15.8],
+      "eco": [9.2, 1.5]
+    },
+    {
+      "name": "balanced",
+      "seed": 45,
+      "weights": [0.34, 0.33, 0.33],
+      "flood": [0, 0],
+      "supply": [177.5, 15.1],
+      "eco": [16.4, 1.9]
+    },
+    {
+      "name": "flood_supply",
+      "seed": 46,
+      "weights": [0.45, 0.45, 0.1],
+      "flood": [0, 0],
+      "supply": [135.7, 12.4],
+      "eco": [11.7, 1.6]
+    },
+    {
+      "name": "supply_ecology",
+      "seed": 47,
+      "weights": [0.1, 0.45, 0.45],
+      "flood": [4.2, 10.9],
+      "supply": [141.2, 18.9],
+      "eco": [15.4, 1.9]
+    },
+    {
+      "name": "flood_ecology",
+      "seed": 48,
+      "weights": [0.45, 0.1, 0.45],
+      "flood": [0, 0],
+      "supply": [167, 20.7],
+      "eco": [13, 1.7]
+    },
+    {
+      "name": "mild_balanced",
+      "seed": 49,
+      "weights": [0.5, 0.3, 0.2],
+      "flood": [0.5, 3],
+      "supply": [142.2, 15.1],
+      "eco": [10.3, 1.6]
+    }
+  ],
+  "balanced_headline_seed42": {
+    "nominal": {
+      "flood": [1.7, 7],
+      "supply": [183.4, 16.2],
+      "eco": [22.2, 2.2],
+      "reward": -13.091
+    },
+    "drier_climate": {
+      "flood": [0, 0],
+      "supply": [349.4, 18.9],
+      "eco": [40.5, 2.9],
+      "reward": -27.297
+    },
+    "drier_climate_definition": "inflow mean x0.8, noise x1.3, no retraining",
+    "weights": [0.34, 0.33, 0.33]
+  },
+  "random_policy": {
+    "flood": [582.9, 46.3],
+    "supply": [467.5, 26.7],
+    "eco": [52, 6.9],
+    "reward": -99.195
+  },
+  "notes": [
+    "Penalties are yearly sums, mean over 100 evaluation episodes (episode seeds 1000+i, shared by all policies); lower is better.",
+    "Pareto agents use seed 42+i (i = sweep index). 'balanced_headline_seed42' is a separate single run with the same weights as the sweep's 'balanced' (seed 45); the two land at different points.",
+    "Pareto-agent rewards were scored with each agent's own weights, so they are not comparable across agents and are omitted here."
+  ],
+  "learning_curve_seed42": {
+    "timesteps": [
+      365, 4015, 7665, 11315, 14965, 18615, 22265, 25915, 29565, 33215, 36865,
+      40515, 44165, 47815, 51465, 55115, 58765, 62415, 66065, 69715, 73365,
+      77015, 80665, 84315, 87965, 91615, 95265, 98915, 102565, 106215, 109865,
+      113515, 117165, 120815, 124465, 128115, 131765, 135415, 139065, 142715,
+      146365, 150015, 151475
+    ],
+    "episode_reward": [
+      -116.88, -88.01, -89.16, -54.04, -58.98, -43.29, -24.3, -29.51, -23.15,
+      -16.29, -18, -16.18, -21.48, -17.54, -20, -17.62, -17.08, -18.63, -16.5,
+      -16.35, -24.06, -17.18, -15.41, -14.87, -15.25, -20.19, -21.27, -20.88,
+      -14.01, -19.94, -15.55, -22.14, -23.1, -18.71, -18.17, -15.78, -15.89,
+      -15.45, -16.86, -14.58, -13.82, -13.91, -13.47
+    ],
+    "note": "Downsampled from results/single_ppo_results.json learning_curve; training-episode reward (random starting storage)."
+  }
+}

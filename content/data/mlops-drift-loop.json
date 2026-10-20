@@ -1,0 +1,7 @@
+{
+  "documented_levels": {
+    "stale_champion_f1": 0.27,
+    "after_promotion_f1": 0.78
+  },
+  "per_batch_series": "NOT YET EXPORTED - see spec §10.7: run the repo's `make experiment` with a one-line patch that writes `timeline` (list of {t, f1, version}) from src/mlops_drift/experiments/run.py to JSON. Never hand-draw intermediate points."
+}

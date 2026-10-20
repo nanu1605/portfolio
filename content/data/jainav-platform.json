@@ -1,0 +1,59 @@
+{
+  "phases": [
+    {
+      "p": 0,
+      "name": "Setup and guardrails"
+    },
+    {
+      "p": 1,
+      "name": "Content model and admin"
+    },
+    {
+      "p": 2,
+      "name": "Design system and motion"
+    },
+    {
+      "p": 3,
+      "name": "Public pages"
+    },
+    {
+      "p": 4,
+      "name": "Forms, leads and notifications"
+    },
+    {
+      "p": 5,
+      "name": "Signature animations and polish"
+    },
+    {
+      "p": 6,
+      "name": "Deploy pipeline and runbooks (server not set up yet)"
+    },
+    {
+      "p": 7,
+      "name": "Accounts, checkout and invoices (Razorpay test mode)"
+    },
+    {
+      "p": 8,
+      "name": "Licensing"
+    },
+    {
+      "p": 9,
+      "name": "Store operations"
+    },
+    {
+      "p": 10,
+      "name": "Store go-live",
+      "status": "not started"
+    }
+  ],
+  "built": "Spec dated 15 Oct 2026; phases 0-9 built 15-18 Oct 2026 (migrations 15-17 Oct; phase PRs opened 16-18 Oct).",
+  "order_to_licence": [
+    "Email-code sign-in (6 digits, 10-minute expiry, 5 attempts)",
+    "Razorpay order + checkout",
+    "Signature verified AND payment re-fetched from Razorpay",
+    "Idempotent fulfilment in one transaction (reconciliation job every 15 min; paid-twice flagged)",
+    "GST invoice PDF (CGST+SGST in Madhya Pradesh, IGST elsewhere)",
+    "Licence key VYRO-XXXXX-XXXXX-XXXXX-XXXXX (stored as SHA-256 hash + AES-256-GCM copy), emailed",
+    "App activation returns an Ed25519-signed token (2 devices, 14-day trial, 180-day grace, 12 months of updates)"
+  ]
+}
