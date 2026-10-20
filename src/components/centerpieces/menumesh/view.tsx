@@ -1,5 +1,4 @@
-import type { Ref } from "react";
-import { Chip } from "@/components/ui/tag";
+import type { CSSProperties, Ref } from "react";
 import { cx } from "@/lib/cx";
 import { Stepper } from "../stepper";
 
@@ -18,6 +17,8 @@ export type Shot = {
   src: string;
   avif: string;
   webp: string;
+  /** The part shown where room is short: [x, y, width, height] in pixels. */
+  detail: readonly [number, number, number, number];
 };
 
 export type MenumeshData = {
@@ -45,9 +46,19 @@ type Live = {
 };
 
 const pad = (n: number) => String(n).padStart(2, "0");
+const portrait = (shot: Shot) => shot.height > shot.width;
 
-function Picture({ shot, sizes }: { shot: Shot; sizes: string }) {
-  const portrait = shot.height > shot.width;
+function Img({
+  shot,
+  sizes,
+  className,
+  style,
+}: {
+  shot: Shot;
+  sizes: string;
+  className?: string;
+  style?: CSSProperties;
+}) {
   return (
     <picture className="contents">
       <source type="image/avif" srcSet={shot.avif} sizes={sizes} />
@@ -60,54 +71,136 @@ function Picture({ shot, sizes }: { shot: Shot; sizes: string }) {
         alt={shot.alt}
         loading="lazy"
         decoding="async"
-        style={{ backgroundImage: `url(${shot.blur})` }}
-        className={cx(
-          "border border-border bg-cover object-contain",
-          // Phones fill the height left by the label; the rest, the width.
-          portrait
-            ? "min-h-0 w-auto max-w-full flex-1 rounded-xl"
-            : "h-auto min-h-0 w-full rounded-lg",
-        )}
+        style={{ backgroundImage: `url(${shot.blur})`, ...style }}
+        className={cx("bg-cover", className)}
       />
     </picture>
   );
 }
 
 /**
- * Screens stacked in one box, each with its view under it ("Demo: kitchen
- * tablet, ready"); the shown one fades in (opacity only).
+ * `shot.detail` at `width`: a box of the detail's shape with the capture
+ * scaled and offset inside it. Menus fade out at the bottom, their top
+ * corners rounded like the phone (the capture's own are square); landscape
+ * screens get a hairline frame.
  */
-function Stage({
-  shots,
-  shown,
-  sizes,
-  className,
+function Detail({
+  shot,
+  width,
+  box,
 }: {
-  shots: Shot[];
-  shown: number;
-  sizes: string;
-  className?: string;
+  shot: Shot;
+  width: string;
+  /** The box's rendered width, for `sizes`. */
+  box: string;
 }) {
+  const [x, y, w, h] = shot.detail;
   return (
-    <div className={cx("relative", className)}>
+    <div
+      className={cx(
+        "relative shrink-0 overflow-clip",
+        portrait(shot)
+          ? "rounded-t-lg mask-b-from-90% mask-b-to-100%"
+          : "rounded-md border border-border",
+      )}
+      style={{ width, aspectRatio: `${w} / ${h}` }}
+    >
+      <Img
+        shot={shot}
+        sizes={`calc(${box} * ${(shot.width / w).toFixed(2)})`}
+        className="absolute max-w-none"
+        style={{
+          width: `${(shot.width / w) * 100}%`,
+          left: `${(-x / w) * 100}%`,
+          top: `${(-y / h) * 100}%`,
+        }}
+      />
+    </div>
+  );
+}
+
+/** One of the stacked screens; the shown one fades in (opacity only). */
+const layer = (on: boolean) =>
+  cx(
+    "flex flex-col items-center gap-3 transition-opacity duration-(--duration-slow) ease-out motion-reduce:transition-none",
+    on ? "opacity-100" : "opacity-0",
+  );
+
+/** The screen's view under it ("Demo: kitchen tablet, ready"). */
+const ViewLine = ({ shot }: { shot: Shot }) => (
+  <span
+    aria-hidden="true"
+    className="shrink-0 text-center font-mono text-mono-label text-fg-subtle"
+  >
+    {shot.view}
+  </span>
+);
+
+/**
+ * The sticky frame: phones whole, at the frame's height; landscape screens
+ * as their detail, at the column's width.
+ */
+function Frame({ shots, shown }: { shots: Shot[]; shown: number }) {
+  return (
+    <div className="relative h-full">
       {shots.map((shot, i) => (
         <div
-          key={shot.src}
+          key={i}
           aria-hidden={i !== shown}
-          className={cx(
-            "absolute inset-0 flex flex-col items-center justify-center gap-3 transition-opacity duration-(--duration-slow) ease-out motion-reduce:transition-none",
-            i === shown ? "opacity-100" : "opacity-0",
-          )}
+          className={cx("absolute inset-0 justify-center", layer(i === shown))}
         >
-          <Picture shot={shot} sizes={sizes} />
-          <span
-            aria-hidden="true"
-            className="shrink-0 text-center font-mono text-mono-label text-fg-subtle"
-          >
-            {shot.view}
-          </span>
+          {portrait(shot) ? (
+            <Img
+              shot={shot}
+              sizes="20rem"
+              // The frame's height less the view line: an explicit height,
+              // so every engine sizes the width from the image's ratio.
+              className="h-[calc(min(65svh,40rem)-2.5rem)] w-auto max-w-full rounded-lg object-contain"
+            />
+          ) : (
+            <Detail shot={shot} width="100%" box="(100vw - 4rem) * 0.4" />
+          )}
+          <ViewLine shot={shot} />
         </div>
       ))}
+    </div>
+  );
+}
+
+/**
+ * The stepper's screens, stacked in one grid cell so the box takes the
+ * tallest. Menus up to 16.25rem wide (cross-device §6: legible on a
+ * 360 px phone); every detail fits the viewport's height.
+ */
+function Details({ shots, shown }: { shots: Shot[]; shown: number }) {
+  return (
+    <div className="grid w-full">
+      {shots.map((shot, i) => {
+        const [, , w, h] = shot.detail;
+        const fit = `(100svh - 6rem) * ${(w / h).toFixed(3)}`;
+        return (
+          <div
+            key={i}
+            aria-hidden={i !== shown}
+            className={cx("[grid-area:1/1]", layer(i === shown))}
+          >
+            {portrait(shot) ? (
+              <Detail
+                shot={shot}
+                width={`min(100%, 16.25rem, ${fit})`}
+                box="16.25rem"
+              />
+            ) : (
+              <Detail
+                shot={shot}
+                width={`min(100%, ${fit})`}
+                box="(100vw - 3.5rem)"
+              />
+            )}
+            <ViewLine shot={shot} />
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -122,6 +215,7 @@ function Label({ i, name }: { i: number; name: string }) {
   );
 }
 
+/** English/हिंदी: the pressed one gets the MenuMesh border and dot. */
 function Languages({
   on,
   onHindi,
@@ -131,14 +225,28 @@ function Languages({
   onHindi?: (on: boolean) => void;
   languages: MenumeshData["languages"];
 }) {
+  const options = [
+    { lang: "en", text: languages.en, hindi: false },
+    { lang: "hi", text: languages.hi, hindi: true },
+  ];
   return (
     <div role="group" aria-label={languages.label} className="flex gap-2">
-      <Chip pressed={!on} lang="en" onClick={onHindi && (() => onHindi(false))}>
-        {languages.en}
-      </Chip>
-      <Chip pressed={on} lang="hi" onClick={onHindi && (() => onHindi(true))}>
-        {languages.hi}
-      </Chip>
+      {options.map((o) => (
+        <button
+          key={o.lang}
+          type="button"
+          lang={o.lang}
+          aria-pressed={o.hindi === on}
+          onClick={onHindi && (() => onHindi(o.hindi))}
+          className="group inline-flex min-h-11 items-center gap-2 rounded-full border border-border-strong px-4 text-small text-fg-muted transition-ui hover:bg-surface-2 hover:text-fg aria-pressed:border-menumesh aria-pressed:bg-surface-2 aria-pressed:text-fg"
+        >
+          <span
+            aria-hidden="true"
+            className="size-1.5 rounded-full bg-menumesh opacity-0 transition-ui group-aria-pressed:opacity-100"
+          />
+          {o.text}
+        </button>
+      ))}
     </div>
   );
 }
@@ -163,8 +271,9 @@ export function View({
   return (
     <div className="@container">
       {/* Sticky phone story (cross-device §6): from 768 × 600, where the
-          frame has room to pin. */}
-      <div className="hidden gap-8 lg:gap-12 [@media(min-width:768px)_and_(min-height:600px)]:grid [@media(min-width:768px)_and_(min-height:600px)]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+          frame has room to pin. The frame gets the wider column, so the
+          landscape screens stay legible. */}
+      <div className="hidden gap-8 lg:gap-12 [@media(min-width:768px)_and_(min-height:600px)]:grid [@media(min-width:768px)_and_(min-height:600px)]:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
         <ol ref={storyRef}>
           {steps.map((step, i) => (
             <li
@@ -205,14 +314,10 @@ export function View({
           <div className="sticky top-[calc(var(--header-h)_+_(100svh_-_var(--header-h)_-_min(65svh,40rem))_/_2)] isolate h-[min(65svh,40rem)]">
             <span
               aria-hidden="true"
+              data-glow=""
               className="pointer-events-none absolute inset-[10%] -z-10 rounded-full bg-[radial-gradient(closest-side,var(--menumesh),transparent)] opacity-10 dark:opacity-20"
             />
-            <Stage
-              shots={shots}
-              shown={shown}
-              sizes="(min-width: 1024px) 440px, 45vw"
-              className="h-full"
-            />
+            <Frame shots={shots} shown={shown} />
           </div>
         </div>
       </div>
@@ -226,19 +331,20 @@ export function View({
           labels={labels}
           trackRef={trackRef}
           onGo={onGo}
+          tone="menumesh"
           steps={steps.map((step, i) => ({
             name: step.name,
             content: (
-              // Phone landscape and short windows: screen beside the text.
+              // Every slide is as tall as the tallest: the screen's panel
+              // takes the slack, so the text sits on the buttons. Phone
+              // landscape and short windows: screen beside the text.
               <div className="flex h-full flex-col gap-4 @2xl:grid @2xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] @2xl:items-center @2xl:gap-6">
-                <div className="rounded-md border border-border bg-bg bg-grid p-3">
-                  <Stage
+                <div className="flex flex-1 items-center justify-center rounded-md border border-border bg-bg bg-grid px-3 pt-4 pb-3">
+                  <Details
                     shots={
                       i === hindi.step ? [step.shot, hindi.shot] : [step.shot]
                     }
                     shown={i === hindi.step && state.hindiMenu ? 1 : 0}
-                    sizes="(min-width: 640px) 600px, calc(100vw - 4rem)"
-                    className="h-[min(40svh,22rem)] @2xl:h-[min(55svh,22rem)]"
                   />
                 </div>
                 <div className="flex flex-col gap-2">

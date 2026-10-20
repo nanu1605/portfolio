@@ -10,7 +10,7 @@ import { View, type MenumeshData, type Shot } from "./view";
 // "Illustrative" label; the caption keeps the build and capture date. The
 // poster is step 1: the story's first screen and the stepper's first slide.
 
-function shot(file: string): Shot {
+function shot(file: string, detail: Shot["detail"]): Shot {
   const s = screen(file);
   const set = (format: "avif" | "webp") =>
     s.image.variants.map((v) => `${v[format]} ${v.width}w`).join(", ");
@@ -23,6 +23,7 @@ function shot(file: string): Shot {
     src: s.image.variants.at(-1)!.webp,
     avif: set("avif"),
     webp: set("webp"),
+    detail,
   };
 }
 
@@ -30,9 +31,12 @@ const data: MenumeshData = {
   steps: tableToBill.steps.map((s) => ({
     name: s.name,
     text: s.text,
-    shot: shot(s.screen),
+    shot: shot(s.screen, s.detail),
   })),
-  hindi: { step: tableToBill.hindi.step, shot: shot(tableToBill.hindi.screen) },
+  hindi: {
+    step: tableToBill.hindi.step,
+    shot: shot(tableToBill.hindi.screen, tableToBill.hindi.detail),
+  },
   title: tableToBill.title,
   languages: tableToBill.languages,
   labels: { previous: microcopy.icons.previous, next: microcopy.icons.next },
@@ -42,6 +46,7 @@ export function Centerpiece() {
   const first = screen(tableToBill.steps[0].screen);
   return (
     <Figure
+      bleed
       caption={`${tableToBill.caption} · ${first.build} · ${captured(first.capturedOn)}`}
     >
       <div className="bg-surface p-4 md:p-6">
