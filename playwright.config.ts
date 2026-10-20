@@ -8,6 +8,8 @@ const desktop = { width: 1440, height: 900 }; // §17 visual width; §5.4 hero/b
 // main and nightly add the rest: --project="desktop-*" --project="phone-*" --project="tablet-*".
 export default defineConfig({
   testDir: "tests/e2e",
+  // perf.spec.ts runs only in the perf projects.
+  testIgnore: "**/perf.spec.ts",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
@@ -28,6 +30,20 @@ export default defineConfig({
     {
       name: "tablet-landscape-ios",
       use: { ...devices["iPad Mini landscape"] }, // 1024: desktop layout, coarse pointer
+    },
+    // Budgets (§13, cross-device §8): Home JS, scroll CLS, the LCP element.
+    // perf-phone throttles the CPU 4x in the test (Chromium only).
+    {
+      name: "perf-phone",
+      testMatch: "perf.spec.ts",
+      testIgnore: [],
+      use: { ...devices["Pixel 10"] },
+    },
+    {
+      name: "perf-desktop",
+      testMatch: "perf.spec.ts",
+      testIgnore: [],
+      use: { ...devices["Desktop Chrome"], viewport: desktop },
     },
 
     // main + nightly

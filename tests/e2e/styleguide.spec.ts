@@ -271,7 +271,9 @@ test("every tappable element changes on press, and nothing sticks after a tap", 
   for (let i = 0; i < count; i++) {
     const el = targets.nth(i);
     if (!(await el.isVisible())) continue;
-    await el.scrollIntoViewIfNeeded();
+    // Centre it: at the top edge, the header (back after a small scroll up)
+    // would cover it.
+    await el.evaluate((node) => node.scrollIntoView({ block: "center" }));
     // Press only once the element itself is under the pointer.
     await expect
       .poll(async () => {
