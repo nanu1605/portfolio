@@ -1,0 +1,240 @@
+{
+  "note": "Screens for the portfolio. VYRO and Baby were captured on Tanishq's PC with Snipping Tool and cropped to the app window. menumesh/ and jainav/ are filled by scripts/capture (spec §15.2). Videos were recorded with Xbox Game Bar (window capture, so no other windows appear), trimmed and encoded to muted H.264 at 30 fps.",
+  "screens": [
+    {
+      "file": "vyro/vyro-dashboard.png",
+      "project": "vyro",
+      "view": "Dashboard",
+      "capturedOn": "2026-10-20",
+      "build": "VYRO 1.7.0 development build, 4K display",
+      "size": [
+        3840,
+        2036
+      ],
+      "alt": "VYRO dashboard: animated CPU and GPU speedometers at 47% and 46% with clocks of 5,123 and 2,812 MHz, live tiles and per-thread load bars.",
+      "use": "Case-study hero; Home bento poster"
+    },
+    {
+      "file": "vyro/vyro-health.png",
+      "project": "vyro",
+      "view": "Health",
+      "capturedOn": "2026-10-20",
+      "build": "VYRO 1.7.0 development build, 4K display",
+      "size": [
+        3840,
+        2036
+      ],
+      "alt": "VYRO Health view: every subsystem within normal limits, a diagnostics panel and alert rules for CPU and GPU temperature.",
+      "use": "Case study: on top of the readings"
+    },
+    {
+      "file": "vyro/vyro-gaming.png",
+      "project": "vyro",
+      "view": "Gaming",
+      "capturedOn": "2026-10-20",
+      "build": "VYRO 1.7.0 development build, 4K display",
+      "size": [
+        3840,
+        2036
+      ],
+      "alt": "VYRO Gaming view: game profiles and recorded sessions with average FPS, 1% and 0.1% lows and what limited the frame rate.",
+      "use": "Case study: gaming"
+    },
+    {
+      "file": "vyro/vyro-cooling.png",
+      "project": "vyro",
+      "view": "Cooling",
+      "capturedOn": "2026-10-20",
+      "build": "VYRO 1.7.0 development build, 4K display",
+      "size": [
+        3840,
+        2036
+      ],
+      "alt": "VYRO fan control: each fan header follows the BIOS curve, with fixed and custom-curve options and full-speed safety limits.",
+      "use": "Case study: safety"
+    },
+    {
+      "file": "vyro/vyro-game-replay.png",
+      "project": "vyro",
+      "view": "Game replay",
+      "capturedOn": "2026-10-20",
+      "build": "VYRO 1.7.0 development build, 2560x1440 display",
+      "size": [
+        2244,
+        1222
+      ],
+      "alt": "VYRO replay of a 44-minute cs2 session: frame rate, frame time, CPU and GPU usage and temperatures over time.",
+      "use": "Case study: gaming"
+    },
+    {
+      "file": "vyro/vyro-my-pc-3d.png",
+      "project": "vyro",
+      "view": "My PC (3-D)",
+      "capturedOn": "2026-10-20",
+      "build": "VYRO 1.7.0 development build, 2560x1440 display",
+      "size": [
+        1858,
+        1222
+      ],
+      "alt": "VYRO My PC view: a 3-D model of the PC with each part labelled by temperature and airflow lines through the case.",
+      "use": "Case study: architecture; company card"
+    },
+    {
+      "file": "vyro/vyro-sensors.png",
+      "project": "vyro",
+      "view": "Sensors",
+      "capturedOn": "2026-10-20",
+      "build": "VYRO 1.7.0 development build, 2560x1440 display",
+      "size": [
+        2244,
+        1222
+      ],
+      "alt": "VYRO Sensors table listing every reading with its value, minimum, maximum, average and source.",
+      "use": "Case study: what it shows"
+    },
+    {
+      "file": "vyro/vyro-settings-appearance.png",
+      "project": "vyro",
+      "view": "Settings: appearance",
+      "capturedOn": "2026-10-20",
+      "build": "VYRO 1.7.0 development build, 2560x1440 display",
+      "size": [
+        2244,
+        1222
+      ],
+      "alt": "VYRO appearance settings: six themes, an accent colour wheel, update-rate profiles and an overlay preview.",
+      "use": "Case study: themes"
+    },
+    {
+      "file": "baby/baby-brain-idle.png",
+      "project": "baby",
+      "view": "The Brain (idle)",
+      "capturedOn": "2026-10-20",
+      "build": "Baby installed build; cloud mode, game mode on",
+      "size": [
+        2226,
+        1227
+      ],
+      "alt": "Baby's \"The Brain\" interface: a live 3-D graph of the assistant's components around a glowing core, with chats on the left and the chat panel on the right.",
+      "use": "Case-study hero; Home bento poster"
+    },
+    {
+      "file": "baby/baby-turn-thinking.png",
+      "project": "baby",
+      "view": "Turn in progress",
+      "capturedOn": "2026-10-20",
+      "build": "Baby installed build; cloud mode, game mode on",
+      "size": [
+        2226,
+        1227
+      ],
+      "alt": "Baby's graph lit up while it answers a question, with the reply streaming into the chat panel.",
+      "use": "Case study: how a turn flows"
+    },
+    {
+      "file": "baby/baby-turn-hinglish.png",
+      "project": "baby",
+      "view": "Chat: English and Hinglish",
+      "capturedOn": "2026-10-20",
+      "build": "Baby installed build; cloud mode, game mode on",
+      "size": [
+        2226,
+        1227
+      ],
+      "alt": "Baby chat: a system-stats answer in English, then a Hinglish question about RAM answered in Hinglish.",
+      "use": "Case study: languages"
+    },
+    {
+      "file": "baby/baby-turn-english.png",
+      "project": "baby",
+      "view": "Chat: English tool turn",
+      "capturedOn": "2026-10-20",
+      "build": "Baby installed build; cloud mode, game mode on",
+      "size": [
+        2226,
+        1227
+      ],
+      "alt": "Baby chat answering \"How busy is my PC right now?\" with CPU, RAM, disk and GPU figures.",
+      "use": "Spare: reply contains a model quirk (System Idle Process 1129%); prefer baby-turn-hinglish"
+    },
+    {
+      "file": "baby/baby-activity.png",
+      "project": "baby",
+      "view": "Activity feed",
+      "capturedOn": "2026-10-20",
+      "build": "Baby installed build; cloud mode, game mode on",
+      "size": [
+        2226,
+        1227
+      ],
+      "alt": "Baby Activity feed showing the get_system_stats tool call and its JSON result.",
+      "use": "Case study: transparency and the safety gate"
+    },
+    {
+      "file": "baby/baby-inspector.png",
+      "project": "baby",
+      "view": "Inspector",
+      "capturedOn": "2026-10-20",
+      "build": "Baby installed build; cloud mode, game mode on",
+      "size": [
+        2226,
+        1227
+      ],
+      "alt": "Baby inspector panel describing the core node: its live state of idle, listening, thinking, speaking or executing.",
+      "use": "Case study: more than a chatbot"
+    }
+  ],
+  "videos": [
+    {
+      "file": "vyro/vyro-dashboard.mp4",
+      "poster": "vyro/vyro-dashboard-poster.png",
+      "project": "vyro",
+      "view": "Dashboard, live",
+      "capturedOn": "2026-10-20",
+      "build": "VYRO 1.7.0 development build",
+      "size": [
+        1600,
+        1090
+      ],
+      "durationSec": 12,
+      "fps": 30,
+      "audio": false,
+      "alt": "VYRO dashboard updating live: the CPU gauge moves around 40% at about 5.3 GHz while the per-thread bars and sparklines change.",
+      "use": "VYRO case-study hero (autoplay muted loop when in view)"
+    },
+    {
+      "file": "vyro/vyro-my-pc-3d.mp4",
+      "poster": "vyro/vyro-my-pc-3d-poster.png",
+      "project": "vyro",
+      "view": "My PC 3-D, rotated by hand",
+      "capturedOn": "2026-10-20",
+      "build": "VYRO 1.7.0 development build",
+      "size": [
+        1600,
+        1090
+      ],
+      "durationSec": 10,
+      "fps": 30,
+      "audio": false,
+      "alt": "VYRO My PC view: the 3-D model of the PC turns slowly while airflow lines move through the case and parts show their temperatures.",
+      "use": "Case study, architecture section; not a seamless loop"
+    },
+    {
+      "file": "baby/baby-turn-hinglish.mp4",
+      "poster": "baby/baby-turn-hinglish-poster.png",
+      "project": "baby",
+      "view": "A Hinglish question answered",
+      "capturedOn": "2026-10-20",
+      "build": "Baby installed build; cloud mode, game mode on",
+      "size": [
+        1920,
+        1030
+      ],
+      "durationSec": 16,
+      "fps": 30,
+      "audio": false,
+      "alt": "Baby is asked \"Mera GPU kitna busy hai abhi?\" and answers in Hinglish with the GPU load and VRAM in use, while its 3-D graph turns.",
+      "use": "Baby case-study hero (autoplay muted loop when in view)"
+    }
+  ]
+}
