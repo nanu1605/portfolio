@@ -6,7 +6,8 @@
       "url": [
         "http://localhost:3000/",
         "http://localhost:3000/work",
-        "http://localhost:3000/work/vyro"
+        "http://localhost:3000/work/vyro",
+        "http://localhost:3000/work/mlops-drift-loop"
       ],
       "numberOfRuns": 3,
       "settings": {
