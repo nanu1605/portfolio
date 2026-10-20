@@ -1,6 +1,5 @@
 // §10.6 "Calibration explorer". Strings from the spec say where they come
-// from; the rest are new and listed in docs/decisions.md for Tanishq to
-// approve. Every number comes from Appendix B (@content/charts).
+// from; the ones marked "New" still need Tanishq's approval. Every number comes from Appendix B (@content/charts).
 
 export const forecastingCopy = {
   // Phase 4's figure caption.

@@ -37,7 +37,7 @@ const meanSd = (cell: string | number, scale = 1, unit = "") => {
   const [m, sd] = String(cell)
     .split("±")
     .map((v) => +(Number(v) * scale).toFixed(3));
-  return { value: `${m}${unit}`, sd: `± ${sd}` };
+  return { value: `${m}${unit}`, sd: `± ${sd}${unit}` };
 };
 /** A bar scale: the largest value, rounded up to one decimal. */
 const ceil = (values: number[]) => Math.ceil(Math.max(...values) * 10) / 10;
@@ -171,6 +171,8 @@ function explorerData(): ForecastingData {
         "{value}",
         three(r.oracle_test_fit_ece),
       ),
+      // Its own results file, apart from the figure's (calibration) source.
+      source: source("fc.recal"),
     },
     copy,
   };

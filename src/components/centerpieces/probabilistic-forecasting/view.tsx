@@ -1,6 +1,7 @@
 import type { Ref } from "react";
 import type { ForecastingCopy } from "@content/centerpieces/probabilistic-forecasting";
 import { Tabs } from "@/components/ui/tabs";
+import { TextLink } from "@/components/ui/text-link";
 import { Bars, LineKey, Reliability, type Line } from "@/components/viz/charts";
 import { cx } from "@/lib/cx";
 
@@ -40,6 +41,7 @@ export type ForecastingData = {
     bars: BarRow[];
     max: number;
     note: string;
+    source: { href: string; label: string };
   };
   copy: ForecastingCopy;
 };
@@ -84,12 +86,13 @@ export function ForecastingView({
     <div className="flex flex-col gap-6">
       <fieldset>
         <legend className={cx(label, "mb-3")}>{copy.seeds}</legend>
-        <div className="grid grid-cols-3 gap-2 @2xl:flex @2xl:flex-wrap">
+        <div className="grid grid-cols-3 gap-1.5 @xs:gap-2 @2xl:flex @2xl:flex-wrap">
           {options.map((o, i) => (
             <label
               key={o.name}
               className={cx(
-                "relative inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full border border-border-strong px-4 font-mono text-small whitespace-nowrap text-fg-muted transition-ui pointer-fine:min-h-9",
+                // Below 320 px of box, a smaller face keeps "Mean of 5" clear of the edge.
+                "relative inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full border border-border-strong px-2 font-mono text-mono-label tracking-normal whitespace-nowrap text-fg-muted transition-ui pointer-fine:min-h-9 @xs:px-4 @xs:text-small",
                 "hover:bg-surface-2 hover:text-fg active:bg-surface-2",
                 "has-checked:border-accent has-checked:bg-accent has-checked:text-on-accent",
                 "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-accent",
@@ -157,7 +160,7 @@ export function ForecastingView({
                     {pick.metrics[c].sd && (
                       <>
                         {" "}
-                        <span className="text-small text-fg-muted">
+                        <span className="text-small whitespace-nowrap text-fg-muted">
                           {pick.metrics[c].sd}
                         </span>
                       </>
@@ -248,6 +251,12 @@ export function ForecastingView({
           <p className="border-l-2 border-accent pl-3 text-small text-fg-muted">
             {data.recal.note}
           </p>
+          <TextLink
+            href={data.recal.source.href}
+            className="self-start text-small"
+          >
+            {data.recal.source.label}
+          </TextLink>
         </div>
       </div>
     </div>
