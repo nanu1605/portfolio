@@ -31,7 +31,8 @@ export function Centerpiece() {
         ]}
         rows={babyDemo.scenarios.map((s) => ({
           scenario: s.name,
-          utterance: <span lang={s.lang}>{s.lines[0].text}</span>,
+          // Quoted, like the spec's table (and the replies).
+          utterance: <span lang={s.lang}>{`"${s.lines[0].text}"`}</span>,
           route: s.row.route,
           gate: s.row.gate,
           reply: <span lang={s.lang}>{s.row.reply}</span>,

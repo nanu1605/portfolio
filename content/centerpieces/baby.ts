@@ -164,7 +164,7 @@ export const babyDemo: BabyDemo = {
       row: {
         route:
           "read_file runs; the privacy pin keeps the rest of the turn on the local 9B, and the file content is redacted from anything sent to the cloud",
-        gate: "read_file: ALLOW",
+        gate: "ALLOW",
         reply: '"Here\'s the gist: …" (illustrative)',
       },
     },
