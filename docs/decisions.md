@@ -337,3 +337,6 @@ A flaky WebKit reduced-motion test (one idle frame) traced to the header's scrol
   - Most of the blocking time is React's own evaluation and hydration; the rest is the first style and layout pass. The page's own JS is small.
   - CI fails on LCP and CLS (median), on accessibility, best practices and SEO, but only **warns** on the performance score (0.95) and TBT (200 ms), because they move with the runner's hardware.
   - §13's production budget (performance ≥ 0.95) is measured on production in Phase 8 (PSI and Speed Insights). Hydration cost is the item to watch as Phases 4–7 add JS.
+- **CLS 0.21 on the next run,** from the hero photo this time. The cause sat one layer down: next/font's size-adjusted fallback faces name only `local(Arial)`. Without Arial, the hero text first rendered in an unadjusted, wider font, then rewrapped when Plus Jakarta Sans arrived, moving the photo below it. This would also have hit Android, which has Roboto but no Arial.
+  - `adjustFontFallback` is now off. Our own fallback faces in `globals.css` keep next/font's overrides but also match Liberation Sans (metric-compatible with Arial), Helvetica and Roboto.
+  - CI afterwards: CLS 0.001 on every run; mobile performance 0.98 / 0.98 / 0.90 (median 0.98, the 0.90 run had TBT 330 ms); LCP 1.8 s; desktop 1.0.
