@@ -1,6 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const port = 3000;
+// PORT lets parallel checkouts each run their own server.
+const port = Number(process.env.PORT ?? 3000);
 const desktop = { width: 1440, height: 900 }; // §17 visual width; §5.4 hero/bento container
 
 // Device matrix from docs/cross-device.md §8.
