@@ -45,6 +45,10 @@ test("plays by itself, eases the needles by transform, and pauses", async ({
   await expect(
     root.getByText("Simulated values — VYRO reads the real ones."),
   ).toBeInViewport();
+  // The sparkline's text version.
+  await expect(
+    root.getByText(/^Last 60 s: low \d+ °C, high \d+ °C$/),
+  ).toBeAttached();
 
   // Moving on its own, through the needle's transform.
   const pause = root.getByRole("button", { name: "Pause" });
@@ -76,6 +80,69 @@ test("plays by itself, eases the needles by transform, and pauses", async ({
   await press(play, touch);
   await expect(pause).toBeVisible();
   await expect.poll(() => dials(root)).not.toEqual(still);
+});
+
+test("the easing loop rests between polls", async ({ page }, testInfo) => {
+  test.skip(
+    !isTouch(testInfo.project.name),
+    "Lenis keeps its own frame loop on fine pointers",
+  );
+  // Every requestAnimationFrame call on the page, timed.
+  await page.addInitScript(() => {
+    const w = window as typeof window & { __raf: number[] };
+    const raf = w.requestAnimationFrame.bind(w);
+    w.__raf = [];
+    w.requestAnimationFrame = (cb) => {
+      w.__raf.push(performance.now());
+      return raf(cb);
+    };
+  });
+  const { root, ready } = await open(page);
+  await goLive(page, root, ready);
+  // Three polls' worth: it eases after each one, then goes quiet, so the
+  // longest pause between frames is many frames long.
+  const { frames, frame, gap } = await page.evaluate(async () => {
+    const w = window as typeof window & { __raf: number[] };
+    w.__raf = [];
+    const t0 = performance.now();
+    await new Promise((r) => setTimeout(r, 3000));
+    const t = [t0, ...w.__raf, performance.now()];
+    const gaps = t.slice(1).map((v, i) => v - t[i]!);
+    const sorted = [...gaps].sort((a, b) => a - b);
+    return {
+      frames: w.__raf.length,
+      frame: sorted[Math.floor(sorted.length / 2)]!,
+      gap: sorted.at(-1)!,
+    };
+  });
+  await testInfo.attach("frames", {
+    body: JSON.stringify({ frames, frame, gap }),
+    contentType: "application/json",
+  });
+  expect(frames).toBeGreaterThan(10);
+  expect(gap).toBeGreaterThan(Math.max(100, 4 * frame));
+});
+
+test("each reading sits on its dial's centre at every width", async ({
+  page,
+}) => {
+  const { root } = await open(page);
+  for (const width of [360, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await root.scrollIntoViewIfNeeded();
+    // The dial's centre is (100, 100) in its 200 × 174 viewBox.
+    const offsets = await root.locator("[data-dial]").evaluateAll((dials) =>
+      dials.map((d) => {
+        const svg = d.querySelector("svg")!.getBoundingClientRect();
+        const text = d.querySelector(":scope > div")!.getBoundingClientRect();
+        return Math.abs(
+          text.top + text.height / 2 - (svg.top + (svg.height * 100) / 174),
+        );
+      }),
+    );
+    expect(offsets, `at ${width} px`).toHaveLength(2);
+    for (const o of offsets) expect(o, `at ${width} px`).toBeLessThan(2);
+  }
 });
 
 test("pauses off-screen and resumes in view", async ({ page }) => {
@@ -269,9 +336,10 @@ test("interaction stays under the INP and long-task budgets at 4× CPU throttle"
   const reveal = root.getByRole("button", {
     name: "What your browser can see",
   });
-  // Parallel workers on one machine only ever add time, so a pass within
-  // budget (of up to three) shows the panel's own cost; all are attached.
-  const passes = [];
+  // Three passes, judged by the median: parallel workers on one machine can
+  // add a stray long task to one pass, while a cost of the panel's own shows
+  // up in most of them. All three are attached.
+  const passes: Awaited<ReturnType<typeof during>>[] = [];
   for (let i = 0; i < 3; i++) {
     passes.push(
       await during(page, async () => {
@@ -284,14 +352,14 @@ test("interaction stays under the INP and long-task budgets at 4× CPU throttle"
       }),
     );
     await press(reveal, touch);
-    if (passes.at(-1)!.longest < 50 && passes.at(-1)!.slowestEvent < 200) break;
   }
   await release();
   await testInfo.attach("interaction", {
     body: JSON.stringify(passes, null, 2),
     contentType: "application/json",
   });
-  const last = passes.at(-1)!;
-  expect(last.longest).toBeLessThan(50);
-  expect(last.slowestEvent).toBeLessThan(200);
+  const median = (key: "longest" | "slowestEvent") =>
+    passes.map((p) => p[key]).sort((a, b) => a - b)[1]!;
+  expect(median("longest")).toBeLessThan(50);
+  expect(median("slowestEvent")).toBeLessThan(200);
 });
