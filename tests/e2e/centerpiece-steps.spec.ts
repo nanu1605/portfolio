@@ -51,9 +51,14 @@ async function live(page: Page, slug: string, info: TestInfo) {
   return box;
 }
 
-/** A sideways swipe on the track through Chromium's touch input (CDP). */
-async function swipe(page: Page, track: Locator, dx: number) {
+/**
+ * A sideways swipe on the track through Chromium's touch input (CDP), as a
+ * share of the track's width: past half a slide, so it snaps to the next one
+ * on a 360 px phone and a 640 px tablet alike.
+ */
+async function swipe(page: Page, track: Locator, share: number) {
   const box = (await track.boundingBox())!;
+  const dx = share * box.width;
   // The touch must land on the track, below the sticky header.
   expect(box.y).toBeGreaterThan(80);
   const cdp = await page.context().newCDPSession(page);
@@ -226,7 +231,7 @@ test.describe("Jainav: from order to licence", () => {
     await track.evaluate((el) => el.scrollTo({ left: 0, behavior: "instant" }));
     await expect(selected(box)).toHaveAttribute("id", "order-to-licence-tab-0");
     const before = await scrollY(page);
-    await swipe(page, track, -220);
+    await swipe(page, track, -0.6);
     await expect(selected(box)).toHaveAttribute("id", "order-to-licence-tab-1");
     expect(await scrollY(page)).toBe(before);
   });
@@ -316,11 +321,12 @@ test.describe("MenuMesh: table to bill", () => {
         await expect(shown(alt(step.screen))).toHaveCount(1);
         await expect(frame).toBeInViewport({ ratio: 0.9 });
         // Legible: the whole phone at the frame's height; the landscape
-        // screens' details across the column.
+        // screens' details across the column. The ~65svh frame gives the
+        // phone 0.32 in a 1280×720 window (desktop Safari and Firefox).
         const img = frame.locator('[aria-hidden="false"] img');
         const { width, height } = screen(step.screen).image;
         expect(await scale(img, step.screen)).toBeGreaterThanOrEqual(
-          height > width ? 0.33 : 0.24,
+          height > width ? 0.3 : 0.24,
         );
       }
       await steps.nth(1).evaluate((el) => {
@@ -421,7 +427,7 @@ test.describe("MenuMesh: table to bill", () => {
       }),
     );
     const before = await scrollY(page);
-    await swipe(page, track, -220);
+    await swipe(page, track, -0.6);
     await expect(current).toHaveAttribute("id", "table-to-bill-tab-1");
     expect(await scrollY(page)).toBe(before);
   });
