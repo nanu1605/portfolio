@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
 // Routes to sweep for horizontal overflow. Add each route as it lands.
-const routes = ["/"];
+const routes = ["/", "/styleguide"];
 
 // docs/cross-device.md §8: 320 is the WCAG 1.4.10 reflow width, 744 is
 // iPad mini portrait, 844×390 is phone landscape.
@@ -44,7 +44,11 @@ async function overflowing(page: Page) {
       );
     }
   });
-  await page.waitForLoadState("networkidle");
+  // Not "networkidle": Next keeps prefetches for routes that don't exist
+  // yet open. Images are sized and posters hold their boxes, so fonts are
+  // the last thing that can move the layout.
+  await page.waitForLoadState("load");
+  await page.evaluate(() => document.fonts.ready);
 
   return page.evaluate(() => {
     const limit = document.documentElement.clientWidth;
