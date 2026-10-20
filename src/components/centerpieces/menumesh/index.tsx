@@ -1,44 +1,58 @@
+import { tableToBill } from "@content/centerpieces/menumesh";
+import { microcopy } from "@content/microcopy";
 import { screen } from "@content/screens";
-import { Figure, Picture } from "@/components/ui/figure";
+import { Figure } from "@/components/ui/figure";
 import { captured } from "@/components/work/media";
+import { MenumeshIsland } from "./island";
+import { View, type MenumeshData, type Shot } from "./view";
 
-// §10.4 "Table to bill" as stills from the staging demo, one per step,
-// until Phase 5 makes it the scroll-linked phone story.
+// §10.4 "Table to bill" from the captured staging demo (§15.2), so no
+// "Illustrative" label; the caption keeps the build and capture date. The
+// poster is step 1: the story's first screen and the stepper's first slide.
 
-const tableToBill = [
-  ["Scan", "menumesh/menumesh-demo-start-guest.png"],
-  ["Order", "menumesh/menumesh-demo-ordered-guest.png"],
-  ["Cook and serve", "menumesh/menumesh-demo-ready-kitchen.png"],
-  ["Bill and pay", "menumesh/menumesh-demo-billed-counter.png"],
-] as const;
+function shot(file: string): Shot {
+  const s = screen(file);
+  const set = (format: "avif" | "webp") =>
+    s.image.variants.map((v) => `${v[format]} ${v.width}w`).join(", ");
+  return {
+    alt: s.alt,
+    view: s.view,
+    width: s.image.width,
+    height: s.image.height,
+    blur: s.image.blur,
+    src: s.image.variants.at(-1)!.webp,
+    avif: set("avif"),
+    webp: set("webp"),
+  };
+}
+
+const data: MenumeshData = {
+  steps: tableToBill.steps.map((s) => ({
+    name: s.name,
+    text: s.text,
+    shot: shot(s.screen),
+  })),
+  hindi: { step: tableToBill.hindi.step, shot: shot(tableToBill.hindi.screen) },
+  title: tableToBill.title,
+  languages: tableToBill.languages,
+  labels: { previous: microcopy.icons.previous, next: microcopy.icons.next },
+};
 
 export function Centerpiece() {
-  const first = screen(tableToBill[0][1]);
+  const first = screen(tableToBill.steps[0].screen);
   return (
     <Figure
-      caption={`The browser demo, one step per screen · ${first.build} · ${captured(first.capturedOn)}`}
+      caption={`${tableToBill.caption} · ${first.build} · ${captured(first.capturedOn)}`}
     >
-      <ol className="grid items-start gap-6 bg-surface p-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_2fr_2fr]">
-        {tableToBill.map(([label, file], i) => {
-          const s = screen(file);
-          return (
-            <li key={file} className="flex flex-col gap-3">
-              <span className="font-mono text-mono-label text-fg-subtle">
-                <span className="text-accent">
-                  {String(i + 1).padStart(2, "0")}
-                </span>{" "}
-                {label}
-              </span>
-              <Picture
-                image={s.image}
-                alt={s.alt}
-                sizes="(min-width: 1024px) 300px, (min-width: 640px) 45vw, 90vw"
-                className="rounded-md border border-border"
-              />
-            </li>
-          );
-        })}
-      </ol>
+      <div className="bg-surface p-4 md:p-6">
+        <MenumeshIsland
+          name="menumesh"
+          poster={
+            <View {...data} state={{ story: 0, step: 0, hindiMenu: false }} />
+          }
+          {...data}
+        />
+      </div>
     </Figure>
   );
 }
