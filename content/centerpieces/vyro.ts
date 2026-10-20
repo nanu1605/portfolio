@@ -1,7 +1,7 @@
 // §10.2 VYRO "Gauge panel": the centerpiece's own strings. The browser
 // lines and "Footprint" come from §10.2, "Measure" and "Target" from A.4.2's
-// results table; the short gauge and readout labels are new and listed in
-// docs/decisions.md for Tanishq. The honesty label and the Pause/Play names
+// results table; the short gauge and readout labels are new and await
+// Tanishq's approval. The honesty label and the Pause/Play names
 // live in microcopy.ts. No numbers here: the gauges are simulated
 // (src/components/centerpieces/vyro/sim.ts) and the footprint is read from
 // metrics.ts.
@@ -13,6 +13,9 @@ export const vyroCopy = {
   temp: "CPU temperature",
   fan: "CPU fan",
   window: "Last 60 s",
+  /** The sparkline's text version: "Last 60 s: low 48 °C, high 57 °C". */
+  low: "low",
+  high: "high",
   browser: {
     button: "What your browser can see",
     note: "Computed in your browser; nothing is sent.",

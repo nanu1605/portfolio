@@ -47,7 +47,6 @@ const label = `${mono} uppercase`;
 // are therefore steps of 2 units.
 const C = 100;
 const R = 80;
-const ARC = R * 1.5 * Math.PI;
 const angle = (pct: number) => -135 + 2.7 * pct;
 const at = (pct: number, r: number) => {
   const a = (angle(pct) * Math.PI) / 180;
@@ -55,9 +54,24 @@ const at = (pct: number, r: number) => {
     (n) => Math.round(n * 100) / 100,
   ) as [number, number];
 };
-const [x0, y0] = at(0, R);
-const [x1, y1] = at(100, R);
-const arc = `M${x0} ${y0}A${R} ${R} 0 1 1 ${x1} ${y1}`;
+const arcPath = (from: number, to: number) => {
+  const [ax, ay] = at(from, R);
+  const [bx, by] = at(to, R);
+  return `M${ax} ${ay}A${R} ${R} 0 ${to - from > 200 / 3 ? 1 : 0} 1 ${bx} ${by}`;
+};
+const arc = arcPath(0, 100);
+// The value arc moves by transform only, like the needle (cross-device §2
+// keeps stroke-dashoffset to one path at a time, and there are two dials).
+// It is drawn in two overlapping halves, from 0 to 50 % plus 4° and from
+// 50 % minus 4° to 100 %. Each shows through a half-plane clip whose edge
+// turns with the value; a half sweeps at most 139°, so one half-plane
+// covers it, and the overlap hides the seam where they meet.
+const halves = [arcPath(0, 50 + 4 / 2.7), arcPath(50 - 4 / 2.7, 100)];
+/** The two clip edges for a value. A's stops at A's end; B's waits 20° short of B's start until the value reaches it. */
+const edges = (pct: number) => {
+  const a = angle(pct);
+  return [Math.min(a, 4), a < -4 ? -24 : a];
+};
 const ticks = Array.from({ length: 21 }, (_, i) => i * 5);
 
 // The dial face never changes, so it is built once: React skips an
@@ -103,11 +117,13 @@ const face = (
 );
 
 function Dial({
+  id,
   name,
   usage,
   clock,
   units,
 }: {
+  id: string;
   name: string;
   usage: number;
   clock: number;
@@ -122,13 +138,26 @@ function Dial({
         className="block h-auto w-full overflow-visible"
       >
         {face}
-        <path
-          d={arc}
-          strokeWidth={10}
-          strokeDasharray={`${ARC} ${ARC}`}
-          strokeDashoffset={ARC * (1 - pct / 100)}
-          className="fill-none stroke-vyro"
-        />
+        {edges(pct).map((edge, i) => (
+          <g key={i}>
+            <clipPath id={`${id}-${i}`}>
+              {/* The half-plane left of the edge: angles edge − 180° to edge. */}
+              <rect
+                x={C - 100}
+                y={C - 100}
+                width={100}
+                height={200}
+                transform={`rotate(${edge} ${C} ${C})`}
+              />
+            </clipPath>
+            <path
+              d={halves[i]}
+              strokeWidth={10}
+              clipPath={`url(#${id}-${i})`}
+              className="fill-none stroke-vyro"
+            />
+          </g>
+        ))}
         <line
           x1={C}
           y1={C - 54}
@@ -218,7 +247,7 @@ export function View({
           title={toggle}
           disabled={!onToggle}
           onClick={onToggle}
-          className="inline-flex size-11 shrink-0 items-center justify-center rounded-md text-fg-muted transition-ui hover:bg-surface-2 hover:text-fg active:bg-surface-2"
+          className="inline-flex size-11 shrink-0 items-center justify-center rounded-md text-fg-muted transition-ui enabled:hover:bg-surface-2 enabled:hover:text-fg enabled:active:bg-surface-2 disabled:opacity-50"
         >
           {playing ? (
             <Pause aria-hidden="true" className="size-4" />
@@ -229,14 +258,18 @@ export function View({
       </div>
 
       <div className="grid gap-3 p-3 @[40rem]:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] @[40rem]:gap-6 @[40rem]:p-6">
-        <div className="grid grid-cols-2 gap-2 @[40rem]:gap-4">
+        {/* items-center: each dial keeps its drawing's height (the reading
+            sits on its centre) when the side column is the taller one. */}
+        <div className="grid grid-cols-2 items-center gap-2 @[40rem]:gap-4">
           <Dial
+            id="vyro-cpu"
             name={copy.cpu}
             usage={reading.cpu}
             clock={reading.cpuClock}
             units={units}
           />
           <Dial
+            id="vyro-gpu"
             name={copy.gpu}
             usage={reading.gpu}
             clock={reading.gpuClock}
@@ -251,7 +284,14 @@ export function View({
               <span className="text-small text-fg-muted"> {units.temp}</span>
             </span>
             <Spark values={history} />
-            <span className={mono}>{copy.window}</span>
+            <span aria-hidden="true" className={mono}>
+              {copy.window}
+            </span>
+            {/* The sparkline as text; it changes once a second, unannounced. */}
+            <span className="sr-only">
+              {copy.window}: {copy.low} {fmt(Math.min(...history))} {units.temp}
+              , {copy.high} {fmt(Math.max(...history))} {units.temp}
+            </span>
           </div>
           <div className={tile}>
             <span className={label}>{copy.fan}</span>
@@ -279,7 +319,7 @@ export function View({
             aria-controls="vyro-browser"
             disabled={!onBrowser}
             onClick={onBrowser}
-            className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-md border border-border-strong px-4 text-small font-semibold text-fg transition-ui hover:bg-surface-2 active:bg-surface-2"
+            className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-md border border-border-strong px-4 text-small font-semibold text-fg transition-ui enabled:hover:bg-surface-2 enabled:active:bg-surface-2 disabled:opacity-50"
           >
             <MonitorSmartphone aria-hidden="true" className="size-4" />
             {copy.browser.button}
