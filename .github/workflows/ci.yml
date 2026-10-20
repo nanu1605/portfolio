@@ -55,6 +55,18 @@ jobs:
           name: playwright-report
           path: playwright-report
           retention-days: 7
+      # Interaction long-task budgets at 4x CPU throttle (§19 Phase 5),
+      # alone and one at a time, so other tests can't steal the CPU.
+      - name: Interaction budgets
+        env:
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report-budget
+        run: pnpm test:budget
+      - uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: playwright-report-budget
+          path: playwright-report-budget
+          retention-days: 7
 
       # §13 budgets on Home with applied (devtools) throttling; see
       # docs/decisions.md for why not simulated. Mobile always, desktop on

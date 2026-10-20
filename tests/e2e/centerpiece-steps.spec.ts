@@ -246,15 +246,24 @@ test.describe("Jainav: from order to licence", () => {
     expect(await running(box)).toBe(0);
   });
 
-  test("a step costs no long task at 4x throttle", async ({
-    page,
-    browserName,
-  }, info) => {
-    test.skip(browserName !== "chromium", "longtask and event timing");
-    const box = await live(page, slug, info);
-    await measure(page, info, slug, box.getByRole("button", { name: "Next" }));
-    await expect(selected(box)).toHaveAttribute("id", "order-to-licence-tab-1");
-  });
+  test(
+    "a step costs no long task at 4x throttle",
+    { tag: "@budget" },
+    async ({ page, browserName }, info) => {
+      test.skip(browserName !== "chromium", "longtask and event timing");
+      const box = await live(page, slug, info);
+      await measure(
+        page,
+        info,
+        slug,
+        box.getByRole("button", { name: "Next" }),
+      );
+      await expect(selected(box)).toHaveAttribute(
+        "id",
+        "order-to-licence-tab-1",
+      );
+    },
+  );
 
   test("the build timeline lists phases 0–9 and phase 10 as next", async ({
     page,
@@ -443,20 +452,21 @@ test.describe("MenuMesh: table to bill", () => {
     expect(await running(box)).toBe(0);
   });
 
-  test("the language toggle costs no long task at 4x throttle", async ({
-    page,
-    browserName,
-  }, info) => {
-    test.skip(browserName !== "chromium", "longtask and event timing");
-    const box = await live(page, slug, info);
-    if (!(await sticky(page)))
-      await press(info, box.getByRole("button", { name: "Next" }));
-    const hindi = box
-      .getByRole("button", { name: "हिंदी" })
-      .locator("visible=true");
-    await measure(page, info, slug, hindi);
-    await expect(hindi).toHaveAttribute("aria-pressed", "true");
-  });
+  test(
+    "the language toggle costs no long task at 4x throttle",
+    { tag: "@budget" },
+    async ({ page, browserName }, info) => {
+      test.skip(browserName !== "chromium", "longtask and event timing");
+      const box = await live(page, slug, info);
+      if (!(await sticky(page)))
+        await press(info, box.getByRole("button", { name: "Next" }));
+      const hindi = box
+        .getByRole("button", { name: "हिंदी" })
+        .locator("visible=true");
+      await measure(page, info, slug, hindi);
+      await expect(hindi).toHaveAttribute("aria-pressed", "true");
+    },
+  );
 });
 
 test.describe("CSS-only flows", () => {

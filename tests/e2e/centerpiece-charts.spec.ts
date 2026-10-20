@@ -389,67 +389,71 @@ test.describe("forecasting calibration explorer", () => {
   });
 });
 
-test.describe("interaction budgets at 4× CPU throttle", () => {
-  // Alone, these measure no long task at all; beside two other busy
-  // workers a throttled CPU now and then stretches one past 50 ms. One
-  // fresh retry (reported as flaky) still fails a real regression.
-  test.describe.configure({ retries: 1 });
-  test.beforeEach(({ browserName }) => {
-    test.skip(browserName !== "chromium", "long tasks and event timing");
-  });
-
-  test("reservoir: select, toggle and keys", async ({ page }, testInfo) => {
-    const { root } = await open(page, "reservoir-rl");
-    const { select, handle } = await parts(page, root);
-    const reset = await throttle(page);
-    const numbers = await during(page, async () => {
-      await select.selectOption("4");
-      await root.getByRole("button", { name: "Drier climate" }).click();
-      await handle.focus();
-      await page.keyboard.press("ArrowLeft");
-      await page.keyboard.press("Shift+ArrowUp");
+test.describe(
+  "interaction budgets at 4× CPU throttle",
+  { tag: "@budget" },
+  () => {
+    // Alone, these measure no long task at all; beside two other busy
+    // workers a throttled CPU now and then stretches one past 50 ms. One
+    // fresh retry (reported as flaky) still fails a real regression.
+    test.describe.configure({ retries: 1 });
+    test.beforeEach(({ browserName }) => {
+      test.skip(browserName !== "chromium", "long tasks and event timing");
     });
-    await reset();
-    await record(testInfo, "reservoir-interaction", numbers);
-    expect(numbers.longest).toBeLessThan(50);
-    expect(numbers.slowestEvent).toBeLessThan(200);
-  });
 
-  test("reservoir: dragging the cursor", async ({ page }, testInfo) => {
-    const { root } = await open(page, "reservoir-rl");
-    const { at, centre, select } = await parts(page, root);
-    const from = await centre();
-    const to = at({ x: 285, y: 264 }); // ecology_focused
-    const swipe = isTouch(testInfo) ? await finger(page) : undefined;
-    const reset = await throttle(page);
-    const numbers = await during(page, async () => {
-      if (swipe) return swipe(from, to);
-      await page.mouse.move(from.x, from.y);
-      await page.mouse.down();
-      await page.mouse.move(to.x, to.y, { steps: 20 });
-      await page.mouse.up();
+    test("reservoir: select, toggle and keys", async ({ page }, testInfo) => {
+      const { root } = await open(page, "reservoir-rl");
+      const { select, handle } = await parts(page, root);
+      const reset = await throttle(page);
+      const numbers = await during(page, async () => {
+        await select.selectOption("4");
+        await root.getByRole("button", { name: "Drier climate" }).click();
+        await handle.focus();
+        await page.keyboard.press("ArrowLeft");
+        await page.keyboard.press("Shift+ArrowUp");
+      });
+      await reset();
+      await record(testInfo, "reservoir-interaction", numbers);
+      expect(numbers.longest).toBeLessThan(50);
+      expect(numbers.slowestEvent).toBeLessThan(200);
     });
-    await reset();
-    await expect(select).toHaveValue("2");
-    await record(testInfo, "reservoir-drag", numbers);
-    expect(numbers.longest).toBeLessThan(50);
-    expect(numbers.slowestEvent).toBeLessThan(200);
-  });
 
-  test("forecasting: seeds and tabs", async ({ page }, testInfo) => {
-    const { root } = await open(page, "probabilistic-forecasting");
-    await chip(root, "456").scrollIntoViewIfNeeded();
-    const reset = await throttle(page);
-    const numbers = await during(page, async () => {
-      await chip(root, "456").click();
-      await chip(root, "1337").click();
-      await root
-        .getByRole("tab", { name: "Recalibration", exact: true })
-        .click();
+    test("reservoir: dragging the cursor", async ({ page }, testInfo) => {
+      const { root } = await open(page, "reservoir-rl");
+      const { at, centre, select } = await parts(page, root);
+      const from = await centre();
+      const to = at({ x: 285, y: 264 }); // ecology_focused
+      const swipe = isTouch(testInfo) ? await finger(page) : undefined;
+      const reset = await throttle(page);
+      const numbers = await during(page, async () => {
+        if (swipe) return swipe(from, to);
+        await page.mouse.move(from.x, from.y);
+        await page.mouse.down();
+        await page.mouse.move(to.x, to.y, { steps: 20 });
+        await page.mouse.up();
+      });
+      await reset();
+      await expect(select).toHaveValue("2");
+      await record(testInfo, "reservoir-drag", numbers);
+      expect(numbers.longest).toBeLessThan(50);
+      expect(numbers.slowestEvent).toBeLessThan(200);
     });
-    await reset();
-    await record(testInfo, "forecasting-interaction", numbers);
-    expect(numbers.longest).toBeLessThan(50);
-    expect(numbers.slowestEvent).toBeLessThan(200);
-  });
-});
+
+    test("forecasting: seeds and tabs", async ({ page }, testInfo) => {
+      const { root } = await open(page, "probabilistic-forecasting");
+      await chip(root, "456").scrollIntoViewIfNeeded();
+      const reset = await throttle(page);
+      const numbers = await during(page, async () => {
+        await chip(root, "456").click();
+        await chip(root, "1337").click();
+        await root
+          .getByRole("tab", { name: "Recalibration", exact: true })
+          .click();
+      });
+      await reset();
+      await record(testInfo, "forecasting-interaction", numbers);
+      expect(numbers.longest).toBeLessThan(50);
+      expect(numbers.slowestEvent).toBeLessThan(200);
+    });
+  },
+);

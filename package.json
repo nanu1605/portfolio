@@ -15,6 +15,7 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:e2e": "playwright test",
+    "test:budget": "playwright test --grep @budget --workers=1 --project=desktop-chromium --project=phone-android",
     "tokens:build": "tsx scripts/tokens-build.ts",
     "check:tokens": "tsx scripts/check-tokens.ts",
     "check:content": "tsx scripts/check-content.ts",

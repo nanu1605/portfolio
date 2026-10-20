@@ -7,8 +7,13 @@ const desktop = { width: 1440, height: 900 }; // §17 visual width; §5.4 hero/b
 // Device matrix from docs/cross-device.md §8.
 // `pnpm test:e2e` runs the projects without `default: false` (every PR).
 // main and nightly add the rest: --project="desktop-*" --project="phone-*" --project="tablet-*".
+// Throttled long-task budgets (@budget) measure the main thread, so they
+// run on their own, one at a time: `pnpm test:budget`. Other runs skip them.
+const budget = process.argv.some((arg) => arg.includes("@budget"));
+
 export default defineConfig({
   testDir: "tests/e2e",
+  grepInvert: budget ? undefined : /@budget/,
   // perf.spec.ts runs only in the perf projects.
   testIgnore: "**/perf.spec.ts",
   fullyParallel: true,

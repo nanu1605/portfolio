@@ -379,40 +379,44 @@ test("a vertical swipe over the graph scrolls the page", async ({
     .toBeGreaterThan(before + 50);
 });
 
-test("a chip change stays within the long-task and INP budgets", async ({
-  page,
-  browserName,
-}, testInfo) => {
-  test.skip(browserName !== "chromium", "longtask and event timing: Chromium");
-  await live(page);
-  await expect
-    .poll(async () => (await timeline(page)).count, { timeout: 8000 })
-    .toBe(0);
-  // Tap by coordinates, found beforehand: a role locator resolves inside
-  // the page, and that work would be counted as the app's.
-  const target = chip(page, "Privacy pin");
-  await target.scrollIntoViewIfNeeded();
-  const box = (await target.boundingBox())!;
-  const [x, y] = [box.x + box.width / 2, box.y + box.height / 2];
-  // Measure the tap, not the page still booting around it: wait for an
-  // idle period (the live version also measures its edges in one).
-  await page.evaluate(
-    () =>
-      new Promise((r) => requestIdleCallback(() => r(0), { timeout: 2000 })),
-  );
-  const release = await throttle(page);
-  const result = await during(page, async () => {
-    if (isTouch(testInfo.project.name)) await page.touchscreen.tap(x, y);
-    else await page.mouse.click(x, y);
-    // Let the transition commit and the replay start.
-    await page.waitForTimeout(400);
-  });
-  await expect(target).toHaveAttribute("aria-checked", "true");
-  await release();
-  await testInfo.attach("interaction (4x CPU throttle)", {
-    body: JSON.stringify(result, null, 2),
-    contentType: "application/json",
-  });
-  expect(result.longest).toBeLessThan(50);
-  expect(result.slowestEvent).toBeLessThan(200);
-});
+test(
+  "a chip change stays within the long-task and INP budgets",
+  { tag: "@budget" },
+  async ({ page, browserName }, testInfo) => {
+    test.skip(
+      browserName !== "chromium",
+      "longtask and event timing: Chromium",
+    );
+    await live(page);
+    await expect
+      .poll(async () => (await timeline(page)).count, { timeout: 8000 })
+      .toBe(0);
+    // Tap by coordinates, found beforehand: a role locator resolves inside
+    // the page, and that work would be counted as the app's.
+    const target = chip(page, "Privacy pin");
+    await target.scrollIntoViewIfNeeded();
+    const box = (await target.boundingBox())!;
+    const [x, y] = [box.x + box.width / 2, box.y + box.height / 2];
+    // Measure the tap, not the page still booting around it: wait for an
+    // idle period (the live version also measures its edges in one).
+    await page.evaluate(
+      () =>
+        new Promise((r) => requestIdleCallback(() => r(0), { timeout: 2000 })),
+    );
+    const release = await throttle(page);
+    const result = await during(page, async () => {
+      if (isTouch(testInfo.project.name)) await page.touchscreen.tap(x, y);
+      else await page.mouse.click(x, y);
+      // Let the transition commit and the replay start.
+      await page.waitForTimeout(400);
+    });
+    await expect(target).toHaveAttribute("aria-checked", "true");
+    await release();
+    await testInfo.attach("interaction (4x CPU throttle)", {
+      body: JSON.stringify(result, null, 2),
+      contentType: "application/json",
+    });
+    expect(result.longest).toBeLessThan(50);
+    expect(result.slowestEvent).toBeLessThan(200);
+  },
+);

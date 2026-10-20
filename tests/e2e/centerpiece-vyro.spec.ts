@@ -320,48 +320,50 @@ test("a vertical swipe over the gauges scrolls the page", async ({
   await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(before);
 });
 
-test("interaction stays under the INP and long-task budgets at 4× CPU throttle", async ({
-  page,
-}, testInfo) => {
-  test.skip(
-    !isChromium(testInfo.project.name),
-    "longtask and event timing: Chromium only",
-  );
-  const touch = isTouch(testInfo.project.name);
-  const { root, ready } = await open(page);
-  await goLive(page, root, ready);
-  // The site's own first-pointer work (desktop pointer effects) happens
-  // before the measured window, so it counts only the panel.
-  if (!touch) await root.getByRole("button", { name: "Pause" }).hover();
-  await page.waitForTimeout(500);
-  const release = await throttle(page);
-  const reveal = root.getByRole("button", {
-    name: "What your browser can see",
-  });
-  // Three passes, judged by the median: parallel workers on one machine can
-  // add a stray long task to one pass, while a cost of the panel's own shows
-  // up in most of them. All three are attached.
-  const passes: Awaited<ReturnType<typeof during>>[] = [];
-  for (let i = 0; i < 3; i++) {
-    passes.push(
-      await during(page, async () => {
-        await press(root.getByRole("button", { name: "Pause" }), touch);
-        await press(root.getByRole("button", { name: "Play" }), touch);
-        // A second and a half of easing, then the browser readout.
-        await page.waitForTimeout(1500);
-        await press(reveal, touch);
-        await expect(reveal).toHaveAttribute("aria-expanded", "true");
-      }),
+test(
+  "interaction stays under the INP and long-task budgets at 4× CPU throttle",
+  { tag: "@budget" },
+  async ({ page }, testInfo) => {
+    test.skip(
+      !isChromium(testInfo.project.name),
+      "longtask and event timing: Chromium only",
     );
-    await press(reveal, touch);
-  }
-  await release();
-  await testInfo.attach("interaction", {
-    body: JSON.stringify(passes, null, 2),
-    contentType: "application/json",
-  });
-  const median = (key: "longest" | "slowestEvent") =>
-    passes.map((p) => p[key]).sort((a, b) => a - b)[1]!;
-  expect(median("longest")).toBeLessThan(50);
-  expect(median("slowestEvent")).toBeLessThan(200);
-});
+    const touch = isTouch(testInfo.project.name);
+    const { root, ready } = await open(page);
+    await goLive(page, root, ready);
+    // The site's own first-pointer work (desktop pointer effects) happens
+    // before the measured window, so it counts only the panel.
+    if (!touch) await root.getByRole("button", { name: "Pause" }).hover();
+    await page.waitForTimeout(500);
+    const release = await throttle(page);
+    const reveal = root.getByRole("button", {
+      name: "What your browser can see",
+    });
+    // Three passes, judged by the median: parallel workers on one machine can
+    // add a stray long task to one pass, while a cost of the panel's own shows
+    // up in most of them. All three are attached.
+    const passes: Awaited<ReturnType<typeof during>>[] = [];
+    for (let i = 0; i < 3; i++) {
+      passes.push(
+        await during(page, async () => {
+          await press(root.getByRole("button", { name: "Pause" }), touch);
+          await press(root.getByRole("button", { name: "Play" }), touch);
+          // A second and a half of easing, then the browser readout.
+          await page.waitForTimeout(1500);
+          await press(reveal, touch);
+          await expect(reveal).toHaveAttribute("aria-expanded", "true");
+        }),
+      );
+      await press(reveal, touch);
+    }
+    await release();
+    await testInfo.attach("interaction", {
+      body: JSON.stringify(passes, null, 2),
+      contentType: "application/json",
+    });
+    const median = (key: "longest" | "slowestEvent") =>
+      passes.map((p) => p[key]).sort((a, b) => a - b)[1]!;
+    expect(median("longest")).toBeLessThan(50);
+    expect(median("slowestEvent")).toBeLessThan(200);
+  },
+);

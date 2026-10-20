@@ -9,7 +9,7 @@ pnpm install
 pnpm dev
 ```
 
-Checks: `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm check:tokens`, `pnpm check:content`, `pnpm build`, `pnpm test:e2e`. After a build, `pnpm exec lhci autorun` checks Home, /work and /work/vyro against the §13 Lighthouse budgets (it needs Chrome and a free port 3000).
+Checks: `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm check:tokens`, `pnpm check:content`, `pnpm build`, `pnpm test:e2e`, then `pnpm test:budget` (the 4× CPU-throttled interaction budgets, run alone so other tests can't skew them). After a build, `pnpm exec lhci autorun` checks Home, /work and /work/vyro against the §13 Lighthouse budgets (it needs Chrome and a free port 3000).
 
 Content lives in `content/` and is validated with Zod; `pnpm check:content` runs the cross-checks and prints the `{{PLACEHOLDER}}` report. After changing the photo, screens or videos in `assets/source/`, run `pnpm images` and commit `public/media/` and `content/generated/media.json`. `pnpm capture:menumesh` re-captures the MenuMesh screens (§15.2; set `MENUMESH_BASE_URL` at launch), then run `pnpm images`.
 

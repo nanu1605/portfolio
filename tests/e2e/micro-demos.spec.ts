@@ -147,37 +147,38 @@ async function settle(page: Page) {
   );
 }
 
-test("a hover at 4x CPU throttling has no long task", async ({
-  page,
-  browserName,
-}, testInfo) => {
-  test.skip(
-    isTouch(testInfo.project.name) || browserName !== "chromium",
-    "long tasks and event timing are Chromium only",
-  );
-  await observe(page);
-  await toWork(page);
-  const t = tile(page, "probabilistic-forecasting");
-  await t.scrollIntoViewIfNeeded();
-  // A first hover elsewhere warms the pointer effects up.
-  await tile(page, "mlops-drift-loop").hover();
-  await page.mouse.move(0, 0);
+test(
+  "a hover at 4x CPU throttling has no long task",
+  { tag: "@budget" },
+  async ({ page, browserName }, testInfo) => {
+    test.skip(
+      isTouch(testInfo.project.name) || browserName !== "chromium",
+      "long tasks and event timing are Chromium only",
+    );
+    await observe(page);
+    await toWork(page);
+    const t = tile(page, "probabilistic-forecasting");
+    await t.scrollIntoViewIfNeeded();
+    // A first hover elsewhere warms the pointer effects up.
+    await tile(page, "mlops-drift-loop").hover();
+    await page.mouse.move(0, 0);
 
-  // A raw pointer move, so Playwright's own hit-testing isn't timed.
-  const box = (await t.boundingBox())!;
-  await settle(page);
-  const stop = await throttle(page);
-  const timing = await during(page, () =>
-    page.mouse.move(box.x + box.width / 2, box.y + box.height / 2),
-  );
-  await stop();
-  await testInfo.attach("hover-timing.json", {
-    body: JSON.stringify(timing),
-    contentType: "application/json",
-  });
-  expect(timing.longest).toBeLessThan(50);
-  expect(timing.slowestEvent).toBeLessThan(200);
-});
+    // A raw pointer move, so Playwright's own hit-testing isn't timed.
+    const box = (await t.boundingBox())!;
+    await settle(page);
+    const stop = await throttle(page);
+    const timing = await during(page, () =>
+      page.mouse.move(box.x + box.width / 2, box.y + box.height / 2),
+    );
+    await stop();
+    await testInfo.attach("hover-timing.json", {
+      body: JSON.stringify(timing),
+      contentType: "application/json",
+    });
+    expect(timing.longest).toBeLessThan(50);
+    expect(timing.slowestEvent).toBeLessThan(200);
+  },
+);
 
 test("hover plays a demo once from the start, and again on the next hover", async ({
   page,
