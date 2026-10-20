@@ -554,12 +554,14 @@ test.describe("CSS-only flows", () => {
   test("layouts: phones down a rail, tablets in a grid, desktop in a row", async ({
     page,
   }) => {
-    // This project's viewport, then a 768 px tablet.
+    // This project's viewport, then a 768 px tablet. A fresh page per load:
+    // on Firefox repeated gotos on one page can stall on "navigation".
     for (const width of [page.viewportSize()!.width, 768]) {
-      if (width === 768) await page.setViewportSize({ width, height: 1024 });
       for (const flow of flows) {
-        await page.goto(`/work/${flow.slug}`);
-        const box = root(page, flow.slug);
+        const tab = await page.context().newPage();
+        if (width === 768) await tab.setViewportSize({ width, height: 1024 });
+        await tab.goto(`/work/${flow.slug}`);
+        const box = root(tab, flow.slug);
         await box.scrollIntoViewIfNeeded();
         // offsetTop ignores the reveal's rise.
         const tops = await box
@@ -569,6 +571,7 @@ test.describe("CSS-only flows", () => {
         expect(new Set(tops).size, `${flow.slug} at ${width}`).toBe(
           width >= 1024 ? 1 : width >= 768 ? flow.tablet : flow.count,
         );
+        await tab.close();
       }
     }
   });

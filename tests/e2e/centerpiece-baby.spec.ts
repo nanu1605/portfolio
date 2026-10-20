@@ -73,13 +73,16 @@ async function live(page: Page) {
 test("the poster is the first scenario's final state; the swap shifts nothing", async ({
   page,
 }, testInfo) => {
+  // One navigation: on Firefox a second goto on the same page can leave
+  // Playwright waiting on a navigation that never finishes.
+  await observe(page);
   await page.goto(URL);
   // Server HTML, before the live chunk: Hinglish, with its reply and gate.
   await expect(chip(page, "Hinglish")).toHaveAttribute("aria-checked", "true");
   await expect(root(page)).toContainText("CPU abhi 48°C par hai.");
   await expect(root(page).getByText(LABEL)).toBeVisible();
 
-  const result = await live(page);
+  const result = await goLive(page, root(page), ready(page));
   await testInfo.attach("swap", {
     body: JSON.stringify(result, null, 2),
     contentType: "application/json",
