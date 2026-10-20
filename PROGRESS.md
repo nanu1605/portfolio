@@ -28,15 +28,19 @@ Done when:
 
 ## Phase 1 — Content layer
 
-- [ ] Zod schemas (§4.2); all content files from Appendix A; `metrics.ts` from Appendix C; `content/data/*.json` from Appendix B.
-- [ ] MDX (`@next/mdx`, `remark-gfm`) and the component map.
-- [ ] `scripts/images.ts` (§15): photo variants, web variants of the VYRO and Baby screens and videos (§15.1); product icons copied in with sources recorded.
-- [ ] Load `assets/source/screens/manifest.json` through a Zod schema.
-- [ ] `check:content`: validate content, unique slugs, every metric has a source, `{{PLACEHOLDER}}` report (warn in dev, fail in production unless allow-listed).
-- [ ] `lib/github.ts` (§4.3), with a fallback.
-- [ ] ↔ `images.ts` also makes 640 and 960 px screenshot variants (never upscaled) for bento posters and phone figures.
+- [x] Zod schemas (§4.2); all content files from Appendix A, including the 9 case-study MDX bodies; `metrics.ts` from Appendix C (70 metrics); `content/data/*.json` from Appendix B, plus the 16 merged PRs from GitHub.
+- [x] MDX (`@next/mdx`, `remark-gfm`) and the component map.
+- [x] `scripts/images.ts` (§15): photo variants, web variants of the VYRO and Baby screens and videos (§15.1); product icons copied in with sources recorded.
+- [x] Load `assets/source/screens/manifest.json` through a Zod schema.
+- [x] `check:content`: validate content, unique slugs, every metric has a source, `{{PLACEHOLDER}}` report (warn in dev, fail in production unless allow-listed).
+- [x] `lib/github.ts` (§4.3), with a fallback.
+- [x] ↔ `images.ts` also makes 640 and 960 px screenshot variants (never upscaled) for bento posters and phone figures.
 
-Done when: `pnpm check:content` passes and prints the placeholder report; a unit test fails if a metric loses its source; the images are generated.
+Done when:
+
+- [x] `pnpm check:content` passes and prints the placeholder report
+- [x] a unit test fails if a metric loses its source
+- [x] the images are generated (`public/media/`, 12 MB)
 
 ## Phase 2 — Design system and motion
 
@@ -138,3 +142,4 @@ Done when: `https://tanishq.website` serves production; the old URL redirects; a
 
 `{{FOUNDED}}` (shows "2026"), `{{EDITOR}}`, `{{UDEMY_COURSE_TITLE}}`, `{{X_URL}}` (hidden), `{{MYCOUNSELHUB_URL}}`, `{{VDR_IMAGES}}`, `{{NOW_ITEMS}}`, `{{VYRO_PRO}}` (default no), `{{REGISTRAR}}`, `{{GSC_TXT}}`.
 Resolved: `{{REPO}}` = `nanu1605/portfolio` (public), `{{CONFIRM_AI_NATIVE}}` = true, `{{BOSCH_DOCS_TRACK}}` = include.
+The allow-list and fallbacks live in `content/placeholders.ts`; `pnpm check:content` prints where each one is used.

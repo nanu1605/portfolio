@@ -77,3 +77,68 @@ Tanishq asked for the best UI/UX, with animation, on phones, tablets and PCs bef
 **Test matrix.** Playwright runs 4 device projects on every PR (desktop Chromium at 1440, Pixel 10, iPhone SE on WebKit, iPad Mini landscape on WebKit) and 8 on main and nightly (adds iPad Mini portrait, Galaxy Tab S9, desktop Safari and Firefox). An emulation guard fails if a touch project reports a fine pointer or vice versa. A width sweep checks for horizontal overflow from 320 to 1920 px (including 744, iPad mini portrait) and at 844×390. It fails whenever the document is wider than the viewport, even when no single element is to blame (overflowing text, pseudo-elements). CI runs nightly at 02:30 IST and always keeps the Playwright report.
 
 **Pending:** an accessible name for the phone command palette's icon-only close button (proposed "Close search").
+
+## Phase 1 — Content layer — 20 Oct 2026
+
+**Where content lives.** `content/` at the repo root, imported as `@content/*`. Each file parses its data through the Zod schemas in `content/schema.ts` when it loads, so invalid content fails `pnpm build` and the tests. `pnpm check:content` adds the cross-file checks and now runs in `prebuild` as well as CI.
+
+**All copy now, layout later.** "Content layer: all copy" (§19) is read as including the nine case-study bodies, so `content/case-studies/*.mdx` hold the A.4 body sections now; Phase 4 adds the template, figures and screens. TL;DR, meta, links and the "How this was built" note are structured fields in `projects.ts`, because the template (§8.4) places them. A.4's "Screens" lines are instructions, not copy, and aren't in the MDX.
+
+**Numbers.** Components never hard-code a number. Copy keeps its numbers as written in Appendix A, which already matches Appendix C. Values that can change, or that are shown as readouts, are written as `{metric.id}` and filled by `resolve()` in `src/lib/fill.ts`: the bento readouts, the hero status pill and the Baby status line. `check:content` fails on an unknown id, and it cross-checks the metrics against the chart data (`rl.flood`, `rl.supply`, `rl.agents`, `vyro.releases`, `mlops.f1`) and the PR list (`oss.merged`).
+
+**Metric sources.**
+
+- Every repo source is a GitHub link at the repo's default branch. All of them were checked on 20 Oct 2026.
+- Sources given as "resume" (the Bosch figures, `vdr.team`, `mch.services`) link to `/resume`. The resume Google Doc in C.2 isn't linked: it's a working document and may hold contact details the site must not show.
+- MenuMesh pricing was read on the staging site, which A.4.4 says never to link. Those three metrics keep the URL with `linkSource: false`, so they show the source as text. `check:content` fails if `staging.menumesh.in` appears anywhere else.
+- `vyro.inapp` links this repo's `assets/source/screens/vyro/`, where the screenshots are.
+- Versions and setups ("v0.2.0", "large-v3-turbo, CPU, int8") moved from labels into `measuredOn`, as §4.2 intends.
+
+**Schema changes from §4.2's sketch.**
+
+- `tldr` (three labelled cards) replaces `summary`. The labels vary: VDR uses "What we built" and "My role", MenuMesh "Business model".
+- `readout` is a template string, because several readouts combine two metrics ("22 tools · 1,037 tests").
+- `links` is a list of `{label, href, requires?}`. `requires: "jainavLive" | "menumeshLive"` hides a link until its launch flag is on.
+- `badges[]` replaces the single status badge; `status` and `platform` are the case-study meta row.
+- `period` is optional: A.4.4 gives MenuMesh no timeline.
+- `heroOneLiner` holds the Jainav platform's A.4.3 line, which differs from its A.3 card line.
+- `tags` is dropped. The command palette will search titles, one-liners and stack instead of keywords nobody wrote.
+- Experience entries carry the A.5 role casing everywhere, plus a short `org` for Home and the A.5 `orgFull` with the place.
+- The proof strip uses the A.2 labels with values from the metrics, so Bosch reads "1.5 years" (C.1) rather than A.2's "1.5 yrs".
+
+**Placeholders.** `content/placeholders.ts` is the allow-list, with a note and an optional fallback. `resolve()` swaps in the fallback (`{{FOUNDED}}` → "2026"), and returns `null` for anything still waiting on a placeholder without one, so components hide it (the editor line, the Udemy certificate, the X link, the MyCounselHub link). An unlisted placeholder warns locally and fails with `--strict`, on Vercel production builds and in CI.
+
+**MDX.** `@next/mdx` with `remark-gfm` passed by name, as Turbopack requires. Case studies are imported by their route, so `pageExtensions` stays at the default. `src/mdx-components.tsx` wraps tables in a focusable scroll region. There's no case-study route until Phase 4, so `check:content` compiles every MDX file with the same `@mdx-js/mdx` the loader uses (resolved through `@mdx-js/loader`, so no new dependency). A throwaway route confirmed Next renders the Baby body, the GFM table and the wrapper; it was removed.
+
+**Open-source data.** `content/data/open-source.json` holds the 16 merged PRs with open and merge dates from the GitHub API (fetched 20 Oct 2026), for the dot timeline. 15 are PEcAn PRs opened Jul–Sep 2022, matching A.6, and the A.6 theme groups list each exactly once.
+
+**Chart data.** `content/data/*.json` was extracted from Appendix B's JSON block by script, not retyped, and is validated with strict schemas in `content/charts.ts`.
+
+**Images (`pnpm images`).**
+
+- Outputs are committed: `public/media/` (12 MB, 162 files) and the index `content/generated/media.json`. Builds need neither sharp nor ffmpeg, and re-runs skip unchanged files.
+- Screens and posters: AVIF (quality 60) and WebP (quality 80) at 640, 960, 1280, 1920 and 2560 px, never upscaled, each with a 16 px blur placeholder.
+- Photo: hero at 640–1600 px; About as a 4:5 crop trimmed evenly from the sides (800, 1200); the share crop is a 600 px square from the top as JPEG, because `next/og` can't read AVIF or WebP.
+- Videos: the MP4 is copied muted with `+faststart`; WebM is VP9 at CRF 42, which keeps SSIM above 0.99 against the MP4 and is smaller for all three clips (273 KB, 838 KB and 490 KB against 312 KB, 1.29 MB and 1.12 MB).
+- `ffmpeg-static`'s install script stays blocked in `pnpm-workspace.yaml`, so CI and Vercel don't download a binary they never use. `scripts/images.ts` runs the package's own installer the first time it needs ffmpeg.
+- `content/screens.ts` loads the screen manifest and the generated index; `screen()` and `video()` throw for a file that isn't in both.
+
+**Product icons** (in `assets/source/icons/`, copied to `public/media/icons/`):
+
+- `vyro.svg`: `nanu1605/vyro`, `src-tauri/icons/icon.svg` at commit `dbb7b1e` on `main`. Licence MIT OR Apache-2.0 (the repo ships both).
+- `baby.png`: `nanu1605/baby`, `ui/shell/src-tauri/icons/icon.png` at commit `d69c719` on `master`, 512×512. Licence MIT.
+- MenuMesh's logo comes from the capture script in Phase 4. Jainav Infotech has no logo; the typographic "J" is built in Phase 6.
+
+**Live releases (`src/lib/github.ts`).** The VYRO installer size is binary megabytes, because that's what gives C.1's 11.6 MB for the v1.4.1 MSI (12,210,176 bytes); Baby's "19 MB" in C.1 is decimal, but it isn't a live value. The API dates Baby 6.0.1's release 7 Sep 2026, against C.1's 4 Sep; no release date is shown, so nothing changes. Each live value falls back on its own, with a build warning.
+
+**C.4 checks.**
+
+1. The VYRO download page lists `Vyro_1.4.1_x64_en-US.msi` as the latest release.
+2. (Phase 5.)
+3. `nanu1605/vyro` is public. It's linked as A.4.2 says; Tanishq to confirm.
+4. F1 Insights links its repo only. The archive links repos only, so the `f1insights.vercel.app` question doesn't arise.
+
+**Small calls.**
+
+- Home's open-source section links to `/open-source` as "Open source →", following A.2's "All work →"; A.2 gives no label.
+- `server-only` is resolved by Next in app builds and aliased to an empty module in Vitest.
