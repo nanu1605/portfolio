@@ -54,6 +54,8 @@ async function live(page: Page, slug: string, info: TestInfo) {
 /** A sideways swipe on the track through Chromium's touch input (CDP). */
 async function swipe(page: Page, track: Locator, dx: number) {
   const box = (await track.boundingBox())!;
+  // The touch must land on the track, below the sticky header.
+  expect(box.y).toBeGreaterThan(80);
   const cdp = await page.context().newCDPSession(page);
   const y = box.y + Math.min(box.height / 2, 120);
   const x = box.x + box.width * (dx < 0 ? 0.85 : 0.15);
@@ -119,9 +121,29 @@ test.describe("Jainav: from order to licence", () => {
     await expect(tabs).toHaveCount(orderToLicence.length);
     await expect(selected(box)).toHaveAttribute("id", "order-to-licence-tab-0");
 
-    // Appendix B's text on every step.
-    for (const [i, step] of orderToLicence.entries())
+    // Appendix B's text on every step; the tab names keep a space between
+    // number and name, and the schematic is not read a second time.
+    for (const [i, step] of orderToLicence.entries()) {
       await expect(panel(box, i)).toContainText(step.text);
+      await expect(tabs.nth(i)).toHaveAccessibleName(
+        `${String(i + 1).padStart(2, "0")} ${step.name}`,
+      );
+    }
+    const spoken = await panel(box, 0).ariaSnapshot();
+    expect(spoken).toContain(orderToLicence[0].text.slice(0, 20));
+    expect(spoken).not.toContain("•");
+
+    // Highlighted schematic boxes take the accent, like the step number.
+    const tax = orderToLicence.findIndex((s) => s.diagram.kind === "tax");
+    const colours = await panel(box, tax).evaluate((el, igst) => {
+      const accent = getComputedStyle(el.querySelector(".text-accent")!).color;
+      // The innermost span with that text: the box itself.
+      const node = [...el.querySelectorAll("span")]
+        .filter((n) => n.textContent === igst)
+        .at(-1)!;
+      return { accent, box: getComputedStyle(node).color };
+    }, "IGST");
+    expect(colours.box).toBe(colours.accent);
 
     const next = box.getByRole("button", { name: "Next" });
     const before = await steady(page, next);
@@ -249,6 +271,9 @@ test.describe("Jainav: from order to licence", () => {
 test.describe("MenuMesh: table to bill", () => {
   const slug = "menumesh";
   const alt = (file: string) => screen(file).alt;
+  /** CSS px per captured pixel: how large the capture is drawn. */
+  const scale = async (img: Locator, file: string) =>
+    (await img.boundingBox())!.width / screen(file).image.width;
   /** Wide and tall enough to pin the frame (cross-device §6). */
   const sticky = (page: Page) =>
     page.evaluate(
@@ -281,6 +306,13 @@ test.describe("MenuMesh: table to bill", () => {
         await expect(steps.nth(i)).toHaveAttribute("aria-current", "step");
         await expect(shown(alt(step.screen))).toHaveCount(1);
         await expect(frame).toBeInViewport({ ratio: 0.9 });
+        // Legible: the whole phone at the frame's height; the landscape
+        // screens' details across the column.
+        const img = frame.locator('[aria-hidden="false"] img');
+        const { width, height } = screen(step.screen).image;
+        expect(await scale(img, step.screen)).toBeGreaterThanOrEqual(
+          height > width ? 0.33 : 0.24,
+        );
       }
       await steps.nth(1).evaluate((el) => {
         const r = el.getBoundingClientRect();
@@ -315,6 +347,16 @@ test.describe("MenuMesh: table to bill", () => {
     await expect(
       order.getByRole("img", { name: alt(tableToBill.steps[1].screen) }),
     ).toBeVisible();
+    // Legible on a phone: the menu at least 240 px wide; the bill's detail
+    // the slide's width.
+    const img = (i: number) =>
+      box.locator(`#table-to-bill-step-${i} [aria-hidden="false"] img`);
+    expect(
+      await scale(img(1), tableToBill.steps[1].screen),
+    ).toBeGreaterThanOrEqual(0.37);
+    expect(
+      await scale(img(3), tableToBill.steps[3].screen),
+    ).toBeGreaterThanOrEqual(0.24);
 
     const hindi = order.getByRole("button", { name: "हिंदी" });
     expect((await hindi.boundingBox())!.height).toBeGreaterThanOrEqual(44);
@@ -341,7 +383,34 @@ test.describe("MenuMesh: table to bill", () => {
     await expect(current).toHaveAttribute("id", "table-to-bill-tab-0");
     await expect(box.locator("#table-to-bill-step-0")).toBeInViewport();
 
+    // Arrow keys on the language toggle stay there: same step, same focus.
+    await page.keyboard.press("ArrowRight");
+    await expect(current).toHaveAttribute("id", "table-to-bill-tab-1");
+    const hindi = box
+      .locator("#table-to-bill-step-1")
+      .getByRole("button", { name: "हिंदी" });
+    const at = () => track.evaluate((el) => el.scrollLeft / el.clientWidth);
+    await expect.poll(at).toBeCloseTo(1, 2);
+    await hindi.evaluate((el) => el.focus({ preventScroll: true }));
+    await page.keyboard.press("ArrowRight");
+    await page.waitForTimeout(600);
+    await expect(hindi).toBeFocused();
+    await expect(current).toHaveAttribute("id", "table-to-bill-tab-1");
+    // Nor does the track scroll under it.
+    expect(await at()).toBeCloseTo(1, 2);
+    await box.getByRole("tab").nth(1).focus();
+    await page.keyboard.press("Home");
+    await expect(current).toHaveAttribute("id", "table-to-bill-tab-0");
+    await expect.poll(at).toBeCloseTo(0, 2);
+
     test.skip(browserName !== "chromium", "CDP touch swipes: Chromium");
+    // The toggle's focus scrolled the page; bring the track's top back.
+    await track.evaluate((el) =>
+      window.scrollBy({
+        top: el.getBoundingClientRect().top - innerHeight / 3,
+        behavior: "instant",
+      }),
+    );
     const before = await scrollY(page);
     await swipe(page, track, -220);
     await expect(current).toHaveAttribute("id", "table-to-bill-tab-1");
@@ -391,25 +460,44 @@ test.describe("MenuMesh: table to bill", () => {
 });
 
 test.describe("CSS-only flows", () => {
+  // rows: how many rows the stages take on a 768 px tablet.
   const flows = [
-    { slug: "virtual-dressing-room", items: "li.vdr-stage", count: 6 },
-    { slug: "mycounselhub", items: "li.mch-node", count: 5 },
+    {
+      slug: "virtual-dressing-room",
+      items: "li.vdr-stage",
+      count: 6,
+      tablet: 2,
+    },
+    { slug: "mycounselhub", items: "li.mch-node", count: 5, tablet: 1 },
   ];
 
   for (const flow of flows) {
     test(`${flow.slug}: plays once in view, under 5 s, then holds`, async ({
       page,
+      browserName,
     }) => {
       await page.goto(`/work/${flow.slug}`);
       const box = root(page, flow.slug);
       const items = box.locator(flow.items);
       await expect(items).toHaveCount(flow.count);
-      await box.scrollIntoViewIfNeeded();
+      // Below the fold it waits in its start state.
+      const hidden = () =>
+        items.evaluateAll(
+          (els) =>
+            els.filter((el) => getComputedStyle(el).opacity !== "1").length,
+        );
+      expect(await hidden()).toBeGreaterThan(0);
       // Bring the whole flow into view, so every stage reveals.
       await box.evaluate((el) =>
         el.scrollIntoView({ block: "center", behavior: "instant" }),
       );
       const start = Date.now();
+      // It plays: transitions run. (Playwright's WebKit on Windows jumps
+      // CSS transitions to their end, so only the start state is checked.)
+      if (browserName !== "webkit")
+        await expect
+          .poll(() => running(box), { timeout: 2_000 })
+          .toBeGreaterThan(0);
       await expect
         .poll(
           async () =>
@@ -447,20 +535,25 @@ test.describe("CSS-only flows", () => {
     });
   }
 
-  test("layouts: phones down a rail, wider in rows", async ({ page }) => {
-    const width = page.viewportSize()!.width;
-    for (const flow of flows) {
-      await page.goto(`/work/${flow.slug}`);
-      const box = root(page, flow.slug);
-      await box.scrollIntoViewIfNeeded();
-      // offsetTop ignores the reveal's rise.
-      const tops = await box
-        .locator(flow.items)
-        .evaluateAll((els) => els.map((el) => (el as HTMLElement).offsetTop));
-      const rows = new Set(tops).size;
-      // VDR: one row from 1024 px (3 × 2 on tablets); MCH: one row once
-      // its container is 36rem.
-      expect(rows).toBe(width >= 1024 ? 1 : flow.count);
+  test("layouts: phones down a rail, tablets in a grid, desktop in a row", async ({
+    page,
+  }) => {
+    // This project's viewport, then a 768 px tablet.
+    for (const width of [page.viewportSize()!.width, 768]) {
+      if (width === 768) await page.setViewportSize({ width, height: 1024 });
+      for (const flow of flows) {
+        await page.goto(`/work/${flow.slug}`);
+        const box = root(page, flow.slug);
+        await box.scrollIntoViewIfNeeded();
+        // offsetTop ignores the reveal's rise.
+        const tops = await box
+          .locator(flow.items)
+          .evaluateAll((els) => els.map((el) => (el as HTMLElement).offsetTop));
+        // VDR: 3 × 2 from 768 px, one row from 1024; MCH: one row from 768.
+        expect(new Set(tops).size, `${flow.slug} at ${width}`).toBe(
+          width >= 1024 ? 1 : width >= 768 ? flow.tablet : flow.count,
+        );
+      }
     }
   });
 });
