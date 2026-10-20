@@ -10,7 +10,7 @@ import {
   HowBuilt,
   Tldr,
 } from "@/components/work/case-study";
-import { centerpieces } from "@/components/work/figures";
+import { centerpieces } from "@/components/centerpieces";
 import { Screen, ScreenVideo } from "@/components/work/media";
 import { ReadingProgress } from "@/components/work/reading-progress";
 import { Toc } from "@/components/work/toc";

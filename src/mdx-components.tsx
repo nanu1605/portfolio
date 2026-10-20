@@ -1,6 +1,6 @@
 import type { MDXComponents } from "mdx/types";
 import type { ComponentProps } from "react";
-import { HorizonFigure } from "@/components/work/figures";
+import { HorizonFigure } from "@/components/centerpieces/probabilistic-forecasting";
 import { Screen, ScreenVideo } from "@/components/work/media";
 
 // Case-study prose (§8.4). Text keeps to the reading width; figures and
