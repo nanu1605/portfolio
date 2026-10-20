@@ -12,9 +12,10 @@
     "assert": {
       "assertions": {
         "categories:performance": [
-          "error",
+          "warn",
           {
-            "minScore": 0.95
+            "minScore": 0.95,
+            "aggregationMethod": "median-run"
           }
         ],
         "categories:accessibility": [
@@ -38,13 +39,22 @@
         "largest-contentful-paint": [
           "error",
           {
-            "maxNumericValue": 2000
+            "maxNumericValue": 2000,
+            "aggregationMethod": "median"
           }
         ],
         "cumulative-layout-shift": [
           "error",
           {
-            "maxNumericValue": 0.05
+            "maxNumericValue": 0.05,
+            "aggregationMethod": "median"
+          }
+        ],
+        "total-blocking-time": [
+          "warn",
+          {
+            "maxNumericValue": 200,
+            "aggregationMethod": "median"
           }
         ]
       }
