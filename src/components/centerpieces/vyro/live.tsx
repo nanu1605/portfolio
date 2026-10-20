@@ -14,14 +14,19 @@ import { View, type BrowserInfo, type Copy } from "./view";
 const TAU = 220; // ms
 const FRAME = 1000 / 60;
 const POLL = 1000;
-/** Closer than this, a value snaps to its target and stops moving. */
+/**
+ * Closer than this, a value snaps to its target and stops moving. Each snap
+ * is too small to see (0.7° of needle, 0.1 % of a clock, 0.1 % of the fan
+ * bar), and all of them land within about 0.8 s of a poll (at most 1 s), so
+ * the loop rests for the rest of each second instead of running on.
+ */
 const SETTLE: Reading = {
-  cpu: 0.05,
-  cpuClock: 0.5,
-  gpu: 0.05,
-  gpuClock: 0.5,
-  temp: 0.02,
-  fan: 0.5,
+  cpu: 0.25,
+  cpuClock: 5,
+  gpu: 0.25,
+  gpuClock: 5,
+  temp: 0.1,
+  fan: 2,
 };
 const keys = Object.keys(SETTLE) as (keyof Reading)[];
 
