@@ -1,0 +1,635 @@
+{
+  "photo": {
+    "hero": {
+      "width": 6334,
+      "height": 7680,
+      "blur": "data:image/webp;base64,UklGRrIAAABXRUJQVlA4IKYAAAAQBQCdASoQABMAPtFUo0uoJKMhsAgBABoJQBUieCYAPIAHsWPPXRml/LpI0pzx/qwAAP70Ml4UxVr6m/TLchlm53884XqvfrR1uT/JqumR3vZJzBa9QuxHrG4QK6KmikbCpg70zabQuL22UkMaDc03/WRvTjc3krxM4Z9bv17yvntQUSGGOfxdVakFbpRqLXBJ5Jyb5Bn1elDX2cdM9T08yuDfgAAA",
+      "variants": [
+        {
+          "width": 640,
+          "height": 776,
+          "avif": "/media/photo/hero-640.avif",
+          "webp": "/media/photo/hero-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 1164,
+          "avif": "/media/photo/hero-960.avif",
+          "webp": "/media/photo/hero-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 1552,
+          "avif": "/media/photo/hero-1280.avif",
+          "webp": "/media/photo/hero-1280.webp"
+        },
+        {
+          "width": 1600,
+          "height": 1940,
+          "avif": "/media/photo/hero-1600.avif",
+          "webp": "/media/photo/hero-1600.webp"
+        }
+      ]
+    },
+    "about": {
+      "width": 6144,
+      "height": 7680,
+      "blur": "data:image/webp;base64,UklGRqgAAABXRUJQVlA4IJwAAADwBACdASoQABQAPtFUo0uoJKMhsAgBABoJQBUieCYAP4AOVoeah032npHXqvR/ggAA/vQyqKQ+/XG+DLb9XOXFZBYKgT2cPby4xnFXPRcT0TjsY7MbrQb8P07WSCZSh7pMRSblaVswP7sau5Xup1RW+7tGmZDhupYeM9xbriafPuhTyYRZy52rNHNdVBbZz82/zdh4j1PLkd9MAAA=",
+      "variants": [
+        {
+          "width": 800,
+          "height": 1000,
+          "avif": "/media/photo/about-800.avif",
+          "webp": "/media/photo/about-800.webp"
+        },
+        {
+          "width": 1200,
+          "height": 1500,
+          "avif": "/media/photo/about-1200.avif",
+          "webp": "/media/photo/about-1200.webp"
+        }
+      ]
+    },
+    "share": {
+      "width": 600,
+      "height": 600,
+      "jpg": "/media/photo/share-600.jpg"
+    }
+  },
+  "screens": {
+    "vyro/vyro-dashboard.png": {
+      "width": 3840,
+      "height": 2036,
+      "blur": "data:image/webp;base64,UklGRjIAAABXRUJQVlA4ICYAAADQAQCdASoQAAgAAsBMJaQAAudgFmv9EAD++uo+4pfWwBwWThsgAA==",
+      "variants": [
+        {
+          "width": 640,
+          "height": 339,
+          "avif": "/media/screens/vyro/vyro-dashboard-640.avif",
+          "webp": "/media/screens/vyro/vyro-dashboard-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 509,
+          "avif": "/media/screens/vyro/vyro-dashboard-960.avif",
+          "webp": "/media/screens/vyro/vyro-dashboard-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 679,
+          "avif": "/media/screens/vyro/vyro-dashboard-1280.avif",
+          "webp": "/media/screens/vyro/vyro-dashboard-1280.webp"
+        },
+        {
+          "width": 1920,
+          "height": 1018,
+          "avif": "/media/screens/vyro/vyro-dashboard-1920.avif",
+          "webp": "/media/screens/vyro/vyro-dashboard-1920.webp"
+        },
+        {
+          "width": 2560,
+          "height": 1357,
+          "avif": "/media/screens/vyro/vyro-dashboard-2560.avif",
+          "webp": "/media/screens/vyro/vyro-dashboard-2560.webp"
+        }
+      ]
+    },
+    "vyro/vyro-health.png": {
+      "width": 3840,
+      "height": 2036,
+      "blur": "data:image/webp;base64,UklGRioAAABXRUJQVlA4IB4AAAAwAQCdASoQAAgAAsBMJaQAA3AA/vfL/TwgOk6AAAA=",
+      "variants": [
+        {
+          "width": 640,
+          "height": 339,
+          "avif": "/media/screens/vyro/vyro-health-640.avif",
+          "webp": "/media/screens/vyro/vyro-health-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 509,
+          "avif": "/media/screens/vyro/vyro-health-960.avif",
+          "webp": "/media/screens/vyro/vyro-health-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 679,
+          "avif": "/media/screens/vyro/vyro-health-1280.avif",
+          "webp": "/media/screens/vyro/vyro-health-1280.webp"
+        },
+        {
+          "width": 1920,
+          "height": 1018,
+          "avif": "/media/screens/vyro/vyro-health-1920.avif",
+          "webp": "/media/screens/vyro/vyro-health-1920.webp"
+        },
+        {
+          "width": 2560,
+          "height": 1357,
+          "avif": "/media/screens/vyro/vyro-health-2560.avif",
+          "webp": "/media/screens/vyro/vyro-health-2560.webp"
+        }
+      ]
+    },
+    "vyro/vyro-gaming.png": {
+      "width": 3840,
+      "height": 2036,
+      "blur": "data:image/webp;base64,UklGRiYAAABXRUJQVlA4IBoAAAAwAQCdASoQAAgAAsBMJaQAA3AA/vfrsUGAAA==",
+      "variants": [
+        {
+          "width": 640,
+          "height": 339,
+          "avif": "/media/screens/vyro/vyro-gaming-640.avif",
+          "webp": "/media/screens/vyro/vyro-gaming-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 509,
+          "avif": "/media/screens/vyro/vyro-gaming-960.avif",
+          "webp": "/media/screens/vyro/vyro-gaming-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 679,
+          "avif": "/media/screens/vyro/vyro-gaming-1280.avif",
+          "webp": "/media/screens/vyro/vyro-gaming-1280.webp"
+        },
+        {
+          "width": 1920,
+          "height": 1018,
+          "avif": "/media/screens/vyro/vyro-gaming-1920.avif",
+          "webp": "/media/screens/vyro/vyro-gaming-1920.webp"
+        },
+        {
+          "width": 2560,
+          "height": 1357,
+          "avif": "/media/screens/vyro/vyro-gaming-2560.avif",
+          "webp": "/media/screens/vyro/vyro-gaming-2560.webp"
+        }
+      ]
+    },
+    "vyro/vyro-cooling.png": {
+      "width": 3840,
+      "height": 2036,
+      "blur": "data:image/webp;base64,UklGRiwAAABXRUJQVlA4ICAAAAAwAQCdASoQAAgAAsBMJaQAA3AA/vfsGKNNmi0ftdzAAA==",
+      "variants": [
+        {
+          "width": 640,
+          "height": 339,
+          "avif": "/media/screens/vyro/vyro-cooling-640.avif",
+          "webp": "/media/screens/vyro/vyro-cooling-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 509,
+          "avif": "/media/screens/vyro/vyro-cooling-960.avif",
+          "webp": "/media/screens/vyro/vyro-cooling-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 679,
+          "avif": "/media/screens/vyro/vyro-cooling-1280.avif",
+          "webp": "/media/screens/vyro/vyro-cooling-1280.webp"
+        },
+        {
+          "width": 1920,
+          "height": 1018,
+          "avif": "/media/screens/vyro/vyro-cooling-1920.avif",
+          "webp": "/media/screens/vyro/vyro-cooling-1920.webp"
+        },
+        {
+          "width": 2560,
+          "height": 1357,
+          "avif": "/media/screens/vyro/vyro-cooling-2560.avif",
+          "webp": "/media/screens/vyro/vyro-cooling-2560.webp"
+        }
+      ]
+    },
+    "vyro/vyro-game-replay.png": {
+      "width": 2244,
+      "height": 1222,
+      "blur": "data:image/webp;base64,UklGRi4AAABXRUJQVlA4ICIAAABQAQCdASoQAAkAAsBMJaQABDOAAP73YXb/Wg64teJtlIAA",
+      "variants": [
+        {
+          "width": 640,
+          "height": 349,
+          "avif": "/media/screens/vyro/vyro-game-replay-640.avif",
+          "webp": "/media/screens/vyro/vyro-game-replay-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 523,
+          "avif": "/media/screens/vyro/vyro-game-replay-960.avif",
+          "webp": "/media/screens/vyro/vyro-game-replay-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 697,
+          "avif": "/media/screens/vyro/vyro-game-replay-1280.avif",
+          "webp": "/media/screens/vyro/vyro-game-replay-1280.webp"
+        },
+        {
+          "width": 1920,
+          "height": 1046,
+          "avif": "/media/screens/vyro/vyro-game-replay-1920.avif",
+          "webp": "/media/screens/vyro/vyro-game-replay-1920.webp"
+        }
+      ]
+    },
+    "vyro/vyro-my-pc-3d.png": {
+      "width": 1858,
+      "height": 1222,
+      "blur": "data:image/webp;base64,UklGRkQAAABXRUJQVlA4IDgAAADQAQCdASoQAAsAAsBMJaQAAuQtlcysAAD++u8b+oe0bwoFrfSo6srkgMWQs6aTZLb5FEMd4AAAAA==",
+      "variants": [
+        {
+          "width": 640,
+          "height": 421,
+          "avif": "/media/screens/vyro/vyro-my-pc-3d-640.avif",
+          "webp": "/media/screens/vyro/vyro-my-pc-3d-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 631,
+          "avif": "/media/screens/vyro/vyro-my-pc-3d-960.avif",
+          "webp": "/media/screens/vyro/vyro-my-pc-3d-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 842,
+          "avif": "/media/screens/vyro/vyro-my-pc-3d-1280.avif",
+          "webp": "/media/screens/vyro/vyro-my-pc-3d-1280.webp"
+        }
+      ]
+    },
+    "vyro/vyro-sensors.png": {
+      "width": 2244,
+      "height": 1222,
+      "blur": "data:image/webp;base64,UklGRiwAAABXRUJQVlA4ICAAAACwAQCdASoQAAkAAsBMJaQAAudfwELgAP76Zd5snpIAAA==",
+      "variants": [
+        {
+          "width": 640,
+          "height": 349,
+          "avif": "/media/screens/vyro/vyro-sensors-640.avif",
+          "webp": "/media/screens/vyro/vyro-sensors-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 523,
+          "avif": "/media/screens/vyro/vyro-sensors-960.avif",
+          "webp": "/media/screens/vyro/vyro-sensors-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 697,
+          "avif": "/media/screens/vyro/vyro-sensors-1280.avif",
+          "webp": "/media/screens/vyro/vyro-sensors-1280.webp"
+        },
+        {
+          "width": 1920,
+          "height": 1046,
+          "avif": "/media/screens/vyro/vyro-sensors-1920.avif",
+          "webp": "/media/screens/vyro/vyro-sensors-1920.webp"
+        }
+      ]
+    },
+    "vyro/vyro-settings-appearance.png": {
+      "width": 2244,
+      "height": 1222,
+      "blur": "data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAADQAQCdASoQAAkAAsBMJYwAAsaWbQHiWAD++miklkN2/Qhzz1F1eNaeACeX8nK3QeiMNM6tdaeBCjB/rflkX1wAAAA=",
+      "variants": [
+        {
+          "width": 640,
+          "height": 349,
+          "avif": "/media/screens/vyro/vyro-settings-appearance-640.avif",
+          "webp": "/media/screens/vyro/vyro-settings-appearance-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 523,
+          "avif": "/media/screens/vyro/vyro-settings-appearance-960.avif",
+          "webp": "/media/screens/vyro/vyro-settings-appearance-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 697,
+          "avif": "/media/screens/vyro/vyro-settings-appearance-1280.avif",
+          "webp": "/media/screens/vyro/vyro-settings-appearance-1280.webp"
+        },
+        {
+          "width": 1920,
+          "height": 1046,
+          "avif": "/media/screens/vyro/vyro-settings-appearance-1920.avif",
+          "webp": "/media/screens/vyro/vyro-settings-appearance-1920.webp"
+        }
+      ]
+    },
+    "baby/baby-brain-idle.png": {
+      "width": 2226,
+      "height": 1227,
+      "blur": "data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAACwAQCdASoQAAkAAsBMJZwAAvcIZX2AAP76gK0FPn1TC8xRx+4wH+3951F2eVfp+3v9Exyk2pCOBScKDW+V60ZwAAA=",
+      "variants": [
+        {
+          "width": 640,
+          "height": 353,
+          "avif": "/media/screens/baby/baby-brain-idle-640.avif",
+          "webp": "/media/screens/baby/baby-brain-idle-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 529,
+          "avif": "/media/screens/baby/baby-brain-idle-960.avif",
+          "webp": "/media/screens/baby/baby-brain-idle-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 706,
+          "avif": "/media/screens/baby/baby-brain-idle-1280.avif",
+          "webp": "/media/screens/baby/baby-brain-idle-1280.webp"
+        },
+        {
+          "width": 1920,
+          "height": 1058,
+          "avif": "/media/screens/baby/baby-brain-idle-1920.avif",
+          "webp": "/media/screens/baby/baby-brain-idle-1920.webp"
+        }
+      ]
+    },
+    "baby/baby-turn-thinking.png": {
+      "width": 2226,
+      "height": 1227,
+      "blur": "data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAAAwAgCdASoQAAkAAsBMJZQAD4ovLtz+xvYuAAD++KIi20V1sH2rFEMtbt7bspr/2KhVW5oOzxYoC/3yPtbNXIBiVK3G6tL4HggjIdoekKyXpk+MHgA=",
+      "variants": [
+        {
+          "width": 640,
+          "height": 353,
+          "avif": "/media/screens/baby/baby-turn-thinking-640.avif",
+          "webp": "/media/screens/baby/baby-turn-thinking-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 529,
+          "avif": "/media/screens/baby/baby-turn-thinking-960.avif",
+          "webp": "/media/screens/baby/baby-turn-thinking-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 706,
+          "avif": "/media/screens/baby/baby-turn-thinking-1280.avif",
+          "webp": "/media/screens/baby/baby-turn-thinking-1280.webp"
+        },
+        {
+          "width": 1920,
+          "height": 1058,
+          "avif": "/media/screens/baby/baby-turn-thinking-1920.avif",
+          "webp": "/media/screens/baby/baby-turn-thinking-1920.webp"
+        }
+      ]
+    },
+    "baby/baby-turn-hinglish.png": {
+      "width": 2226,
+      "height": 1227,
+      "blur": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAACwAQCdASoQAAkAAsBMJZwAAiEALkNgAP76gij3BTzRthLYx4XZJBEYMaLYv2ydhk5gfpP0332LSZnhY4+EENJiGJsBdHANpAAAAA==",
+      "variants": [
+        {
+          "width": 640,
+          "height": 353,
+          "avif": "/media/screens/baby/baby-turn-hinglish-640.avif",
+          "webp": "/media/screens/baby/baby-turn-hinglish-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 529,
+          "avif": "/media/screens/baby/baby-turn-hinglish-960.avif",
+          "webp": "/media/screens/baby/baby-turn-hinglish-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 706,
+          "avif": "/media/screens/baby/baby-turn-hinglish-1280.avif",
+          "webp": "/media/screens/baby/baby-turn-hinglish-1280.webp"
+        },
+        {
+          "width": 1920,
+          "height": 1058,
+          "avif": "/media/screens/baby/baby-turn-hinglish-1920.avif",
+          "webp": "/media/screens/baby/baby-turn-hinglish-1920.webp"
+        }
+      ]
+    },
+    "baby/baby-turn-english.png": {
+      "width": 2226,
+      "height": 1227,
+      "blur": "data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAACwAQCdASoQAAkAAsBMJZwAApMF9C2wAP74lAEYftqC9RCy9SSBNhd8tcvYxWrROoUoFzIzmjjsKON03QMg9zsdw+XG1I4DcVS5p6AKLSgAAA==",
+      "variants": [
+        {
+          "width": 640,
+          "height": 353,
+          "avif": "/media/screens/baby/baby-turn-english-640.avif",
+          "webp": "/media/screens/baby/baby-turn-english-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 529,
+          "avif": "/media/screens/baby/baby-turn-english-960.avif",
+          "webp": "/media/screens/baby/baby-turn-english-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 706,
+          "avif": "/media/screens/baby/baby-turn-english-1280.avif",
+          "webp": "/media/screens/baby/baby-turn-english-1280.webp"
+        },
+        {
+          "width": 1920,
+          "height": 1058,
+          "avif": "/media/screens/baby/baby-turn-english-1920.avif",
+          "webp": "/media/screens/baby/baby-turn-english-1920.webp"
+        }
+      ]
+    },
+    "baby/baby-activity.png": {
+      "width": 2226,
+      "height": 1227,
+      "blur": "data:image/webp;base64,UklGRlQAAABXRUJQVlA4IEgAAACwAQCdASoQAAkAAsBMJZwAApNYzuugAP75UaNXe95feD83HleJJKqnbm6775nvP7Dzzu3b8iL4sLWThbkPgpIiYFB6azBUAAA=",
+      "variants": [
+        {
+          "width": 640,
+          "height": 353,
+          "avif": "/media/screens/baby/baby-activity-640.avif",
+          "webp": "/media/screens/baby/baby-activity-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 529,
+          "avif": "/media/screens/baby/baby-activity-960.avif",
+          "webp": "/media/screens/baby/baby-activity-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 706,
+          "avif": "/media/screens/baby/baby-activity-1280.avif",
+          "webp": "/media/screens/baby/baby-activity-1280.webp"
+        },
+        {
+          "width": 1920,
+          "height": 1058,
+          "avif": "/media/screens/baby/baby-activity-1920.avif",
+          "webp": "/media/screens/baby/baby-activity-1920.webp"
+        }
+      ]
+    },
+    "baby/baby-inspector.png": {
+      "width": 2226,
+      "height": 1227,
+      "blur": "data:image/webp;base64,UklGRlIAAABXRUJQVlA4IEYAAACwAQCdASoQAAkAAsBMJZQAAh3FsYkAAP76grQt0ENdsyVwu72LCN3jpX+hvEDw0zLWTRVRdN7T+m0sEz6qpvQEQ8DhuAAA",
+      "variants": [
+        {
+          "width": 640,
+          "height": 353,
+          "avif": "/media/screens/baby/baby-inspector-640.avif",
+          "webp": "/media/screens/baby/baby-inspector-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 529,
+          "avif": "/media/screens/baby/baby-inspector-960.avif",
+          "webp": "/media/screens/baby/baby-inspector-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 706,
+          "avif": "/media/screens/baby/baby-inspector-1280.avif",
+          "webp": "/media/screens/baby/baby-inspector-1280.webp"
+        },
+        {
+          "width": 1920,
+          "height": 1058,
+          "avif": "/media/screens/baby/baby-inspector-1920.avif",
+          "webp": "/media/screens/baby/baby-inspector-1920.webp"
+        }
+      ]
+    },
+    "vyro/vyro-dashboard-poster.png": {
+      "width": 1600,
+      "height": 1090,
+      "blur": "data:image/webp;base64,UklGRjIAAABXRUJQVlA4ICYAAAAwAQCdASoQAAsAAsBMJaQAA3AA/vZJO7gVz2OlT3N+ntOfQUAAAA==",
+      "variants": [
+        {
+          "width": 640,
+          "height": 436,
+          "avif": "/media/screens/vyro/vyro-dashboard-poster-640.avif",
+          "webp": "/media/screens/vyro/vyro-dashboard-poster-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 654,
+          "avif": "/media/screens/vyro/vyro-dashboard-poster-960.avif",
+          "webp": "/media/screens/vyro/vyro-dashboard-poster-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 872,
+          "avif": "/media/screens/vyro/vyro-dashboard-poster-1280.avif",
+          "webp": "/media/screens/vyro/vyro-dashboard-poster-1280.webp"
+        }
+      ]
+    },
+    "vyro/vyro-my-pc-3d-poster.png": {
+      "width": 1600,
+      "height": 1090,
+      "blur": "data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAADQAQCdASoQAAsAAsBMJaQAAqH0qpevAAD++eX2t4nPyHWcUJNR3sOs9mGvmiRsC+x7MXAvJCJUnAAA",
+      "variants": [
+        {
+          "width": 640,
+          "height": 436,
+          "avif": "/media/screens/vyro/vyro-my-pc-3d-poster-640.avif",
+          "webp": "/media/screens/vyro/vyro-my-pc-3d-poster-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 654,
+          "avif": "/media/screens/vyro/vyro-my-pc-3d-poster-960.avif",
+          "webp": "/media/screens/vyro/vyro-my-pc-3d-poster-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 872,
+          "avif": "/media/screens/vyro/vyro-my-pc-3d-poster-1280.avif",
+          "webp": "/media/screens/vyro/vyro-my-pc-3d-poster-1280.webp"
+        }
+      ]
+    },
+    "baby/baby-turn-hinglish-poster.png": {
+      "width": 1920,
+      "height": 1030,
+      "blur": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAADwAQCdASoQAAkAAsBMJZQC7AEPhxKV8dAA/vh76LEFThcjLFGgZg1iBMAXrmYnKOlAPY8pdM7F4ow/WLzqMhV4rquGuGmLlRJqgKJPGAA=",
+      "variants": [
+        {
+          "width": 640,
+          "height": 343,
+          "avif": "/media/screens/baby/baby-turn-hinglish-poster-640.avif",
+          "webp": "/media/screens/baby/baby-turn-hinglish-poster-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 515,
+          "avif": "/media/screens/baby/baby-turn-hinglish-poster-960.avif",
+          "webp": "/media/screens/baby/baby-turn-hinglish-poster-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 687,
+          "avif": "/media/screens/baby/baby-turn-hinglish-poster-1280.avif",
+          "webp": "/media/screens/baby/baby-turn-hinglish-poster-1280.webp"
+        },
+        {
+          "width": 1920,
+          "height": 1030,
+          "avif": "/media/screens/baby/baby-turn-hinglish-poster-1920.avif",
+          "webp": "/media/screens/baby/baby-turn-hinglish-poster-1920.webp"
+        }
+      ]
+    }
+  },
+  "videos": {
+    "vyro/vyro-dashboard.mp4": {
+      "mp4": "/media/screens/vyro/vyro-dashboard.mp4",
+      "webm": "/media/screens/vyro/vyro-dashboard.webm",
+      "poster": "vyro/vyro-dashboard-poster.png"
+    },
+    "vyro/vyro-my-pc-3d.mp4": {
+      "mp4": "/media/screens/vyro/vyro-my-pc-3d.mp4",
+      "webm": "/media/screens/vyro/vyro-my-pc-3d.webm",
+      "poster": "vyro/vyro-my-pc-3d-poster.png"
+    },
+    "baby/baby-turn-hinglish.mp4": {
+      "mp4": "/media/screens/baby/baby-turn-hinglish.mp4",
+      "webm": "/media/screens/baby/baby-turn-hinglish.webm",
+      "poster": "baby/baby-turn-hinglish-poster.png"
+    }
+  },
+  "icons": {
+    "vyro": {
+      "svg": "/media/icons/vyro.svg"
+    },
+    "baby": {
+      "width": 512,
+      "height": 512,
+      "blur": "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAABQAgCdASoQABAAAsBMJagCdAEVrvir/zEDyAAA/vpkc4zuxWnCH6luJUvdX84dv1BU4eMgZeVSD87PSJw1V5GmgR13UnXraiD00cK96YuKte7BLlVbT26pfUoBR0ZwOhHQiTgvIR0SHkg8BgAAAA==",
+      "variants": [
+        {
+          "width": 128,
+          "height": 128,
+          "avif": "/media/icons/baby-128.avif",
+          "webp": "/media/icons/baby-128.webp"
+        },
+        {
+          "width": 256,
+          "height": 256,
+          "avif": "/media/icons/baby-256.avif",
+          "webp": "/media/icons/baby-256.webp"
+        }
+      ]
+    }
+  }
+}
