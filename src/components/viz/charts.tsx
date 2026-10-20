@@ -24,6 +24,13 @@ const at = (x: number, y: number) => ({
 });
 const glide =
   "transition-[transform,opacity] duration-(--duration-base) ease-out motion-reduce:transition-none";
+/**
+ * A unit line (0,0)–(1,0) laid from one point to another by transform
+ * alone, so both of its ends glide with the label and the markers.
+ */
+const leader = (x1: number, y1: number, x2: number, y2: number) => ({
+  transform: `translate(${x1}px, ${y1}px) rotate(${Math.atan2(y2 - y1, x2 - x1)}rad) scaleX(${Math.hypot(x2 - x1, y2 - y1)})`,
+});
 
 function Axes({
   x,
@@ -377,11 +384,14 @@ export function Reliability({
           {placed.map(({ end, y }) => (
             <g key={end.text}>
               <line
-                x1={sx(levels.at(-1)!) + 5}
-                y1={sy(end.value)}
-                x2={sx(1) + 3}
-                y2={y}
-                className="stroke-border-strong"
+                x2={1}
+                style={leader(
+                  sx(levels.at(-1)!) + 5,
+                  sy(end.value),
+                  sx(1) + 3,
+                  y,
+                )}
+                className={cx("stroke-border-strong", glide)}
               />
               <g style={at(sx(1) + 7, y)} className={glide}>
                 <text y={3.5} className="fill-fg">
