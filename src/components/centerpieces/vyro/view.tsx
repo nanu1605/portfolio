@@ -37,7 +37,10 @@ export type ViewProps = {
   ref?: Ref<HTMLDivElement>;
 };
 
-const fmt = (v: number) => Math.round(v).toLocaleString("en-US");
+// One formatter, made once: toLocaleString builds a new one on every call,
+// and the live panel formats six numbers a frame.
+const whole = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
+const fmt = (v: number) => whole.format(Math.round(v));
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 const mono = "font-mono text-mono-label text-fg-subtle";
 const label = `${mono} uppercase`;
