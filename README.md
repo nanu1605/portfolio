@@ -12,3 +12,5 @@ pnpm dev
 Checks: `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm check:tokens`, `pnpm check:content`, `pnpm build`, `pnpm test:e2e`.
 
 Content lives in `content/` and is validated with Zod; `pnpm check:content` runs the cross-checks and prints the `{{PLACEHOLDER}}` report. After changing the photo, screens or videos in `assets/source/`, run `pnpm images` and commit `public/media/` and `content/generated/media.json`.
+
+Every component and motion primitive renders at `/styleguide` (run `pnpm dev` and open it). It is built everywhere so the e2e tests can use it, and returns 404 in Vercel production.

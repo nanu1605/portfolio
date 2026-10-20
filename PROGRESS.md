@@ -44,17 +44,24 @@ Done when:
 
 ## Phase 2 — Design system and motion
 
-- [ ] Components (§5.7) and motion primitives: `Reveal`, `TextReveal`, `CountUp`, `Magnetic`, `Spotlight`, `SignalLine`, `usePauseWhenHidden`, `useReducedMotionSafe`.
-- [ ] Lenis provider (fine pointers only, lazy).
-- [ ] `/styleguide`, excluded from production builds.
-- [ ] ↔ Input detection: pointer-effects chunk on `(any-hover: hover) and (any-pointer: fine)` with a per-event `pointerType` check; Lenis on `(pointer: fine) and (hover: hover)` only.
-- [ ] ↔ Touch versions (§3 of the doc): delayed touch bloom for Spotlight, press scale + halo for Magnetic, shared token-driven `:active` press style on every interactive element, `touch-action: manipulation` on controls.
-- [ ] ↔ CSS-first primitives: inline pre-hydration reveal observer (instant reveal above the viewport), server-split `TextReveal` with `aria-hidden` words, `CountUp` through the metric formatter, `m` + `LazyMotion` only where needed.
-- [ ] ↔ Global: `viewport-fit=cover` and safe-area gutters, `data-scroll-behavior="smooth"` + `scroll-padding-top`, `theme-color` meta follows the theme, `bg` on `html`, dialog/popover exit helper, `@media print` final states, `prefers-contrast` / `forced-colors` / `prefers-reduced-transparency`.
-- [ ] ↔ `/styleguide` gated by `notFound()` when `VERCEL_ENV === "production"` so CI can test it.
-- [ ] ↔ Tests: reduced-motion final states, pause off-screen and in hidden tabs, pointer effects present on desktop and absent on touch, touch versions run, no stuck hover, tap-target audit, every tappable element changes on press.
+- [x] Components (§5.7) and motion primitives: `Reveal`, `TextReveal`, `CountUp`, `Magnetic`, `Spotlight`, `SignalLine`, `usePauseWhenHidden`, `useReducedMotionSafe`.
+- [x] Lenis provider (fine pointers only, lazy).
+- [x] `/styleguide`, excluded from production builds.
+- [x] ↔ Input detection: pointer-effects chunk on `(any-hover: hover) and (any-pointer: fine)` with a per-event `pointerType` check; Lenis on `(pointer: fine) and (hover: hover)` only.
+- [x] ↔ Touch versions (§3 of the doc): delayed touch bloom for Spotlight, press scale + halo for Magnetic, shared token-driven `:active` press style on every interactive element, `touch-action: manipulation` on controls.
+- [x] ↔ CSS-first primitives: inline pre-hydration reveal observer (instant reveal above the viewport), server-split `TextReveal` with `aria-hidden` words, `CountUp` through the metric formatter, `m` + `LazyMotion` only where needed.
+- [x] ↔ Global: `viewport-fit=cover` and safe-area gutters, `data-scroll-behavior="smooth"` + `scroll-padding-top`, `theme-color` meta follows the theme, `bg` on `html`, dialog/popover exit helper, `@media print` final states, `prefers-contrast` / `forced-colors` / `prefers-reduced-transparency`.
+- [x] ↔ `/styleguide` gated by `notFound()` when `VERCEL_ENV === "production"` so CI can test it.
+- [x] ↔ Tests: reduced-motion final states, pause off-screen and in hidden tabs, pointer effects present on desktop and absent on touch, touch versions run, no stuck hover, tap-target audit, every tappable element changes on press.
 
-Done when: every component renders in dark and light at 375, 768 and 1440 px without overflow; keyboard and focus work and axe passes; reduced motion shows final states; no colour literals.
+Done when:
+
+- [x] every component renders in dark and light at 375, 768 and 1440 px without overflow (`/styleguide` is in the 320–1920 px sweep and runs on every device project, with axe in both themes)
+- [x] keyboard use and focus work, and axe passes
+- [x] reduced motion shows final states
+- [x] no colour literals (`check:tokens`)
+
+From §5.7, Header, MobileMenu and Footer (Phase 3), ReadingProgress and TOC (Phase 4) and CommandPalette (Phase 7) are built in the phases that specify them.
 
 ## Phase 3 — Global layout and Home
 

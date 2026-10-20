@@ -142,3 +142,92 @@ Tanishq asked for the best UI/UX, with animation, on phones, tablets and PCs bef
 
 - Home's open-source section links to `/open-source` as "Open source →", following A.2's "All work →"; A.2 gives no label.
 - `server-only` is resolved by Next in app builds and aliased to an empty module in Vitest.
+
+## Phase 2 — Design system and motion — 20 Oct 2026
+
+**CSS first, no Motion yet.** Nothing in Phase 2 needs a spring, drag or a sequence. Reveals, word masks, the signal line, presses, the spotlight and the magnetic pull are CSS transitions and keyframes; small scripts only set attributes and custom properties. `motion` isn't installed until the first component that needs it (Phase 4 or 5), so Home's JS budget starts empty. `lenis` and `lucide-react` were added (both pre-approved).
+
+**Reveals before hydration.**
+
+- An inline script in `<head>` (`src/lib/reveal-script.ts`, under 1 KB) adds `html.js` and hands every `[data-reveal]` element to one IntersectionObserver.
+- A MutationObserver finds those elements, so the script covers the parsed page and client navigations alike.
+- It writes data attributes, never inline styles, so hydration sees no mismatch.
+- Elements in one batch get `data-reveal-i` 0–5 for the 75 ms stagger. Elements first seen above the viewport reveal with no transition.
+- Without the script, nothing is hidden.
+
+**Headline words.**
+
+- `Intl.Segmenter` finds the words, and punctuation joins its word: "machine." and "AI/ML" can't break across lines, and Devanagari stays whole. Unit tests cover this.
+- The sentence is in `sr-only` text, and the word spans are `aria-hidden`.
+- The on-load variant (for the hero) starts at opacity 0.01 and 40% down inside its mask, so the text is painted on the first frame.
+
+**Count-up.**
+
+- Only a value with one number counts, or one written "A → B": B counts up from A, so `mlops.f1` keeps 0.27.
+- Values like "p50 1.2 s · p95 4.0 s" don't count.
+- If any part of the number is visible when the page hydrates, it keeps the final value. Otherwise it's set to the start value while off-screen, and counts once it's 50% in view.
+- A unit test checks that the last frame equals each metric's exact value.
+
+**Signal line.** A seeded path (noise fading out, a sine fading in), identical on every render. The hero variant draws in 1.4 s and drifts once over 3.5 s: 4.9 s in all (WCAG 2.2.2). Both durations are multiples of the reveal token. Everywhere else, the line is static.
+
+**Pointer and touch effects.**
+
+- One delegated `pointermove` listener for the page, instead of one per grid. It finds `[data-spotlight]` and `[data-magnetic]` with `closest()` and writes custom properties once per frame.
+  - It loads on `(any-hover: hover) and (any-pointer: fine) and (prefers-reduced-motion: no-preference)`, re-checked live.
+  - It ignores touch events.
+- The touch bloom (`src/lib/touch-effects.ts`) ships in the main bundle: about 60 lines, no library. It waits 100 ms after `pointerdown` and gives up on `pointercancel`, so a scroll that starts on a card doesn't flash.
+- Cards' delayed press is CSS (`active:delay-100`), not JS: if a scroll removes `:active` within 100 ms, the transition never starts.
+- The shared press style (`:active` → 0.7 opacity) needs normal specificity. Tailwind's preflight sets `button { opacity: 1 }`, which beat the first, zero-specificity version on every button.
+
+**Images: `<picture>`, not `next/image`.** §2 says `next/image`, but `scripts/images.ts` already makes the AVIF and WebP variants and they're committed. `next/image` would re-encode them through its optimiser, and it can't emit an AVIF source with a WebP fallback from existing files. `Picture` renders both `srcset`s with the blur placeholder behind them. Its `priority` option makes the LCP image load eagerly with `fetchpriority="high"`.
+
+**New tokens.** None of these is contrast-checked, because all are decorative.
+
+- `grid-line` (fg at 4%): the hairline grid and light-theme shadows.
+- `glass` (bg-raised at 80%): blurred bars.
+- `scrim` (dark: bg at 80%; light: fg at 40%): the dialog backdrop.
+
+Under `prefers-reduced-transparency`, the glass and the backdrop are opaque. Under `prefers-contrast: more` or forced colours, the grain, grid, spotlight and glows are dropped.
+
+**Grain.** A 64 px seeded noise PNG (7 KB) made by `pnpm images` and tiled on `body`. Grey noise at 3% alpha reads on both themes.
+
+**Components.** Built:
+
+- Button (primary, secondary, ghost, magnetic), TextLink, Tag and Chip
+- StatusBadge, StatusPill, Readout, MetricTable and DataTable
+- Card, BentoTile, SectionHeader, Timeline, Picture and Figure
+- Tabs, Tooltip and Dialog
+- Disclosure, Callout, ThemeToggle and CopyButton
+
+The page chrome is built from these primitives in the phase that specifies its behaviour: Header, MobileMenu and Footer in Phase 3; ReadingProgress and TOC in Phase 4; CommandPalette in Phase 7 (its close label is still pending).
+
+- **ThemeToggle** is now a 44 px icon button. CSS picks the sun or moon from `data-theme`, so the icon is right before hydration. Until then, the label is "Toggle theme" (A.13's palette action).
+- **theme-color:** the `viewport` export sets the dark `bg`. After hydration, the meta follows the chosen theme, using token values passed from the server.
+- **Tooltip** is a native `popover="auto"`. Hover (mouse only) or focus shows it; a tap pins it; a tap elsewhere or Esc dismisses it. It sits above the trigger, or below when there's no room.
+- **Dialog** is a native `<dialog>`. Esc and a click on the backdrop run the 150 ms fade-out before `close()`. Only dialogs get the scrim; popovers leave the page as it is.
+- **StatusBadge** shows its tone on the dot and keeps the text `fg-muted`, so it passes 4.5:1 everywhere. It also covers two badges the content uses beyond §5.7's list: "Launching soon" and "Client work".
+- **TextLink** grows its hit area to about 44 px on coarse pointers with an absolute `::before`, so the layout doesn't move. MDX links keep a static underline.
+- **"Source"** is the visible label on metric source links, with the metric's label as `sr-only` text. Appendix A gives no wording for it.
+
+**Tests.**
+
+- `/styleguide` is checked on the device matrix:
+  - axe in both themes;
+  - visible focus on every Tab stop;
+  - Tabs, Tooltip and Dialog by keyboard;
+  - reduced motion;
+  - pausing off-screen and in hidden tabs;
+  - pointer effects on desktop only;
+  - the touch bloom;
+  - press feedback on every tappable element, and no stuck hover;
+  - a report of tap targets under 44 px.
+- Under reduced motion, the test expects:
+  - no running animations;
+  - no `requestAnimationFrame` calls during 1 s of idle;
+  - every reveal and word at its final state;
+  - the signal line drawn;
+  - final count-up values.
+- The overflow sweep now includes `/styleguide`.
+- The tests wait for `load` plus `document.fonts.ready` instead of `networkidle`. Next keeps prefetches open for routes that don't exist yet (`/work/*`, `/contact`), so the page never goes idle.
+- WebKit's Tab key skips links by default, so the focus test expects fewer stops there.
+- Firefox isn't installed on this machine; CI runs it on main.
