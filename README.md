@@ -1,0 +1,12 @@
+# tanishq.website
+
+Portfolio of Tanishq Jain, built from [`PORTFOLIO_SPEC.md`](PORTFOLIO_SPEC.md). Progress is tracked in [`PROGRESS.md`](PROGRESS.md) and choices in [`docs/decisions.md`](docs/decisions.md).
+
+Requires Node 24 and pnpm.
+
+```bash
+pnpm install
+pnpm dev
+```
+
+Checks: `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm check:tokens`, `pnpm check:content`, `pnpm build`, `pnpm test:e2e`.
