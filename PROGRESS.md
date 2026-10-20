@@ -16,7 +16,7 @@ Done when:
 
 - [x] `/` renders a placeholder, and the theme toggle works without a flash
 - [x] a hex colour in a component fails `check:tokens`
-- [ ] CI is green
+- [x] CI is green (run 39376359564, 20 Oct 2026)
 - [ ] the Vercel preview URL works (Tanishq connects the repo to Vercel)
 
 ## Phase 1 — Content layer
