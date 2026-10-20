@@ -430,7 +430,9 @@ const raw = [
     accent: "menumesh",
     aiNative: true,
     caseStudy: true,
-    // A.4.4 has no "How this was built" text yet; asked in the Phase 1 report.
+    // A.4.4 gives no text; drafted from §1 and the A.4.4 role (decisions.md).
+    howBuilt:
+      "I designed the product — the guest, waiter, kitchen and counter flows — and made the architecture and product decisions. Claude Code wrote much of the implementation.",
     cover: { kind: "schematic" },
   },
   {
