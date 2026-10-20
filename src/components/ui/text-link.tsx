@@ -17,8 +17,8 @@ export function TextLink({
     "relative inline-block text-accent transition-ui hover:text-accent-strong",
     "after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-(--duration-base) after:ease-out",
     "hover:after:scale-x-100 focus-visible:after:scale-x-100 active:after:scale-x-100 motion-reduce:after:transition-none",
-    // A taller hit area for fingers, without moving the layout.
-    "pointer-coarse:before:absolute pointer-coarse:before:-inset-x-2 pointer-coarse:before:-inset-y-3 pointer-coarse:before:content-['']",
+    // A hit area at least 44 px tall for fingers, without moving the layout.
+    "pointer-coarse:before:absolute pointer-coarse:before:-inset-x-2 pointer-coarse:before:inset-y-[min(0px,calc((100%_-_44px)/2))] pointer-coarse:before:content-['']",
     className,
   );
   return href.startsWith("/") ? (

@@ -30,6 +30,8 @@ export function Chip({
       className={cx(
         "inline-flex min-h-11 items-center rounded-full border border-border-strong px-4 text-small text-fg-muted transition-ui pointer-fine:min-h-9",
         "hover:bg-surface-2 hover:text-fg active:bg-surface-2",
+        // Linked highlighting (the stack, §8.2).
+        "data-highlight:border-accent data-highlight:text-fg",
         "aria-pressed:border-accent aria-pressed:bg-accent aria-pressed:text-on-accent",
         className,
       )}

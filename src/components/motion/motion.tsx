@@ -29,6 +29,7 @@ type TextRevealProps = {
   /** "view": when it scrolls into view. "load": from first paint (the hero). */
   trigger?: "view" | "load";
   lang?: string;
+  id?: string;
   className?: string;
 };
 
@@ -40,11 +41,13 @@ export function TextReveal({
   as: Tag = "span",
   trigger = "view",
   lang,
+  id,
   className,
 }: TextRevealProps) {
   let i = 0;
   return (
     <Tag
+      id={id}
       data-reveal={trigger === "load" ? "words-load" : "words"}
       lang={lang}
       className={className}

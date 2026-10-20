@@ -15,11 +15,15 @@ export function CopyButton({
   label,
   done,
   variant = "secondary",
+  magnetic = false,
+  className,
 }: {
   text: string;
   label: string;
   done: string;
   variant?: "primary" | "secondary" | "ghost";
+  magnetic?: boolean;
+  className?: string;
 }) {
   const [copied, setCopied] = useState(false);
 
@@ -40,7 +44,12 @@ export function CopyButton({
   };
 
   return (
-    <Button variant={variant} onClick={copy}>
+    <Button
+      variant={variant}
+      magnetic={magnetic}
+      onClick={copy}
+      className={className}
+    >
       <span className="grid">
         <span
           className={`flex items-center gap-2 [grid-area:1/1] ${copied ? "invisible" : ""}`}

@@ -10,5 +10,7 @@ export const mono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
   display: "swap",
+  // Only the display face is preloaded (§13); mono can swap in.
+  preload: false,
   variable: "--font-jetbrains",
 });

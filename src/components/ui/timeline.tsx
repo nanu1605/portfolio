@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 import { cx } from "@/lib/cx";
 
 export type TimelineItem = {
+  /** Lets the stack highlight this entry (`bosch`, `gsoc`, A.11). */
+  id?: string;
   period: string;
   title: string;
   meta?: string;
@@ -28,11 +30,12 @@ export function Timeline({
       {items.map((item) => (
         <li
           key={`${item.period} ${item.title}`}
-          className="relative grid gap-1 pl-8 md:grid-cols-[140px_1fr] md:gap-6 md:pl-0"
+          data-entry={item.id}
+          className="group/entry relative grid gap-1 pl-8 md:grid-cols-[140px_1fr] md:gap-6 md:pl-0"
         >
           <span
             aria-hidden="true"
-            className="absolute top-2 left-0 size-[7px] rounded-full border border-accent bg-bg md:left-[calc(140px_+_1.5rem)]"
+            className="absolute top-2 left-0 size-[7px] rounded-full border border-accent bg-bg transition-ui group-data-highlight/entry:scale-150 group-data-highlight/entry:bg-accent md:left-[calc(140px_+_1.5rem)]"
           />
           <p className="font-mono text-mono-label text-fg-subtle md:pt-1">
             {item.period}

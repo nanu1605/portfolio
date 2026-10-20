@@ -3,6 +3,8 @@
 @import "lenis/dist/lenis.css";
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+/* Phone landscape gets its own hero and menu (cross-device §1). */
+@custom-variant phone-landscape (@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023.98px));
 
 /* Page gutters that also clear notches and rounded corners (viewport-fit=cover). */
 @utility px-page {
@@ -58,12 +60,23 @@
       right / 0.75rem 100% no-repeat scroll;
 }
 
+/* Below-the-fold sections: skip their layout and paint until they near the
+   viewport, so the first frame (and the LCP) only lays out the hero. */
+@utility defer-render {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 60rem;
+}
+
 /* Colour, fill and press transitions shared by every control. */
 @utility transition-ui {
   transition-property:
     color, background-color, border-color, opacity, transform;
   transition-duration: var(--duration-fast);
   transition-timing-function: var(--ease-out);
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-duration: 0s;
+  }
 }
 
 @layer base {
@@ -342,6 +355,162 @@ dialog[open] {
   }
 }
 
+/* ── Header and mobile menu (§6.2, cross-device §4) ─────────────────────
+   The header script sets [data-hidden] on scroll down; it returns on the
+   way up. The menu's links rise in with the stagger, and its close button
+   turns the menu button's two bars into an X. */
+
+[data-header] {
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+[data-header][data-hidden] {
+  transform: translateY(-100%);
+}
+
+.menu-item {
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
+  transition-delay: calc(var(--i, 0) * var(--stagger));
+}
+
+.menu-bar {
+  position: absolute;
+  left: calc(50% - 9px);
+  top: calc(50% - 0.75px);
+  width: 18px;
+  height: 1.5px;
+  border-radius: 1px;
+  background-color: currentColor;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.menu-bar:first-child {
+  transform: translateY(-4px);
+}
+.menu-bar:last-child {
+  transform: translateY(4px);
+}
+
+dialog .menu-bar:first-child {
+  transform: rotate(45deg);
+}
+dialog .menu-bar:last-child {
+  transform: rotate(-45deg);
+}
+
+@starting-style {
+  dialog[open] .menu-item {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  dialog[open] .menu-bar:first-child {
+    transform: translateY(-4px);
+  }
+  dialog[open] .menu-bar:last-child {
+    transform: translateY(4px);
+  }
+}
+
+/* ── Hero (§6.3, cross-device §4) ───────────────────────────────────────
+   CSS from first paint: the photo rises out of black from opacity 0.01 (it
+   stays an LCP candidate). The glow drifts once and the pointer or a tap
+   moves it; the drift, like the signal line's, ends within 5 s. */
+
+.hero-photo {
+  animation: photo-rise var(--duration-slow) var(--ease-out) both;
+}
+
+@keyframes photo-rise {
+  from {
+    opacity: 0.01;
+    transform: scale(1.03);
+  }
+}
+
+/* Soft edges, so the photo's black backdrop melts into the stage. */
+.hero-mask {
+  mask-image:
+    linear-gradient(
+      to bottom,
+      transparent,
+      var(--fg) 10%,
+      var(--fg) 72%,
+      transparent
+    ),
+    linear-gradient(
+      to right,
+      transparent,
+      var(--fg) 12%,
+      var(--fg) 88%,
+      transparent
+    );
+  mask-composite: intersect;
+}
+
+/* Stacked layouts: the photo also glides up a little as it scrolls in. */
+@supports (animation-timeline: view()) {
+  @media (max-width: 1023.98px) and (prefers-reduced-motion: no-preference) {
+    .hero-glide {
+      animation: photo-glide linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 40%;
+    }
+  }
+}
+
+@keyframes photo-glide {
+  from {
+    transform: translateY(1.5rem);
+  }
+}
+
+[data-hero-glow] {
+  position: absolute;
+  top: 40%;
+  left: 65%;
+  z-index: -1;
+  width: min(48rem, 140vw);
+  aspect-ratio: 1;
+  transform: translate3d(
+    calc(-50% + var(--glow-dx, 0px)),
+    calc(-50% + var(--glow-dy, 0px)),
+    0
+  );
+  transition: transform var(--duration-slow) var(--ease-out);
+  pointer-events: none;
+}
+
+.glow-drift {
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  background: radial-gradient(closest-side, var(--accent-soft), transparent);
+  animation: glow-drift calc(7 * var(--duration-reveal)) var(--ease-in-out) both;
+}
+
+@keyframes glow-drift {
+  33% {
+    transform: translate3d(-6%, 4%, 0);
+  }
+  66% {
+    transform: translate3d(4%, -3%, 0);
+  }
+}
+
+/* Bento tilt, up to 4° toward a fine pointer; it eases back on leave. */
+[data-tilt="on"] {
+  transform: perspective(60rem) rotateX(var(--tilt-x, 0deg))
+    rotateY(var(--tilt-y, 0deg));
+}
+
+@media (prefers-contrast: more), (forced-colors: active) {
+  [data-hero-glow] {
+    display: none;
+  }
+}
+
 /* ── Final states: reduced motion and print ─────────────────────────────
    CSS sets them before any script runs (§3 Motion). */
 
@@ -369,6 +538,19 @@ dialog[open] {
   [data-spot-layer] {
     display: none;
   }
+
+  .hero-photo,
+  .glow-drift,
+  .menu-item,
+  .menu-bar,
+  [data-hero-glow] {
+    transition: none;
+    animation: none;
+  }
+
+  [data-header][data-hidden] {
+    transform: none;
+  }
 }
 
 @media print {
@@ -382,6 +564,10 @@ dialog[open] {
 
   .signal-draw {
     stroke-dashoffset: 0;
+    animation: none;
+  }
+
+  .hero-photo {
     animation: none;
   }
 

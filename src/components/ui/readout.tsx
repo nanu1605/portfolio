@@ -1,6 +1,9 @@
+import { Fragment } from "react";
 import { metrics, type MetricId } from "@content/metrics";
+import { METRIC_REF, type Metric } from "@content/schema";
 import { CountUp } from "@/components/motion/count-up";
 import { cx } from "@/lib/cx";
+import { resolve } from "@/lib/fill";
 import { DataTable } from "./data-table";
 import { TextLink } from "./text-link";
 
@@ -27,6 +30,39 @@ export function Source({
       Source<span className="sr-only">: {metric.label}</span>
     </TextLink>
   );
+}
+
+/**
+ * A readout template such as "{baby.tools} tools · {baby.tests} tests",
+ * with each part that holds one metric linked to that metric's source, so
+ * every number links to where it was measured (A.2). Pass live values where
+ * they apply.
+ */
+export function LinkedReadout({
+  template,
+  values = metrics,
+}: {
+  template: string;
+  values?: Record<MetricId, Metric>;
+}) {
+  return template.split(" · ").map((part, i) => {
+    const ids = [...part.matchAll(METRIC_REF)].map((m) => m[1] as MetricId);
+    const text = resolve(part, values) ?? part;
+    const metric = ids.length === 1 ? values[ids[0]!] : undefined;
+    return (
+      <Fragment key={part}>
+        {i > 0 && " · "}
+        {metric?.linkSource ? (
+          <TextLink href={metric.source}>
+            {text}
+            <span className="sr-only"> (Source)</span>
+          </TextLink>
+        ) : (
+          text
+        )}
+      </Fragment>
+    );
+  });
 }
 
 /** Mono number + label + source link (§5.7). The number is never typed in. */

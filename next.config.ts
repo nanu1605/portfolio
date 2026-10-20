@@ -2,6 +2,8 @@ import createMDX from "@next/mdx";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // "Last updated" in the footer (A.13) is the build date.
+  env: { BUILD_DATE: new Date().toISOString() },
   turbopack: {
     rules: {
       "*.css": {

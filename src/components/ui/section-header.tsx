@@ -1,6 +1,9 @@
 import { cx } from "@/lib/cx";
 
-/** `01 — Selected work`, then the title and intro (§5.5, §5.7). */
+/**
+ * `01 — Selected work`, then the title and intro (§5.5, §5.7), over a faint
+ * patch of the grid texture that fades out at its edges.
+ */
 export function SectionHeader({
   index,
   label,
@@ -19,7 +22,13 @@ export function SectionHeader({
 }) {
   const eyebrow = `${index} — ${label}`;
   return (
-    <header className={cx("flex max-w-text flex-col gap-4", className)}>
+    <header
+      className={cx(
+        "relative isolate flex max-w-text flex-col gap-4",
+        "before:absolute before:inset-x-0 before:-inset-y-10 before:-z-10 before:bg-grid before:[mask-image:radial-gradient(closest-side,var(--fg),transparent)]",
+        className,
+      )}
+    >
       {title ? (
         <>
           <p className="font-mono text-mono-label uppercase text-fg-subtle">

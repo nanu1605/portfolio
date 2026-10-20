@@ -69,7 +69,10 @@ export function Figure({
       <figcaption className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-small text-fg-muted">
         <span>{caption}</span>
         {label && (
-          <span className="font-mono text-mono-label uppercase text-fg-subtle">
+          <span
+            data-honesty=""
+            className="font-mono text-mono-label uppercase text-fg-subtle"
+          >
             {label}
           </span>
         )}

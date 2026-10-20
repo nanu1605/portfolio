@@ -1,16 +1,21 @@
-// Fine-pointer effects (§6.2): the card spotlight follows the pointer and
-// magnetic CTAs pull up to 6 px. Loaded on demand by <Enhancements> only
+// Fine-pointer effects (§6.2, §6.3): the card spotlight follows the
+// pointer, bento tiles tilt up to 4°, magnetic CTAs pull up to 6 px and the
+// hero glow follows with a lag (its transform transition). Loaded on demand by <Enhancements> only
 // while `(any-hover: hover) and (any-pointer: fine)` matches with motion
 // allowed, so phones never download it. One delegated listener for the
 // page; each event is also checked, so a finger on a hybrid device never
 // triggers it (cross-device §2).
 
+import { moveGlow } from "./touch-effects";
+
 const PULL = 6;
+const TILT = 4;
 
 export function start() {
   const root = document.documentElement;
   let spot: HTMLElement | null = null;
   let magnet: HTMLElement | null = null;
+  let tilt: HTMLElement | null = null;
   let last: PointerEvent | null = null;
   let frame = 0;
 
@@ -32,6 +37,13 @@ export function start() {
     magnet = el;
   };
 
+  const setTilt = (el: HTMLElement | null) => {
+    if (el === tilt) return;
+    // Back to flat; the tile's transform transition eases it.
+    tilt?.setAttribute("data-tilt", "");
+    tilt = el;
+  };
+
   const apply = () => {
     frame = 0;
     const event = last;
@@ -45,6 +57,19 @@ export function start() {
       spot.style.setProperty("--spot-s", "1");
       spot.setAttribute("data-spot", "on");
     }
+
+    setTilt(event.target.closest<HTMLElement>("[data-tilt]"));
+    if (tilt) {
+      const box = tilt.getBoundingClientRect();
+      const x = (event.clientX - box.left) / box.width - 0.5;
+      const y = (event.clientY - box.top) / box.height - 0.5;
+      tilt.style.setProperty("--tilt-x", `${(-y * 2 * TILT).toFixed(2)}deg`);
+      tilt.style.setProperty("--tilt-y", `${(x * 2 * TILT).toFixed(2)}deg`);
+      tilt.setAttribute("data-tilt", "on");
+    }
+
+    const hero = event.target.closest<HTMLElement>("[data-hero]");
+    if (hero) moveGlow(hero, event.clientX, event.clientY);
 
     setMagnet(event.target.closest<HTMLElement>("[data-magnetic]"));
     const target = magnet && inner(magnet);
@@ -71,6 +96,7 @@ export function start() {
   const reset = () => {
     last = null;
     setSpot(null);
+    setTilt(null);
     setMagnet(null);
   };
 

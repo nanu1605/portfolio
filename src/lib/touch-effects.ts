@@ -1,11 +1,23 @@
-// Touch version of the card spotlight (cross-device §3): a bloom at the
-// touch point. It starts 100 ms after pointerdown, so a scroll that begins
-// on a card doesn't flash (the browser sends pointercancel when it takes
-// over to pan). A quick tap still blooms briefly. Small enough to ship in
-// the main bundle; no Motion.
+// Touch versions of the pointer effects (cross-device §3): a bloom at the
+// touch point on cards, and a tap moves the hero glow there. The bloom
+// starts 100 ms after pointerdown, so a scroll that begins on a card
+// doesn't flash (the browser sends pointercancel when it takes over to
+// pan); the glow moves on pointerup, so a scroll never moves it. A quick
+// tap still blooms briefly. Small enough to ship in the main bundle; no
+// Motion.
 
 const DELAY_MS = 100;
 const HOLD_MS = 150;
+
+/** Moves the hero glow's centre to a point; its transform transition eases it there. */
+export function moveGlow(hero: HTMLElement, x: number, y: number) {
+  const glow = hero.querySelector<HTMLElement>("[data-hero-glow]");
+  if (!glow) return;
+  const box = hero.getBoundingClientRect();
+  // The glow rests at 65% / 40% of the hero (globals.css).
+  glow.style.setProperty("--glow-dx", `${x - box.left - box.width * 0.65}px`);
+  glow.style.setProperty("--glow-dy", `${y - box.top - box.height * 0.4}px`);
+}
 
 export function start() {
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
@@ -40,7 +52,16 @@ export function start() {
     }, DELAY_MS);
   };
 
-  const up = () => {
+  const up = (event: PointerEvent) => {
+    // A scroll ends in pointercancel instead, so this is a tap or a press.
+    if (
+      event.pointerType === "touch" &&
+      !reduced.matches &&
+      event.target instanceof Element
+    ) {
+      const hero = event.target.closest<HTMLElement>("[data-hero]");
+      if (hero) moveGlow(hero, event.clientX, event.clientY);
+    }
     const el = card;
     if (!el) return;
     card = null;
