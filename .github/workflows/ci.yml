@@ -14,7 +14,8 @@ concurrency:
 jobs:
   checks:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # The full matrix takes about 21 min of e2e since Phase 5.
+    timeout-minutes: 45
     env:
       # PRs run the default device projects; main and nightly run the full
       # matrix from docs/cross-device.md §8.
