@@ -27,7 +27,7 @@ export type JainavData = {
 const pad = (n: number) => String(n).padStart(2, "0");
 
 const box =
-  "inline-flex items-center gap-2 rounded-sm border border-border-strong bg-surface px-2.5 py-1.5 font-mono text-mono-label text-fg";
+  "inline-flex items-center gap-2 rounded-sm border bg-surface px-2.5 py-1.5 font-mono text-mono-label";
 
 function Box({
   icon,
@@ -39,7 +39,12 @@ function Box({
   children: ReactNode;
 }) {
   return (
-    <span className={cx(box, accent && "border-accent text-accent")}>
+    <span
+      className={cx(
+        box,
+        accent ? "border-accent text-accent" : "border-border-strong text-fg",
+      )}
+    >
       {icon}
       {children}
     </span>
@@ -276,7 +281,11 @@ export function View({
               </p>
               <p className="text-body text-fg">{step.text}</p>
             </div>
-            <div className="flex min-h-56 items-center justify-center rounded-md border border-border bg-bg bg-grid p-4 @sm:p-5">
+            {/* The sentence above is the schematic's text alternative. */}
+            <div
+              aria-hidden="true"
+              className="flex min-h-56 items-center justify-center rounded-md border border-border bg-bg bg-grid p-4 @sm:p-5"
+            >
               <Schematic d={step.diagram} token={token} />
             </div>
           </div>
