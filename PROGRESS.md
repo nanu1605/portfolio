@@ -84,14 +84,20 @@ Done when: Home matches the spec at three widths in both themes; local Lighthous
 
 ## Phase 4 — Work index and case studies
 
-- [ ] `/work`: filters synced to `?filter=`, layout animation, archive list.
-- [ ] Case-study template (§8.4) and the 9 MDX case studies (A.4): figures, "How this was built" notes, previous/next, reading progress, sticky TOC.
-- [ ] Redirects (§4.4).
-- [ ] `scripts/capture/menumesh.ts` and `scripts/capture/jainav.ts` (§15.2); captured screens in the MenuMesh and Jainav platform case studies.
-- [ ] ↔ Wrapping filter chips; View Transition grid inside `startTransition` with `history.replaceState`; reading-progress bar at every width; no TOC below 1024 px; meta row 2×2 on phones; data tables in focusable scroll regions; videos with Pause/Play, one at a time, poster + play button when autoplay is refused.
-- [ ] ↔ Tests: filter by tap; progress is transform-only; route change on touch lands at the top; back navigation leaves content above the viewport revealed.
+- [x] `/work`: filters synced to `?filter=` (applied before first paint), layout animation, archive list.
+- [x] Case-study template (§8.4) and the 9 MDX case studies (A.4): figures, "How this was built" notes, previous/next, reading progress, sticky TOC.
+- [x] Redirects (§4.4).
+- [~] `scripts/capture/menumesh.ts` written and run: 23 screens, a 15.5 s demo video and the logo, used in the MenuMesh case study. `scripts/capture/jainav.ts` not written: the permission check blocked a script that clones and runs the Jainav repo. The Jainav case study uses its platform diagrams (the §15.2 fallback) until Tanishq decides.
+- [x] ↔ Wrapping filter chips; View Transition grid with `flushSync` and `history.replaceState`; reading-progress bar at every width; no TOC below 1024 px; meta row 2×2 on phones; data tables in focusable scroll regions; videos with Pause/Play, one at a time, poster + play button when autoplay is refused.
+- [x] ↔ Tests: filter by tap; progress is transform-only; route change on touch lands at the top; back navigation leaves content above the viewport revealed.
+- [x] C.4: item 1 (VYRO download URL: v1.4.1 MSI listed), item 3 (VYRO repo: not linked, going private), item 4 (F1 Insights: the site loads but its data calls fail, so the archive links the repo only).
 
 Done when: all 9 pages render with correct metadata; every number traces to Appendix C; axe passes.
+
+- [x] All 9 pages: title `{title} — Tanishq Jain`, description `{oneLiner}`, canonical on tanishq.website (e2e on every device project).
+- [x] Every metric value matches C.1, and every number in a case study's body and TL;DR appears in its A.4 copy (`tests/unit/traceability.test.ts`).
+- [x] axe: /work and all 9 case studies in both themes, on every device project.
+- Lighthouse mobile, applied throttling, 3 runs each: /work 0.98–0.99, case studies 0.98–0.99; accessibility 1, best practices 0.96, SEO 1; LCP 1.6–1.9 s; CLS ≤ 0.005. CI now checks /, /work and /work/vyro.
 
 ## Phase 5 — Centerpieces and micro-demos
 

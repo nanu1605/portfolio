@@ -340,3 +340,150 @@ A flaky WebKit reduced-motion test (one idle frame) traced to the header's scrol
 - **CLS 0.21 on the next run,** from the hero photo this time. The cause sat one layer down: next/font's size-adjusted fallback faces name only `local(Arial)`. Without Arial, the hero text first rendered in an unadjusted, wider font, then rewrapped when Plus Jakarta Sans arrived, moving the photo below it. This would also have hit Android, which has Roboto but no Arial.
   - `adjustFontFallback` is now off. Our own fallback faces in `globals.css` keep next/font's overrides but also match Liberation Sans (metric-compatible with Arial), Helvetica and Roboto.
   - CI afterwards: CLS 0.001 on every run; mobile performance 0.98 / 0.98 / 0.90 (median 0.98, the 0.90 run had TBT 330 ms); LCP 1.8 s; desktop 1.0.
+
+## Answers after Phase 3 — 20 Oct 2026
+
+Tanishq said "Go", which approved Phase 4. The two wording questions weren't answered, so the defaults stand:
+- the four landmark labels ("Skip to content", "Menu", "Main", "Footer") stay, still pending approval;
+- "Every number links to where it was measured" stays.
+
+## Phase 4 — Work index and case studies — 20 Oct 2026
+
+**Work filter.**
+- One `data-filter` attribute on the index decides what shows; CSS in `globals.css` hides the rest.
+- A small inline script applies a shared `?filter=` link before first paint, so it never flashes the whole list. Without JS, everything shows.
+- A chip runs `document.startViewTransition` around a `flushSync` state change, then `history.replaceState`.
+  - This uses the native API rather than React's `<ViewTransition>`. The cards are server-rendered and a chip changes one attribute, so no card re-renders and the tap stays cheap (INP).
+  - Reduced motion, and browsers without View Transitions, switch instantly.
+- `?filter=` is checked against the list of filter ids rather than with Zod, which would add about 37 KB to the browser bundle. Anything unknown shows "All".
+- The selected chip fills in (Chip's `aria-pressed` style) instead of using a sliding pill. The chips wrap onto two rows on phones, where a pill can't slide.
+- A visually hidden status line announces "Showing {n} of {total}" after each change.
+
+**Work cards.**
+- **The tile.** Each card is a BentoTile with the tilt off (§6.2 tilts bento tiles only) and an `h2` title under the page's `h1`.
+- **What each card shows:**
+  - the cover;
+  - badges;
+  - the one-liner;
+  - the period;
+  - the first four stack items, then "+N";
+  - the readout, with its source links.
+- **No scroll reveal on /work.**
+  - The first row is above the fold, and a cover that starts hidden and is then revealed pushed the LCP to 3.2 s.
+  - The filter's glide is the page's motion.
+  - The first cover loads with high priority.
+- **Covers.** A project with a screen uses it (Baby, VYRO, MenuMesh). The others get a small static figure from Appendix B (the reservoir agents, the best-seed calibration curve, the two documented F1 levels) or step dots.
+
+**Case-study template.**
+- **Hero:**
+  - the title and A.4's one-liner;
+  - a meta `<dl>`, laid out 2 × 2 on phones;
+  - stack tags and link buttons. Links that wait on a launch flag or a pending placeholder (MyCounselHub) are hidden.
+- **Hero media.** This is a project field (`heroMedia`), checked by `check:content`.
+  - Baby and VYRO use their delivered videos, and MenuMesh uses the captured demo video.
+  - It runs full-bleed on phones and sits in the product's accent glow on wider screens.
+- **Previous and next** wrap around the nine case studies.
+- **"How this was built"** is a closed Disclosure, linked from the TOC.
+- **The centerpiece slot** holds the Phase 4 static figures; Phase 5 puts the interactive versions in front of them.
+- **TOC.** A local remark plugin (`src/lib/remark-headings.mjs`) gives each `##` heading an id and exports the list as `headings`.
+  - The plugin also names each MDX table's scroll region after its section.
+  - Turbopack passes remark plugins as a name or a path. A relative path didn't resolve, so `next.config.ts` passes an absolute one.
+  - `check:content` compiles with the same two plugins.
+- **Reading progress.** It uses a CSS scroll timeline where the browser has one; elsewhere (stable Firefox), a small rAF scroll listener sets the same `scaleX`. The cross-device doc names Motion's `useScroll` as the fallback; this does the same job without adding Motion.
+- **Metadata.**
+  - `metadataBase` is https://tanishq.website, and every page sets its canonical URL.
+  - Case studies use A.1's `{title}` and `{oneLiner}`.
+  - Share images and JSON-LD come in Phase 7.
+
+**Figures.** Every chart was simple enough to redraw as themed SVG from Appendix B, so no fallback PNGs are used. Each chart has a "View data" table.
+- **Reservoir RL:** two Pareto scatters. The rule curve is a star, and the sweep's balanced agent (seed 45) is ringed and named. The caption carries §10.5's seed footnote.
+- **Forecasting:** a reliability diagram whose DeepAR line is the point-wise mean of the five seeds, labelled "computed" (§10.6), plus ECE by horizon for the best seed.
+- **MLOps:** the loop as a flow, and the two documented F1 levels as bars, with no intermediate points (§10.7).
+- **Flows:**
+  - the Jainav order-to-licence steps and build timeline;
+  - the VDR stages, as schematic icons;
+  - the MyCounselHub automation.
+
+Captions written for these figures, for Tanishq to review:
+- "Eight PPO agents (dots) and the rule curve (star), over 100 shared evaluation episodes; lower is better on every axis."
+- "Observed against nominal coverage of the forecast intervals on the test set, at nine levels. Lines below the diagonal are overconfident: their intervals are too narrow."
+- "Calibration error (ECE) by forecast horizon, for the best seed (1337)."
+- "The loop runs with no human in the path; it returns to Serve after each reload."
+- "Realized F1 on unseen batches: the stale champion on drifted traffic, then the promoted challenger. Only the two documented levels are shown."
+- "From order to licence: what a VYRO licence purchase goes through."
+- "The six stages, as schematic icons; the research dataset's images can't be shown."
+- "What happens after a payment succeeds, with no manual steps."
+- "The browser demo, one step per screen."
+
+Screen captions are `{view} · {build} · {date}` from the manifest.
+
+Screens placed in the MDX:
+- **Baby:** turn in progress, the Hinglish chat, the activity feed and the inspector.
+- **VYRO:**
+  - sensors, health and game replay;
+  - the 3-D clip, which plays once and stops on its last frame;
+  - appearance settings;
+  - cooling.
+
+  The "GPU tuning" sidebar item isn't mentioned.
+- **Forecasting:** the horizon bars.
+- **MenuMesh:** the language section and the plan cards. The centerpiece slot shows four demo stills: scan, order, cook and serve, bill.
+
+**Videos.**
+- The source is attached on first play, from `data-webm` or `data-mp4`. WebM is used when the browser can play VP9.
+  - Playwright's WebKit never fired `load` on pages whose `<video>` had sources.
+  - Attaching on play also makes `preload="none"` strict everywhere.
+- One video plays at a time, starting once it's half in view. Pressing Pause sticks.
+- Reduced motion, or a refused autoplay, keeps the poster with the Play button.
+
+**Reveal fix.**
+- The bug: a jump that skipped past content (the End key, or a scroll position restored after first paint) crossed no observer threshold, so that content stayed hidden. Android's back navigation showed it.
+- The fix: the shared observer's root now reaches 100,000 px above the viewport.
+- Content above the viewport is still marked `instant`.
+
+**New UI strings** for Tanishq to approve: "Filter", "Showing {n} of {total}", "On this page" and "Back to Work". "Archive", "TL;DR", the meta labels and "How this was built" are the spec's own words.
+
+**Open:** §8.4 says "Limitations and what's next" is always present. A.4 gives MenuMesh only "What's next" and MyCounselHub none, so nothing was invented.
+
+**Redirects (§4.4):** all seven are permanent (308). Three targets don't exist yet; `/resume`, `/resume.pdf` and `/company` are built in Phase 6.
+
+**MenuMesh capture (`pnpm capture:menumesh`, §15.2).**
+- Run against staging.menumesh.in on 20 Oct 2026, in the dark theme.
+- The only clicks are the /demo controls: add, cart, place order, start, ready, served, make bill, start again and the language toggle. The demo saves nothing.
+- Results:
+  - 23 screens;
+  - a 15.5 s, 218 KB H.264 video of "Show me". The walkthrough takes about 10 s, so the recording then glides to the counter's finished bill and holds it. The poster is the frame at 5 s.
+  - the logo, saved from the site header's inline SVG to `assets/source/icons/menumesh.svg` (source: the staging.menumesh.in header, 20 Oct 2026).
+- "How it works" (#how) isn't captured: it is a scroll-driven story, and an element shot of it comes out with the visual blank.
+- The site's sticky header is made static during shots, so it can't land inside tall element screenshots.
+- Re-run at launch with `MENUMESH_BASE_URL=https://menumesh.in`; the build line then drops "staging".
+
+**Jainav capture: not done.**
+- The permission check blocked writing `scripts/capture/jainav.ts`, because the script clones the jainav-infotech repo and runs its install, migrations, seed and dev server.
+- That repo's compose project (`jainav-dev`, port 5432) is already running on this machine. A capture therefore has to use its own throwaway database on another port, so it never touches that one.
+- The Jainav case study uses its platform diagrams (the §15.2 fallback) until Tanishq decides.
+
+**C.4.**
+- **Item 1:** the latest vyro-releases release is v1.4.1, with `Vyro_1.4.1_x64_en-US.msi` (12,210,176 bytes).
+- **Item 3:** the VYRO repo isn't linked (Tanishq's answer after Phase 2).
+- **Item 4:** f1insights.vercel.app loads, but its data requests fail now that the Ergast API is retired, so the archive links the repo only.
+
+**Lighthouse CI** now covers `/`, `/work` and `/work/vyro`; VYRO is the heaviest case study, with a video hero and eight screens. Local runs on five pages are in PROGRESS.md.
+
+**Tests.**
+- `work.spec.ts`:
+  - the list and the archive;
+  - filtering by tap or click, with the URL in step;
+  - a shared link with the app's JS blocked;
+  - an unknown filter;
+  - axe in both themes;
+  - the redirects.
+- `case-study.spec.ts`, for each of the nine pages: metadata and navigation, and axe in both themes.
+- `case-study.spec.ts`, once each:
+  - the progress bar moves by transform only;
+  - the TOC from 1024 px;
+  - a route change on touch lands at the top;
+  - back navigation leaves content revealed;
+  - videos.
+- `traceability.test.ts`: metric values against C.1, and the numbers in each case study against its A.4 copy.
+- The overflow sweep and the link check now include /work and the case studies.
