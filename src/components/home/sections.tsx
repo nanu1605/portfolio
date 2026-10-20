@@ -26,6 +26,7 @@ import { Timeline } from "@/components/ui/timeline";
 import { cx } from "@/lib/cx";
 import { resolve } from "@/lib/fill";
 import type { liveMetrics } from "@/lib/github";
+import { hasDemo, MicroDemo } from "./micro-demos";
 import { Stack } from "./stack";
 
 type Live = Awaited<ReturnType<typeof liveMetrics>>;
@@ -115,7 +116,10 @@ const featured = projects
   .sort((a, b) => a.order - b.order)
   .slice(0, 6);
 
-/** 01 — Selected work: Baby and VYRO large, four compact tiles (§8.2). */
+/**
+ * 01 — Selected work: Baby and VYRO large, four compact tiles (§8.2), each
+ * with its micro-demo (§10.10).
+ */
 export function SelectedWork({ live }: { live: Live }) {
   const s = sections.work;
   return (
@@ -124,6 +128,15 @@ export function SelectedWork({ live }: { live: Live }) {
         {featured.map((p, i) => {
           const large = i < 2;
           const cover = large && p.cover.screen && screen(p.cover.screen);
+          const poster = cover && (
+            <Picture
+              image={cover.image}
+              alt=""
+              sizes="(min-width: 1440px) 680px, (min-width: 1024px) calc(50vw - 3rem), (min-width: 640px) calc(100vw - 4rem), 100vw"
+              className="aspect-[4/3] object-cover object-top-left sm:aspect-video lg:aspect-[16/10]"
+            />
+          );
+          const demo = hasDemo(p.slug);
           return (
             <li
               key={p.slug}
@@ -144,6 +157,7 @@ export function SelectedWork({ live }: { live: Live }) {
                     )
                   }
                   accent={p.accent}
+                  demo={demo}
                   className="h-full"
                   badges={
                     p.badges.length > 0 && (
@@ -155,14 +169,7 @@ export function SelectedWork({ live }: { live: Live }) {
                     )
                   }
                   media={
-                    cover && (
-                      <Picture
-                        image={cover.image}
-                        alt=""
-                        sizes="(min-width: 1440px) 680px, (min-width: 1024px) calc(50vw - 3rem), (min-width: 640px) calc(100vw - 4rem), 100vw"
-                        className="aspect-[4/3] object-cover object-top-left sm:aspect-video lg:aspect-[16/10]"
-                      />
-                    )
+                    demo ? <MicroDemo slug={p.slug} poster={poster} /> : poster
                   }
                 />
               </Reveal>

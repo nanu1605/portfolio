@@ -542,6 +542,174 @@ dialog .menu-bar:last-child {
   }
 }
 
+/* ── Bento micro-demos (§10.10, cross-device §3) ────────────────────────
+   src/components/home/micro-demos.tsx draws each demo's final frame. A
+   part marked .demo-a names its keyframes in --k, with its delay (--t),
+   duration (--d), easing (--e) and repeats (--n). It plays once, from the
+   start, while its tile ([data-demo]) is hovered by a fine pointer or holds
+   keyboard focus, or once the tile is half in view on touch
+   ([data-demo-play], set by the reveal script); then it holds the final
+   frame. Keyframes leave out `to`, so they end on the drawn state. Leaving
+   a tile mid-pass eases back to the final frame. */
+
+.demo-a {
+  animation: none var(--d, 600ms) var(--e, var(--ease-out)) var(--t, 0ms)
+    var(--n, 1) both;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out),
+    stroke-dashoffset var(--duration-base) var(--ease-out);
+}
+
+/* Screen only, so print keeps the final frame too. */
+@media screen and (prefers-reduced-motion: no-preference) {
+  [data-demo][data-demo-play] .demo-a,
+  [data-demo]:has(:focus-visible) .demo-a {
+    animation-name: var(--k);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    [data-demo]:hover .demo-a {
+      animation-name: var(--k);
+    }
+  }
+}
+
+@keyframes demo-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}
+
+@keyframes demo-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes demo-rise {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+/* Line drawing: the path has pathLength 1 and a dash of 1. */
+@keyframes demo-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+@keyframes demo-pulse {
+  from {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+}
+
+@keyframes demo-breathe {
+  0% {
+    transform: scale(0.8);
+  }
+  35% {
+    transform: scale(1.12);
+  }
+  65% {
+    transform: scale(0.94);
+  }
+}
+
+@keyframes demo-halo {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  35% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+  65% {
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
+}
+
+@keyframes demo-wave {
+  0% {
+    transform: scaleY(0.2);
+  }
+  20% {
+    transform: scaleY(1.6);
+  }
+  40% {
+    transform: scaleY(0.5);
+  }
+  60% {
+    transform: scaleY(1.3);
+  }
+  80% {
+    transform: scaleY(0.7);
+  }
+}
+
+/* The gauge: up to nearly full, then back to rest. */
+@keyframes demo-sweep {
+  0% {
+    transform: rotate(-135deg);
+  }
+  55% {
+    transform: rotate(128deg);
+  }
+}
+
+@keyframes demo-arc {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  55% {
+    stroke-dashoffset: 2;
+  }
+}
+
+/* The stepper: the ring holds on each step, then moves to the next. */
+@keyframes demo-step {
+  0%,
+  18% {
+    transform: translateX(calc(-3 * var(--gap)));
+  }
+  33%,
+  51% {
+    transform: translateX(calc(-2 * var(--gap)));
+  }
+  66%,
+  84% {
+    transform: translateX(calc(-1 * var(--gap)));
+  }
+}
+
+@keyframes demo-rail {
+  0%,
+  18% {
+    transform: scaleX(0);
+  }
+  33%,
+  51% {
+    transform: scaleX(0.3333);
+  }
+  66%,
+  84% {
+    transform: scaleX(0.6667);
+  }
+}
+
 /* ── Work index (§8.3, §6.3) ────────────────────────────────────────────
    One attribute on the index decides what shows, so a ?filter= link
    applies before first paint (the inline script in work-index.tsx) and
@@ -633,6 +801,11 @@ dialog .menu-bar:last-child {
 
   [data-header][data-hidden] {
     transform: none;
+  }
+
+  .demo-a {
+    animation: none;
+    transition: none;
   }
 }
 

@@ -63,9 +63,10 @@ export function Card({ href, accent, className, children }: CardProps) {
 /**
  * A Home bento tile (§8.2) or a Work card (§8.3): a Card that lays out from
  * its own width (`@container`), with an optional product-accent glow. Bento
- * tiles alone tilt toward a fine pointer (src/lib/pointer-effects.ts);
- * micro-demos arrive in Phase 5. The title's link stretches over the whole
- * tile, so the readout can hold its own source links without nesting links.
+ * tiles alone tilt toward a fine pointer (src/lib/pointer-effects.ts),
+ * and Home's play their micro-demo (`demo`, §10.10). The title's link
+ * stretches over the whole tile, so the readout can hold its own source
+ * links without nesting links.
  */
 export function BentoTile({
   href,
@@ -76,6 +77,7 @@ export function BentoTile({
   media,
   badges,
   tilt = true,
+  demo = false,
   heading: Heading = "h3",
   className,
   children,
@@ -88,6 +90,8 @@ export function BentoTile({
   media?: ReactNode;
   badges?: ReactNode;
   tilt?: boolean;
+  /** The media holds a micro-demo (src/components/home/micro-demos.tsx). */
+  demo?: boolean;
   /** h2 where the tiles sit right under the page's h1 (/work). */
   heading?: "h2" | "h3";
   className?: string;
@@ -98,6 +102,7 @@ export function BentoTile({
     <div
       data-spotlight=""
       data-tilt={tilt ? "" : undefined}
+      data-demo={demo ? "" : undefined}
       className={cx(surface, "@container", className)}
     >
       <SpotlightLayer />
