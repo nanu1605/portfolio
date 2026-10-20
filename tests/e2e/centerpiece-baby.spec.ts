@@ -33,12 +33,34 @@ const timeline = (page: Page) =>
     };
   });
 
+/** The transcript's animations, and whether it is under half on screen. */
+const typing = (page: Page) =>
+  root(page).evaluate((el) => {
+    const t = el.querySelector("[data-transcript]")!;
+    const box = t.getBoundingClientRect();
+    return {
+      below: box.top + box.height / 2 > innerHeight,
+      states: t.getAnimations({ subtree: true }).map((a) => a.playState),
+    };
+  });
+
+/** The chosen scenario's last reply word: its opacity now. */
+const lastWord = (page: Page) =>
+  transcript(page)
+    .locator("[data-w]")
+    .last()
+    .evaluate((el) => getComputedStyle(el).opacity);
+
+/**
+ * Jumps straight to the demo, so the poster is on screen while the live
+ * version loads: that one holds its final state (no automatic first play).
+ */
 async function live(page: Page) {
   await observe(page);
   await page.goto(URL);
   const result = await goLive(page, root(page), ready(page));
-  // Well in view (its top above 60% of the viewport), where it plays. A
-  // tall box can sit lower after scrollIntoViewIfNeeded on WebKit.
+  // Clear of the header. A tall box can sit lower after
+  // scrollIntoViewIfNeeded on WebKit.
   await root(page).evaluate((el) =>
     window.scrollBy({
       top: el.getBoundingClientRect().top - 80, // clear of the header
@@ -67,23 +89,70 @@ test("the poster is the first scenario's final state; the swap shifts nothing", 
   expect(result.bytes).toBeLessThanOrEqual(60_000);
 });
 
-test("the first scenario plays once in view, in under 5 s, then holds", async ({
+test("the first scenario plays once the graph is in view, then holds", async ({
   page,
 }) => {
-  await live(page);
-  // It runs (or, if the frame is slow, has already queued) …
+  // Scrolling down to it, as a reader does: the live version loads within
+  // 200 px of the viewport, while the graph is still below it, and waits.
+  await page.goto(URL);
+  await page.waitForLoadState("load");
+  await root(page).evaluate((el) =>
+    window.scrollBy({
+      top: el.getBoundingClientRect().top - innerHeight - 100,
+      behavior: "instant",
+    }),
+  );
+  await expect(ready(page)).toBeAttached();
   await expect
-    .poll(async () => (await timeline(page)).count)
+    .poll(async () => (await timeline(page)).paused)
+    .toBeGreaterThan(0);
+  expect((await timeline(page)).running).toBe(0);
+  expect(await lastWord(page)).toBe("0");
+
+  // The whole graph on screen: the pulse runs, in under 5 s.
+  await root(page)
+    .locator("svg[data-graph]:visible")
+    .evaluate((el) => el.scrollIntoView({ block: "end", behavior: "instant" }));
+  await expect
+    .poll(async () => (await timeline(page)).running)
     .toBeGreaterThan(0);
   const { end } = await timeline(page);
   expect(end).toBeGreaterThan(2000);
   expect(end).toBeLessThan(5000);
-  // … then holds its final state with nothing left running.
+
+  // The transcript, still below, waits for its own turn on screen.
+  const held = await typing(page);
+  if (held.below) {
+    expect(held.states.length).toBeGreaterThan(0);
+    expect(held.states.every((s) => s === "paused")).toBe(true);
+  }
+  await page.waitForTimeout(3000); // the pulse has reached Voice
+  if (held.below) {
+    const still = await typing(page);
+    expect(still.states.every((s) => s === "paused")).toBe(true);
+  }
+  await root(page)
+    .locator("[data-transcript]")
+    .evaluate((el) => el.scrollIntoView({ block: "end", behavior: "instant" }));
+
+  // It types in, then everything holds its final state.
   await expect
     .poll(async () => (await timeline(page)).count, { timeout: 8000 })
     .toBe(0);
+  expect(await lastWord(page)).toBe("1");
   await expect(transcript(page)).toContainText("CPU abhi 48°C par hai.");
   await expect(chip(page, "Hinglish")).toHaveAttribute("aria-checked", "true");
+});
+
+test("a final state already on screen holds when the live version arrives", async ({
+  page,
+}) => {
+  await live(page);
+  // Never final → empty → replay: nothing animates on its own.
+  await page.waitForTimeout(1000);
+  expect((await timeline(page)).count).toBe(0);
+  expect(await lastWord(page)).toBe("1");
+  await expect(transcript(page)).toContainText("CPU abhi 48°C par hai.");
 });
 
 test("the honesty label sits next to the demo at every width", async ({
@@ -224,7 +293,10 @@ test("a play pauses off-screen and resumes in view", async ({ page }) => {
   );
   await expect.poll(async () => (await timeline(page)).running).toBe(0);
   expect((await timeline(page)).paused).toBeGreaterThan(0);
-  await root(page).scrollIntoViewIfNeeded();
+  // Back with the transcript on screen, so it types in too.
+  await root(page)
+    .locator("[data-transcript]")
+    .evaluate((el) => el.scrollIntoView({ block: "end", behavior: "instant" }));
   await expect
     .poll(async () => (await timeline(page)).count, { timeout: 8000 })
     .toBe(0);
@@ -245,7 +317,18 @@ test("layout follows the width: vertical below 1024 px, horizontal above", async
     hasText: "Game mode → cloud",
   });
   await expect(rules).toHaveCount(wide ? 1 : 0);
-  if (!wide) {
+  if (wide) {
+    // Open on the router node: the ladder's column edge (where the leader
+    // comes down) is centred under the router.
+    const { router, edge } = await root(page).evaluate((el) => {
+      const r = el
+        .querySelector('svg[data-graph="across"] [data-node="router"]')!
+        .getBoundingClientRect();
+      const l = el.querySelector("[data-ladder]")!.getBoundingClientRect();
+      return { router: r.left + r.width / 2, edge: l.left + 0.5 };
+    });
+    expect(Math.abs(router - edge)).toBeLessThan(1);
+  } else {
     await expect(
       root(page).locator("li:visible", { hasText: "Fired" }),
     ).toHaveCount(1);
@@ -311,6 +394,12 @@ test("a chip change stays within the long-task and INP budgets", async ({
   await target.scrollIntoViewIfNeeded();
   const box = (await target.boundingBox())!;
   const [x, y] = [box.x + box.width / 2, box.y + box.height / 2];
+  // Measure the tap, not the page still booting around it: wait for an
+  // idle period (the live version also measures its edges in one).
+  await page.evaluate(
+    () =>
+      new Promise((r) => requestIdleCallback(() => r(0), { timeout: 2000 })),
+  );
   const release = await throttle(page);
   const result = await during(page, async () => {
     if (isTouch(testInfo.project.name)) await page.touchscreen.tap(x, y);

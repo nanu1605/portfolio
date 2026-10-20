@@ -16,8 +16,11 @@ import { View } from "./view";
 // The live "Follow a turn": the view's final state, replayed. A pulse runs
 // the scenario's real path in about 2.5 s (§10.1), each stop lights as it
 // arrives, and the transcript types in word by word. The first scenario
-// plays once when it is well in view and then holds (under 5 s); a chip
-// plays its scenario once. Everything pauses off-screen and in hidden tabs.
+// plays once when the graph is well in view and then holds (under 5 s); a
+// chip plays its scenario once. The transcript types in only once it is in
+// view too (on phones it sits a screen below the graph). Everything pauses
+// off-screen and in hidden tabs. A final state the reader may already have
+// seen never blanks to replay itself (cross-device §4: never final → 0).
 // Reduced motion: no animation, the chosen scenario's final state at once.
 
 const PASS = 2500;
@@ -32,7 +35,7 @@ const measured = new Map<string, Measured>();
  * An edge's length, and points at even distances along it (its ends for a
  * straight edge, every ~20 units on a curve). The geometry never changes,
  * and measuring forces style and layout, so each layout's edges are
- * measured once, when it first plays, never inside a tap.
+ * measured once, in idle time after mount (warm), never inside a tap.
  */
 function measure(svg: SVGSVGElement, edge: string) {
   const key = `${svg.dataset.graph}|${edge}`;
@@ -50,35 +53,54 @@ function measure(svg: SVGSVGElement, edge: string) {
   return m;
 }
 
-/** Builds (paused) animations for the scenario the view is showing. */
-function choreograph(root: HTMLElement) {
-  const out: Animation[] = [];
-  const appear = (el: Element, delay: number, pop = false) =>
-    out.push(
-      el.animate(
-        pop
-          ? [
-              { opacity: 0, transform: "scale(0.4)" },
-              { opacity: 1, transform: "none" },
-            ]
-          : [{ opacity: 0 }, { opacity: 1 }],
-        {
-          delay,
-          duration: pop ? duration.base : duration.fast,
-          easing: ease.out,
-          fill: "backwards",
-        },
-      ),
-    );
-  // The graph on show: the view swaps them at Tailwind's lg. Asking the
-  // media query, not the layout, keeps this commit free of a forced reflow.
-  // The other graph is display: none and keeps its final state.
-  const wide = matchMedia("(min-width: 64rem)").matches;
-  const svg = root.querySelector<SVGSVGElement>(
-    `svg[data-graph="${wide ? "across" : "down"}"]`,
+/**
+ * The graph on show: the view swaps them at Tailwind's lg. Asking the media
+ * query, not the layout, keeps a commit free of a forced reflow. The other
+ * graph is display: none and keeps its final state.
+ */
+const onShow = (root: HTMLElement) =>
+  root.querySelector<SVGSVGElement>(
+    `svg[data-graph="${matchMedia("(min-width: 64rem)").matches ? "across" : "down"}"]`,
   )!;
+
+/** Measures every edge of the graph on show (and so caches them). */
+function warm(root: HTMLElement) {
+  const svg = onShow(root);
   for (const p of svg.querySelectorAll<SVGPathElement>("[data-edge]"))
     measure(svg, p.dataset.edge!);
+  return svg;
+}
+
+type Play = {
+  /** The pulse, the graph's stops and the ladder. */
+  graph: Animation[];
+  /** The transcript's lines. */
+  text: Animation[];
+  /** When the transcript's first line starts. */
+  lead: number;
+};
+const none: Play = { graph: [], text: [], lead: 0 };
+
+/** Builds (paused) animations for the scenario the view is showing. */
+function choreograph(root: HTMLElement): Play {
+  const graph: Animation[] = [];
+  const text: Animation[] = [];
+  const appear = (el: Element, delay: number, pop = false) =>
+    el.animate(
+      pop
+        ? [
+            { opacity: 0, transform: "scale(0.4)" },
+            { opacity: 1, transform: "none" },
+          ]
+        : [{ opacity: 0 }, { opacity: 1 }],
+      {
+        delay,
+        duration: pop ? duration.base : duration.fast,
+        easing: ease.out,
+        fill: "backwards",
+      },
+    );
+  const svg = warm(root);
   const route = svg.dataset.route!.split(" ");
   const edges = route
     .slice(1)
@@ -105,8 +127,8 @@ function choreograph(root: HTMLElement) {
     });
     frames.at(-1)!.offset = 1;
     const pulse = svg.querySelector("[data-pulse]")!;
-    out.push(pulse.animate(frames, { duration: PASS, easing: "linear" }));
-    out.push(
+    graph.push(pulse.animate(frames, { duration: PASS, easing: "linear" }));
+    graph.push(
       pulse.animate(
         [
           { opacity: 0 },
@@ -121,38 +143,51 @@ function choreograph(root: HTMLElement) {
 
   for (const el of svg.querySelectorAll<SVGElement>("[data-at]")) {
     const i = Number(el.dataset.at);
-    if (el.dataset.fx === "draw")
-      out.push(
-        el.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], {
-          delay: at[i],
-          duration: at[i + 1]! - at[i]!,
-          easing: "linear",
-          fill: "backwards",
-        }),
-      );
-    else appear(el, at[i]!, el.dataset.fx === "pop");
+    graph.push(
+      el.dataset.fx === "draw"
+        ? el.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], {
+            delay: at[i],
+            duration: at[i + 1]! - at[i]!,
+            easing: "linear",
+            fill: "backwards",
+          })
+        : appear(el, at[i]!, el.dataset.fx === "pop"),
+    );
   }
 
   // The ladder and the transcript follow the graph. Lines queue: one
   // starts when its stop is reached and the line before has typed in.
   let cursor = 0;
+  let lead = Infinity;
   for (const el of root.querySelectorAll<HTMLElement>("[data-at]:not(svg *)")) {
     const t = at[Number(el.dataset.at)]!;
     if (el.dataset.line === undefined) {
-      appear(el, t);
+      graph.push(appear(el, t));
       continue;
     }
     const start = Math.max(t, cursor);
+    lead = Math.min(lead, start);
     const words = el.querySelectorAll("[data-w]");
     if (words.length === 0) {
-      appear(el, start);
+      text.push(appear(el, start));
       cursor = start + duration.slow;
     } else {
-      words.forEach((w, k) => appear(w, start + k * WORD));
+      words.forEach((w, k) => text.push(appear(w, start + k * WORD)));
       cursor = start + words.length * WORD;
     }
   }
-  return out;
+  return { graph, text, lead: Number.isFinite(lead) ? lead : 0 };
+}
+
+/** Plays or pauses a group where it stands. */
+function run(list: Animation[], on: boolean) {
+  for (const a of list)
+    if (on && a.playState === "paused") a.play();
+    else if (!on && a.playState === "running") a.pause();
+}
+
+function seek(list: Animation[], t: number) {
+  for (const a of list) a.currentTime = t;
 }
 
 const reply = (demo: BabyDemo, i: number) => {
@@ -171,55 +206,103 @@ export default function Live({
   label: string;
 }) {
   const root = useRef<HTMLDivElement>(null);
-  const anims = useRef<Animation[]>([]);
+  const play = useRef<Play>(none);
+  /** Whether the transcript has started typing in, this play. */
+  const typing = useRef(false);
   // `run` counts the plays a reader asked for; 0 is the first, automatic one.
   const [pick, setPick] = useState({ i: 0, run: 0 });
-  const [seen, setSeen] = useState(false);
+  // The first play: "wait" while the graph is below the viewport, "go" once
+  // it is well in view, "hold" if the graph was on screen (or scrolled past)
+  // when this mounted, so the reader may have seen its final state.
+  const [first, setFirst] = useState<"wait" | "go" | "hold">();
+  const [reading, setReading] = useState(false);
   const [announce, setAnnounce] = useState<{ text: string; lang?: string }>();
   const reduced = useReducedMotionSafe();
   const visible = usePauseWhenHidden(root);
 
-  // "Well in view": the box's top has passed 60% of the viewport height.
   useEffect(() => {
     const el = root.current;
     if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry?.isIntersecting) return;
-        setSeen(true);
-        observer.disconnect();
+    let known = false;
+    const graphs = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          const { top, height } = e.boundingClientRect;
+          if (height === 0) continue; // the other layout's graph (display: none)
+          const next = !known
+            ? top < (e.rootBounds?.bottom ?? innerHeight)
+              ? "hold"
+              : "wait"
+            : e.intersectionRatio >= 0.85
+              ? "go"
+              : undefined;
+          known = true;
+          if (next) setFirst(next);
+          if (next && next !== "wait") graphs.disconnect();
+        }
       },
-      { rootMargin: "0px 0px -40% 0px" },
+      { threshold: [0, 0.85] },
     );
-    observer.observe(el);
-    return () => observer.disconnect();
+    for (const g of el.querySelectorAll("svg[data-graph]")) graphs.observe(g);
+    // Half the transcript on screen: it types in from there. Reached first
+    // (a jump past the graph), it starts the waiting first play too.
+    const text = new IntersectionObserver(
+      ([e]) => {
+        const on = (e?.intersectionRatio ?? 0) >= 0.5;
+        setReading(on);
+        if (on) setFirst((f) => (f === "wait" ? "go" : f));
+      },
+      { threshold: 0.5 },
+    );
+    text.observe(el.querySelector("[data-transcript]")!);
+    // Measure the edges now, while nothing waits on it (Safari has no
+    // requestIdleCallback), so a chip's first play does no layout work.
+    const idle = window.requestIdleCallback ?? setTimeout;
+    const cancel = window.cancelIdleCallback ?? clearTimeout;
+    const id = idle(() => warm(el));
+    return () => {
+      graphs.disconnect();
+      text.disconnect();
+      cancel(id);
+    };
   }, []);
 
-  // Before paint, so the final state never flashes before a replay.
+  // Built paused, before paint, so the final state never flashes before a
+  // replay. The first play builds only once it is sure to play unseen.
+  const build =
+    !reduced && (pick.run > 0 || first === "wait" || first === "go");
   useLayoutEffect(() => {
     const el = root.current;
-    if (!el || reduced) return;
-    const list = choreograph(el);
-    for (const a of list) a.pause();
-    anims.current = list;
+    if (!el || !build) return;
+    const p = choreograph(el);
+    for (const a of [...p.graph, ...p.text]) a.pause();
+    play.current = p;
+    typing.current = false;
+    // A chosen scenario's reply is announced when the turn reaches Voice.
     if (pick.run > 0)
-      Promise.all(list.map((a) => a.finished)).then(
+      Promise.all(p.graph.map((a) => a.finished)).then(
         () => setAnnounce(reply(demo, pick.i)),
         () => {}, // replaced by the next choice
       );
     return () => {
-      for (const a of list) a.cancel();
-      anims.current = [];
+      for (const a of [...p.graph, ...p.text]) a.cancel();
+      play.current = none;
     };
-  }, [demo, pick, reduced]);
+  }, [demo, pick, build]);
 
-  const go = visible && (seen || pick.run > 0);
+  const go = visible && (pick.run > 0 || first === "go");
   useEffect(() => {
-    for (const a of anims.current) {
-      if (go && a.playState === "paused") a.play();
-      else if (!go && a.playState === "running") a.pause();
+    const { graph, text, lead } = play.current;
+    run(graph, go);
+    // The transcript waits until it is in view. Starting late, it skips
+    // its lead-in: the utterance types in at once and the rest follows.
+    const type = go && (typing.current || reading);
+    if (type && !typing.current) {
+      typing.current = true;
+      seek(text, Math.min(Number(graph[0]?.currentTime ?? 0), lead));
     }
-  }, [go, pick, reduced]);
+    run(text, type);
+  }, [go, reading, pick, build]);
 
   const choose = (i: number) =>
     startTransition(() => {
