@@ -47,6 +47,9 @@ export default function ReservoirLive({
   const [moving, setMoving] = useState<ReservoirState["moving"]>();
 
   const drag = useRef<Drag | null>(null);
+  // The click that ends a mouse drag lands on the triangle (it holds the
+  // pointer capture) and would drop the grab offset: skip it.
+  const dragged = useRef(false);
   // Pointer moves are coalesced into one render per frame.
   const frame = useRef(0);
   const pending = useRef<Weights>(cursor);
@@ -75,6 +78,7 @@ export default function ReservoirLive({
 
   const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
     if (e.button !== 0) return;
+    dragged.current = false;
     const handle = (e.target as Element).closest<HTMLElement>("[data-handle]");
     if (!handle && e.pointerType !== "mouse") return; // a tap places (onClick)
     e.preventDefault(); // no text selection; focus is moved by hand
@@ -104,6 +108,7 @@ export default function ReservoirLive({
   const onPointerUp = (e: PointerEvent<HTMLDivElement>) => {
     if (drag.current?.id !== e.pointerId) return;
     drag.current = null;
+    dragged.current = true;
     setMoving(undefined);
   };
 
@@ -123,7 +128,13 @@ export default function ReservoirLive({
         onPointerMove,
         onPointerUp,
         onClick: (e) => {
-          if ((e.target as Element).closest("[data-handle]")) return;
+          if (
+            dragged.current ||
+            (e.target as Element).closest("[data-handle]")
+          ) {
+            dragged.current = false;
+            return;
+          }
           setMoving(undefined);
           setCursor(fromPointer(e, e.currentTarget.getBoundingClientRect()));
         },
