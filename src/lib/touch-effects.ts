@@ -14,9 +14,9 @@ export function moveGlow(hero: HTMLElement, x: number, y: number) {
   const glow = hero.querySelector<HTMLElement>("[data-hero-glow]");
   if (!glow) return;
   const box = hero.getBoundingClientRect();
-  // The glow rests at 65% / 40% of the hero (globals.css).
-  glow.style.setProperty("--glow-dx", `${x - box.left - box.width * 0.65}px`);
-  glow.style.setProperty("--glow-dy", `${y - box.top - box.height * 0.4}px`);
+  // Offsets from where it rests (its layout position, before transforms).
+  glow.style.setProperty("--glow-dx", `${x - box.left - glow.offsetLeft}px`);
+  glow.style.setProperty("--glow-dy", `${y - box.top - glow.offsetTop}px`);
 }
 
 export function start() {

@@ -466,9 +466,12 @@ dialog .menu-bar:last-child {
   }
 }
 
+/* Anchored to the viewport, not the hero's height: when the web font
+   swaps in and the hero grows or shrinks, a percentage top would move this
+   large layer and count as a layout shift. */
 [data-hero-glow] {
   position: absolute;
-  top: 40%;
+  top: min(40svh, 24rem);
   left: 65%;
   z-index: -1;
   width: min(48rem, 140vw);
