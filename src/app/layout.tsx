@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { ThemeProvider } from "next-themes";
+import { microcopy } from "@content/microcopy";
 import { Enhancements } from "@/components/site/enhancements";
+import { Footer } from "@/components/site/footer";
+import { Header } from "@/components/site/header";
 import { revealScript } from "@/lib/reveal-script";
 import { mono, sans } from "@/styles/fonts";
 import { colors } from "@/styles/tokens";
@@ -44,7 +47,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           enableSystem={false}
           disableTransitionOnChange
         >
-          {children}
+          <a
+            href="#main"
+            className="sr-only z-50 rounded-md bg-accent px-4 py-3 text-small font-semibold text-on-accent focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
+          >
+            {microcopy.landmarks.skip}
+          </a>
+          <Header />
+          <main id="main" tabIndex={-1} className="outline-none">
+            {children}
+          </main>
+          <Footer />
           <Enhancements themeColors={themeColors} />
         </ThemeProvider>
       </body>

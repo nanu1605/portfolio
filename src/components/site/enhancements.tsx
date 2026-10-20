@@ -67,15 +67,11 @@ export function Enhancements({
     () =>
       whileMatches(SMOOTH_SCROLL, async () => {
         const { default: Lenis } = await import("lenis");
-        const header = parseFloat(
-          getComputedStyle(document.documentElement).getPropertyValue(
-            "--header-h",
-          ),
-        );
+        // Anchors honour scroll-padding-top, which clears the header.
         const lenis = new Lenis({
           autoRaf: true,
           syncTouch: false,
-          anchors: { offset: -header },
+          anchors: true,
         });
         return () => lenis.destroy();
       }),

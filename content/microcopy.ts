@@ -54,6 +54,12 @@ export const microcopy = z
       previous: z.string(),
       next: z.string(),
     }),
+    landmarks: z.object({
+      skip: z.string(),
+      menu: z.string(),
+      mainNav: z.string(),
+      footerNav: z.string(),
+    }),
   })
   .parse({
     footer: {
@@ -104,5 +110,13 @@ export const microcopy = z
       play: "Play",
       previous: "Previous",
       next: "Next",
+    },
+    // Phase 3: the skip link and landmark names (not in A.13; listed in
+    // decisions.md for Tanishq).
+    landmarks: {
+      skip: "Skip to content",
+      menu: "Menu",
+      mainNav: "Main",
+      footerNav: "Footer",
     },
   });

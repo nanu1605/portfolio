@@ -22,6 +22,8 @@ export const site = z
       x: HrefOrPending,
     }),
     nav: z.array(z.object({ label: z.string(), href: Href })),
+    /** The header's ghost button and the menu's last link (§8.1). */
+    resume: z.object({ label: z.string(), href: Href }),
     seo: z.object({
       titleTemplate: z.string().includes("%s"),
       description: z.string(),
@@ -53,6 +55,7 @@ export const site = z
       { label: "Open source", href: "/open-source" },
       { label: "Now", href: "/now" },
     ],
+    resume: { label: "Resume", href: "/resume" },
     seo: {
       titleTemplate: "%s — Tanishq Jain",
       description:

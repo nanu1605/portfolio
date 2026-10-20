@@ -28,6 +28,7 @@ import { StatusBadge, StatusPill } from "@/components/ui/status";
 import { Tabs } from "@/components/ui/tabs";
 import { Chip, Tag } from "@/components/ui/tag";
 import { TextLink } from "@/components/ui/text-link";
+import { themeLabels } from "@/components/site/header";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Timeline } from "@/components/ui/timeline";
 import { Tooltip } from "@/components/ui/tooltip";
@@ -76,13 +77,10 @@ export default function Styleguide() {
   const dashboard = screen("vyro/vyro-dashboard.png");
 
   return (
-    <main
-      id="main"
-      className="mx-auto flex max-w-site flex-col gap-16 px-page py-section"
-    >
+    <div className="mx-auto flex max-w-site flex-col gap-16 px-page py-section">
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-h1">Styleguide</h1>
-        <ThemeToggle />
+        <ThemeToggle labels={themeLabels} />
       </div>
 
       <Section title="Type">
@@ -312,6 +310,6 @@ export default function Styleguide() {
           <p className="max-w-text">{vyro.tldr[1].text}</p>
         </Callout>
       </Section>
-    </main>
+    </div>
   );
 }
