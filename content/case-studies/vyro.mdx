@@ -1,0 +1,61 @@
+## What it shows
+
+- **CPU:** per-thread usage and clocks. On AMD Ryzen, also temperatures, per-core power and core voltage.
+- **GPU:** per-engine load and VRAM. On NVIDIA, also clocks, power, fan speed, throttle reasons, and hotspot and memory temperatures. On RTX 50-series cards the hotspot is read from the card's thermal registers, because NVIDIA's API no longer reports it.
+- **Memory and storage:** DDR5 module temperatures and timings; NVMe health and SATA SMART data.
+- **Motherboard:** fans, temperatures and voltages.
+- **Displays:** decoded EDID, refresh rate, HDR and colour details.
+- **Also:** network quality, processes, and game frame rates with 1% and 0.1% lows.
+- **On top of the readings:**
+  - history from 5 minutes to 7 days;
+  - compound alerts;
+  - benchmarks compared only with your own PC's earlier runs;
+  - a 13-check diagnostics report you can export;
+  - a 3-D "My PC" view;
+  - desktop widgets;
+  - six themes;
+  - a phone view.
+
+## Architecture
+
+- **Service and app.** A Rust engine runs as a Windows service. The app itself runs without admin rights and talks to the engine over a locked-down named pipe.
+- **Low-level access.** Low-level reads go through PawnIO, a signed driver that works with Memory Integrity turned on. The alternatives were a custom kernel driver, which would have needed paid signing, and WinRing0, which Windows blocks over CVE-2020-14979.
+- **GPU data.** It comes from the vendors' own libraries (NVML, NVAPI, ADL, IGCL), loaded only from System32. WMI is used only for one-off reads at startup, never in the polling loop.
+- **One source of truth.** The Rust structs define the data, and 201 TypeScript type files are generated from them; CI fails if the two drift apart.
+- **Phone view.** A Cloudflare Worker, with one Durable Object per PC, relays an end-to-end-encrypted stream to a phone web app.
+
+## Keeping it light
+
+- **Tauri over Electron.** It uses Tauri with WebView2 instead of Electron.
+- **Polling.** The engine polls once a second, or every 5 s when hidden. When VYRO sits in the tray, the WebView is suspended.
+- **One flag and a frame cap.** A WebView2 flag and a 60 fps animation cap took RAM from 131 to 120 MB, peak RAM from 208 to 132 MB, and average CPU from 1.0% to 0.68%.
+- **History memory.** Keeping large history lists outside Svelte's reactivity cut the History view's JavaScript heap from 53.5 MB to 8.6 MB, and the highest total across all tabs from 295 MB to 167 MB.
+- **Lazy 3-D.** The 3-D view loads Three.js only when you open it, and CI enforces a size budget.
+
+## Results
+
+_Reference PC: Ryzen 7 9700X, RTX 5060 Ti, Windows 11._
+
+| Measure                                                             | Target      | Measured                                                                    |
+| ------------------------------------------------------------------- | ----------- | --------------------------------------------------------------------------- |
+| CPU, window open                                                    | &lt; 1.5%   | 0.46% (v0.2.0)                                                              |
+| RAM, window open                                                    | &lt; 120 MB | 120–125 MB (v0.1.4–0.2.0)                                                   |
+| Startup to first data                                               | &lt; 2 s    | 0.76–1.02 s                                                                 |
+| Installer                                                           | &lt; 60 MB  | 11.6 MB (v1.4.0–1.4.1)                                                      |
+| Cost of one poll                                                    | —           | ~9 ms                                                                       |
+| In-app readout, 1.7 development build on a 4K display (20 Oct 2026) | —           | 0.7–1.7% CPU and 246–270 MB app RAM; 5.5% and 341 MB with the 3-D view open |
+
+- Footprint was formally recorded for v0.1.4 and v0.2.0 with the README's method. 1.x hasn't been re-measured that way; the in-app readout above suggests memory has grown with the features added since.
+- Tests and accessibility:
+  - at the V2 milestone there were 614 Rust core tests and 132 frontend tests;
+  - CI runs 664 automated accessibility checks;
+  - all six themes meet WCAG AA contrast.
+
+## Limitations and what's next
+
+- **Not code-signed yet.** SmartScreen warns, and free open-source signing is being set up.
+- **Hardware coverage is narrow so far:**
+  - low-level CPU sensors are AMD-only;
+  - motherboard sensors cover one Nuvoton chip;
+  - fan control is enabled on one verified board, the MSI B650M GAMING PLUS WIFI.
+- **Next:** DDR4, Intel CPUs and more boards.

@@ -1,0 +1,53 @@
+## The environment
+
+- One reservoir: capacity 300 units, a maximum release of 8 per day, and demand peaking at 7 per day.
+- Inflows are synthetic, and the agent sees a noisy forecast of tomorrow's inflow.
+- Each year is scored on three penalties:
+  - flooding (overflow);
+  - supply deficit;
+  - ecological deficit, when the river drops below a minimum flow of 1.5.
+
+## What went wrong first
+
+- The first sweep was degenerate: every weighting learned to drain the reservoir.
+- It took four changes to the environment before any real trade-off appeared:
+  - capacity;
+  - the release limit;
+  - a discount factor of 0.999;
+  - random starting storage.
+- The modelling work lives in the environment, not in the algorithm.
+
+## The frontier
+
+- **The sweep:** eight weightings, each trained for 150k steps and evaluated on 100 shared episodes.
+- **Against the rule curve:**
+  - every agent beats it on flooding;
+  - seven of eight beat it on supply;
+  - none reaches zero ecological deficit, because the rule enforces minimum flow as a hard floor. That keeps the rule curve on the Pareto frontier for ecology.
+
+## Results
+
+_100 episodes, lower is better._
+
+| Objective          | Balanced PPO | Rule curve   | Random |
+| ------------------ | ------------ | ------------ | ------ |
+| Flood penalty      | 1.7 ± 7.0    | 82.4 ± 29.1  | 582.9  |
+| Supply deficit     | 183.4 ± 16.2 | 194.7 ± 10.0 | 467.5  |
+| Ecological deficit | 22.2 ± 2.2   | 0.0          | 52.0   |
+
+## Stress test: a drier climate
+
+- **Setup:** inflow 20% lower and 30% noisier, with no retraining.
+- **What happened:** the balanced agent's supply deficit rose from 183.4 to 349.4, and its ecological deficit from 22.2 to 40.5.
+- **The lesson:** an agent doesn't adapt to a world it wasn't trained on — the same lesson as my drift work.
+
+## Limitations and what's next
+
+- **Scope:**
+  - a single reservoir;
+  - weighted-sum training rather than true multi-objective RL;
+  - ecology as a soft penalty;
+  - synthetic inflows.
+- **One seed per weighting.** Two runs with identical balanced weights landed at different points (supply deficit 183.4 vs 177.5), so more seeds are the first fix.
+- **The flood term.** Because the release limit equals the flood threshold, the flood term reduces to overflow.
+- **Why it matters to me.** This is the kind of problem I want to study next: decisions under competing objectives and uncertainty.

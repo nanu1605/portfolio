@@ -1,0 +1,58 @@
+## How a turn flows
+
+- Baby listens for its wake phrase, "Hey Jarvis" (or Ctrl+Alt+B).
+- Silero VAD finds the end of your sentence, and faster-whisper (large-v3-turbo) transcribes it on the CPU.
+- The agent loop can call up to 8 tools per turn. Every call passes the safety gate.
+- Kokoro speaks the reply sentence by sentence, in English or Hindi. If you start talking, it stops within about 100 ms.
+- The same agent also answers typed chat, a Telegram bot (locked to one chat), and background tasks.
+
+## Four brains, one router
+
+- **The brains:**
+  - GPT-4o-mini through OpenRouter answers by default;
+  - a heavy model on NVIDIA NIM handles planning;
+  - Gemini Flash is the backstop;
+  - Qwen 3.5 9B runs locally on Ollama.
+- **Privacy pin:** once a file's contents or shell output enters the conversation, the rest of the turn stays on the local model, and that content is redacted from anything sent to the cloud.
+- **Language and connectivity:** Hindi written in Devanagari goes local, and so does everything when the PC is offline.
+- **Failover:** a health state machine (cloud → degraded → offline) fails over mid-turn without losing the conversation.
+
+## A gate, not a guess
+
+- Every tool call is classified allow, confirm or deny by a deterministic classifier, not a model, so it's predictable, auditable and testable (65 test cases).
+- Chained commands are judged by their most dangerous part, protected folders and system processes are denied, and unknown commands ask first.
+- Confirmations come from the screen, the CLI or Telegram buttons — never by voice — and silence for 60 seconds means no.
+- Every action, routing decision and first-token time goes into an audit log.
+
+## More than a chatbot
+
+- **Background tasks.** Longer jobs run in the background.
+- **Multi-agent "projects".** An orchestrator splits a goal into up to four subtasks for two workers, each still behind the gate.
+- **Screen awareness.** Runs on the local multimodal model. It falls back to Gemini only if local vision fails, and one setting keeps screenshots on the PC entirely.
+- **Memory.** Retrieval uses sqlite-vec.
+- **Game mode.** Unloads the local model to free about 5.5 GB of VRAM.
+- **"The Brain."** A live 3-D view that traces the path of every turn.
+
+## Key decisions
+
+1. **Cloud-primary, with local-first guarantees.** I benchmarked 12 models (7 on NVIDIA NIM, 5 on OpenRouter). On the first soak day, NVIDIA NIM — then the primary — served 0 of 45 routed attempts because of congestion, so the default moved to GPT-4o-mini on OpenRouter. The cloud answers by default — and privacy pins decide what never leaves.
+2. **Speech on the CPU.** The local 9B needs almost the whole GPU (7.99 of 8 GB), and int8 CUDA isn't supported on RTX 50-series cards. So Whisper runs on the CPU and uses no VRAM.
+3. **A deterministic gate.** When an assistant can delete files, predictable beats clever.
+4. **Tauri over Electron for the desktop shell:** a 1.7 MB installer instead of about 85 MB, and a 280 ms cold start instead of 469 ms.
+
+## Results
+
+| Measure                         | Value                                                          |
+| ------------------------------- | -------------------------------------------------------------- |
+| Cloud first token (GPT-4o-mini) | p50 1.2 s · p95 4.0 s                                          |
+| Automated tests (v6.0.1)        | 1,037                                                          |
+| Installer                       | 19 MB, per-user (admin rights only for the Visual C++ runtime) |
+| Local model VRAM                | 7.99 of 8 GB; speech uses none                                 |
+| VRAM freed by game mode         | ~5.5 GB                                                        |
+
+## Limitations and what's next
+
+- Speech recognition is the slow link. It takes about 5.5 s per utterance with large-v3-turbo on the CPU (1.4 s with the small model). Making it faster is next.
+- Speaker verification is built but ships switched off until it meets its bar: at most 2% of the owner's turns rejected, and zero impostors accepted.
+- The wake phrase is still the pretrained "Hey Jarvis"; a custom wake word isn't trained yet.
+- The installer isn't code-signed yet, so Windows SmartScreen warns.

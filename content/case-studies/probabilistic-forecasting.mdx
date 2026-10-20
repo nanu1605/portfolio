@@ -1,0 +1,44 @@
+## Setup
+
+- **Data:** UCI Beijing air-quality data from the Aotizhongxin station — hourly PM2.5 from March 2013 to February 2017, 35,064 rows.
+- **Splits:**
+  - train to June 2016;
+  - validate July–December 2016;
+  - test January–February 2017, on 59 non-overlapping 24-hour windows.
+- **DeepAR:** a one-week context, a 24-hour horizon and Student-t outputs, trained over 5 seeds.
+- **Scoring:** every model produces 100 sample paths, and the same code scores them all.
+
+## Results
+
+_Test set; DeepAR is mean ± sd over 5 seeds._
+
+| Model          | CRPS       | RMSE       | 90% coverage | ECE           |
+| -------------- | ---------- | ---------- | ------------ | ------------- |
+| Seasonal naive | 68.4       | 137.5      | 78.6%        | 0.084         |
+| ARIMA          | 47.4       | 103.5      | 80.4%        | 0.072         |
+| ETS            | 47.5       | 104.9      | 87.9%        | 0.109         |
+| DeepAR         | 43.6 ± 1.7 | 99.5 ± 2.3 | 74.1% ± 4.0  | 0.125 ± 0.027 |
+
+_ECE here is the average gap between nominal and observed interval coverage across nine levels._
+
+## Where it breaks
+
+Miscalibration grows with the horizon. For the best seed, the coverage gap is 0.03 one hour ahead and 0.17 at 24 hours.
+
+## The fix that didn't work
+
+- **The method:** isotonic recalibration (Kuleshov et al.), fitted on the validation period.
+- **Validation:** DeepAR was already well calibrated there (gap 0.014), so there was nothing to learn.
+- **Test:** on the shifted winter test period, the gap went from 0.090 to 0.098.
+- **The diagnostic:** a fit on the test period itself reaches 0.020. The method works; the shift is the problem.
+
+## Lessons
+
+- Measure calibration explicitly.
+- Report results across seeds; CRPS ranged from 41.4 to 46.2 across them.
+- A validation set has to look like the future.
+
+## Limitations and what's next
+
+- **Scope:** a single station, PM2.5 history only (no weather covariates), and untuned hyperparameters.
+- **Next:** shift-aware and conditional recalibration, more stations, and newer models.

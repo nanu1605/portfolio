@@ -1,0 +1,16 @@
+## The pipeline
+
+1. Crop the photo to 192×256.
+2. Find 18 body keypoints (OpenPose).
+3. Segment the body and clothing into 20 classes (LIP-JPPNet).
+4. Build a clothing-agnostic representation of the person.
+5. Warp the garment to the body (the Geometric Matching Module).
+6. Render the person wearing it (the Try-On Module).
+
+Webcam mode shows a live pose skeleton before capturing a frame.
+
+## Limitations
+
+- This is 2-D image try-on, not 3-D or AR.
+- The models are pretrained; we didn't train them.
+- The research dataset's images can't be shown publicly.

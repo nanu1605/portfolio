@@ -1,0 +1,39 @@
+## The loop
+
+1. A FastAPI service serves predictions and logs every request.
+2. Evidently checks the features for drift; it doesn't wait for labels, which arrive late.
+3. On drift, the system retrains, and MLflow registers a challenger.
+4. The challenger is promoted only if it beats the champion by at least 0.01 F1 and clears a 0.50 floor.
+5. Serving hot-reloads the new model, and Prometheus and Grafana track it all.
+
+## The experiment
+
+- **Data:** 20,000 synthetic rows over time.
+- **The shift:** the drift period moves 40% of the features and adds an attack type the old model has never seen.
+- **The replay:** the real serving process and controller replay it in 20 batches of 400 rows.
+- **The result:** realized F1 sits around 0.27 while the stale champion serves drifted traffic. Drift is caught and the challenger promoted on the first allowed check, after which F1 holds around 0.78.
+
+## Honest notes
+
+- **Easy detection.** The synthetic shift trips every feature, so detection was never borderline.
+- **Optimistic promotion check.** The promotion test overlaps the retraining data, so it's optimistic. That's why the number I quote comes from the per-batch series on unseen batches.
+- **Label lag.** In production, the F1 line would lag by the label delay.
+- **The model isn't the point.** A plain logistic regression actually beat the random forest at baseline (F1 0.688 vs 0.576). The deliverable is the loop, not the model.
+
+## Running it
+
+- **Deploy targets:** a Docker Compose stack, Kubernetes manifests for minikube, and an Oracle Kubernetes Engine overlay.
+- **GitHub Actions:**
+  - CI with a model-quality gate;
+  - multi-architecture images pushed to GHCR;
+  - a scheduled daily retrain.
+
+## Limitations and what's next
+
+- **Data:** synthetic, not CICIDS2017; promotion needs a disjoint future holdout.
+- **Scale:** a single SQLite writer means a single serving worker.
+- **Next:** real traffic data, a feature store, and concept-drift detection.
+
+## What I learned
+
+Code doesn't rot; models do. The model took an afternoon; the honest evaluation took weeks.
