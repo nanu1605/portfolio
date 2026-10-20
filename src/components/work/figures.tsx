@@ -4,7 +4,7 @@ import type { ProjectSlug } from "@content/schema";
 import { f1Rows } from "@/components/centerpieces/mlops-drift-loop";
 import { mchSteps } from "@/components/centerpieces/mycounselhub";
 import { curves } from "@/components/centerpieces/probabilistic-forecasting";
-import { rlPoints } from "@/components/centerpieces/reservoir-rl";
+import { axisMax, rlPoints } from "@/components/centerpieces/reservoir-rl";
 import { vdrStages } from "@/components/centerpieces/virtual-dressing-room";
 import { Bars, Reliability, Scatter } from "@/components/viz/charts";
 import { MiniFlow } from "@/components/viz/flow";
@@ -42,8 +42,8 @@ export const covers: Partial<Record<ProjectSlug, ReactNode>> = {
     <CoverFrame>
       <Scatter
         points={rlPoints("supply", "eco")}
-        x={{ label: "", max: 280 }}
-        y={{ label: "", max: 25 }}
+        x={{ label: "", max: axisMax("supply") }}
+        y={{ label: "", max: axisMax("eco") }}
         label=""
         mini
       />

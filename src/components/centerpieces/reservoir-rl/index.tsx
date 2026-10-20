@@ -27,6 +27,14 @@ const nice = (v: number) => {
     m
   );
 };
+/** A penalty axis's maximum: the rule's mean or the largest agent mean + sd, rounded up. */
+export const axisMax = (k: (typeof KEYS)[number]) =>
+  nice(
+    Math.max(
+      reservoir.rule_baseline[k][0],
+      ...reservoir.pareto_agents.map((a) => a[k][0] + a[k][1]),
+    ),
+  );
 const penalties = (p: Penalties): Penalties => ({
   flood: p.flood,
   supply: p.supply,
@@ -69,7 +77,7 @@ export function Centerpiece() {
   // the rule's mean (a star, no whiskers).
   const axis = (k: (typeof KEYS)[number]) => ({
     label: copy.penalties[k],
-    max: nice(Math.max(rule[k][0], ...agents.map((a) => a[k][0] + a[k][1]))),
+    max: axisMax(k),
   });
   const data: ReservoirData = {
     agents,

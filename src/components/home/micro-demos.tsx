@@ -2,7 +2,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { forecasting, mlopsLoop } from "@content/charts";
 import { metrics } from "@content/metrics";
 import type { ProjectSlug } from "@content/schema";
-import { rlPoints } from "@/components/centerpieces/reservoir-rl";
+import { axisMax, rlPoints } from "@/components/centerpieces/reservoir-rl";
 
 // §10.10 Home bento micro-demos. Light SVG and CSS, server-rendered and
 // decorative: the tile's text and readout carry the meaning, and the only
@@ -52,11 +52,11 @@ const star = (x: number, y: number, r: number) =>
 
 /** Reservoir RL: the eight agents and the rule curve pop in; "balanced" pulses. */
 function Reservoir() {
-  // Supply against ecological deficit on the Work cover's zero-based axes
-  // (src/components/work/figures.tsx), so the runs sit where they do there.
+  // Supply against ecological deficit on the same zero-based axes as the
+  // Work cover and the case study, so the runs sit where they do there.
   const points = rlPoints("supply", "eco");
-  const sx = (v: number) => 32 + (v / 280) * 256;
-  const sy = (v: number) => 100 - (v / 25) * 84;
+  const sx = (v: number) => 32 + (v / axisMax("supply")) * 256;
+  const sy = (v: number) => 100 - (v / axisMax("eco")) * 84;
   // Plain dots first, then the rule's star and the balanced ring.
   const ordered = [
     ...points.filter((p) => !p.mark),
