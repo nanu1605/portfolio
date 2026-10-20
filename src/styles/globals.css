@@ -669,15 +669,6 @@ dialog .menu-bar:last-child {
   }
 }
 
-@keyframes demo-arc {
-  0% {
-    stroke-dashoffset: 100;
-  }
-  55% {
-    stroke-dashoffset: 2;
-  }
-}
-
 /* The stepper: the ring holds on each step, then moves to the next. */
 @keyframes demo-step {
   0%,

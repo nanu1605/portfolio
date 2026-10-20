@@ -1,11 +1,13 @@
 import type { CSSProperties, ReactNode } from "react";
 import { forecasting, mlopsLoop } from "@content/charts";
+import { metrics } from "@content/metrics";
 import type { ProjectSlug } from "@content/schema";
 import { rlPoints } from "@/components/centerpieces/reservoir-rl";
 
 // §10.10 Home bento micro-demos. Light SVG and CSS, server-rendered and
 // decorative: the tile's text and readout carry the meaning, and the only
-// numbers shown are real ones (the two documented MLOps levels).
+// numbers shown are real ones (the two documented MLOps levels and VYRO's
+// measured CPU).
 //
 // The markup is each demo's final frame. Parts marked .demo-a name their
 // keyframes in --k; globals.css ("Bento micro-demos") plays them once from
@@ -338,63 +340,55 @@ const at = (deg: number, radius: number) => {
   const a = (deg * Math.PI) / 180;
   return `${(C + radius * Math.cos(a)).toFixed(2)} ${(C + radius * Math.sin(a)).toFixed(2)}`;
 };
-const dial = `M${at(135, R)}A${R} ${R} 0 1 1 ${at(45, R)}`;
 
 /**
- * A 270° dial whose needle sweeps up and settles at `rest` (a fraction of
- * the dial). Decorative: it has no scale and shows no value.
+ * VYRO: a 270° dial, 0–100% in tenths, whose needle sweeps up and settles
+ * on VYRO's own measured CPU, the readout beside it.
  */
-function Dial({ rest, delay }: { rest: number; delay: number }) {
-  return (
-    <svg viewBox="0 0 64 64" fill="none" className="size-12">
-      <path
-        d={dial}
-        strokeWidth={4}
-        strokeLinecap="round"
-        className="stroke-border"
-      />
-      {Array.from({ length: 11 }, (_, i) => (
-        <path
-          key={i}
-          d={`M${at(135 + i * 27, R - 7)}L${at(135 + i * 27, R - 10)}`}
-          className="stroke-fg-subtle"
-        />
-      ))}
-      <path
-        d={dial}
-        pathLength={100}
-        strokeDasharray="100 100"
-        strokeWidth={4}
-        strokeLinecap="round"
-        className="demo-a stroke-vyro"
-        style={{
-          strokeDashoffset: 100 - rest * 100,
-          ...play("demo-arc", delay, 1800, inOut),
-        }}
-      />
-      <path
-        d={`M${C} ${C}V${C - R + 5}`}
-        strokeWidth={2}
-        strokeLinecap="round"
-        className="demo-a stroke-fg"
-        style={{
-          transform: `rotate(${rest * 270 - 135}deg)`,
-          transformBox: "view-box",
-          transformOrigin: `${C}px ${C}px`,
-          ...play("demo-sweep", delay, 1800, inOut),
-        }}
-      />
-      <circle cx={C} cy={C} r={3} className="fill-fg" />
-    </svg>
-  );
-}
-
-/** VYRO: a pair of gauges, as on its dashboard; the needles sweep and settle. */
-function Gauges() {
+function Gauge() {
+  const cpu = metrics["vyro.cpu"];
+  const rest = parseFloat(cpu.value) / 100;
+  // A value the needle can't show fails the build, not the dial.
+  if (!(rest >= 0 && rest <= 1)) throw new Error(`vyro.cpu: ${cpu.value}`);
   return (
     <Chip>
-      <Dial rest={0.42} delay={100} />
-      <Dial rest={0.3} delay={250} />
+      <svg viewBox="0 0 64 64" fill="none" className="size-12 shrink-0">
+        <path
+          d={`M${at(135, R)}A${R} ${R} 0 1 1 ${at(45, R)}`}
+          strokeWidth={4}
+          strokeLinecap="round"
+          className="stroke-border"
+        />
+        {Array.from({ length: 11 }, (_, i) => (
+          <path
+            key={i}
+            d={`M${at(135 + i * 27, R - 7)}L${at(135 + i * 27, R - 10)}`}
+            className="stroke-fg-subtle"
+          />
+        ))}
+        <path
+          d={`M${C} ${C}V${C - R + 5}`}
+          strokeWidth={2}
+          strokeLinecap="round"
+          className="demo-a stroke-vyro"
+          style={{
+            transform: `rotate(${rest * 270 - 135}deg)`,
+            transformBox: "view-box",
+            transformOrigin: `${C}px ${C}px`,
+            ...play("demo-sweep", 100, 1800, inOut),
+          }}
+        />
+        <circle cx={C} cy={C} r={3} className="fill-fg" />
+      </svg>
+      <span
+        className="demo-a flex flex-col gap-0.5 font-mono"
+        style={play("demo-rise", 1500, 400)}
+      >
+        <span className="text-small font-medium text-fg tabular-nums">
+          {cpu.value}
+        </span>
+        <span className="text-mono-label text-fg-subtle">{cpu.label}</span>
+      </span>
     </Chip>
   );
 }
@@ -408,7 +402,7 @@ const strips: Partial<Record<ProjectSlug, () => ReactNode>> = {
 
 const chips: Partial<Record<ProjectSlug, () => ReactNode>> = {
   baby: VoiceOrb,
-  vyro: Gauges,
+  vyro: Gauge,
 };
 
 /**
