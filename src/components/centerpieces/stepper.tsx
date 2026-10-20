@@ -14,6 +14,21 @@ import { cx } from "@/lib/cx";
 
 export type Step = { name: string; content: ReactNode };
 
+// The rail's fills: the site accent, or a product's (a fill only, never
+// text: the current step's number turns fg instead).
+const tones = {
+  accent: {
+    fill: "bg-accent",
+    soft: "bg-accent-soft",
+    number: "group-aria-selected:text-accent",
+  },
+  menumesh: {
+    fill: "bg-menumesh",
+    soft: "bg-menumesh/20",
+    number: "group-aria-selected:text-fg",
+  },
+};
+
 const pad = (n: number) => String(n).padStart(2, "0");
 
 export function Stepper({
@@ -24,6 +39,7 @@ export function Stepper({
   labels,
   trackRef,
   onGo,
+  tone = "accent",
 }: {
   /** Prefix for the tab and panel ids. */
   id: string;
@@ -35,11 +51,14 @@ export function Stepper({
   trackRef?: Ref<HTMLDivElement>;
   /** Live version only: go to a step. */
   onGo?: (step: number) => void;
+  tone?: keyof typeof tones;
 }) {
   const last = steps.length - 1;
+  const t = tones[tone];
   const keys =
     onGo &&
     ((event: KeyboardEvent<HTMLElement>) => {
+      const tabs = event.currentTarget.getAttribute("role") === "tablist";
       const to = {
         ArrowRight: current + 1,
         ArrowLeft: current - 1,
@@ -47,10 +66,14 @@ export function Stepper({
         End: last,
       }[event.key];
       if (to === undefined) return;
+      // No keyboard scrolling of the track either way.
       event.preventDefault();
+      // Keys on a control inside a step (the language toggle) stay there:
+      // changing step would make its panel inert and drop the focus.
+      if (!tabs && event.target !== event.currentTarget) return;
       const step = Math.max(0, Math.min(last, to));
       onGo(step);
-      if (event.currentTarget.getAttribute("role") === "tablist")
+      if (tabs)
         event.currentTarget
           .querySelectorAll<HTMLElement>('[role="tab"]')
           [step]?.focus({ preventScroll: true });
@@ -72,7 +95,10 @@ export function Stepper({
         />
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-[calc(50%/var(--n))] top-5.5 h-px origin-left bg-accent transition-transform duration-(--duration-slow) ease-out motion-reduce:transition-none"
+          className={cx(
+            "pointer-events-none absolute inset-x-[calc(50%/var(--n))] top-5.5 h-px origin-left transition-transform duration-(--duration-slow) ease-out motion-reduce:transition-none",
+            t.fill,
+          )}
           style={{ transform: `scaleX(${current / last})` }}
         />
         {steps.map((step, i) => (
@@ -93,21 +119,28 @@ export function Stepper({
             >
               <span
                 className={cx(
-                  "absolute -inset-1.5 rounded-full bg-accent-soft transition-[opacity,transform] duration-(--duration-base) ease-out motion-reduce:transition-none",
+                  "absolute -inset-1.5 rounded-full transition-[opacity,transform] duration-(--duration-base) ease-out motion-reduce:transition-none",
+                  t.soft,
                   i === current ? "opacity-100" : "scale-50 opacity-0",
                 )}
               />
               <span
                 className={cx(
-                  "absolute -inset-px rounded-full bg-accent transition-[opacity,transform] duration-(--duration-base) ease-out motion-reduce:transition-none",
+                  "absolute -inset-px rounded-full transition-[opacity,transform] duration-(--duration-base) ease-out motion-reduce:transition-none",
+                  t.fill,
                   i <= current ? "opacity-100" : "scale-50 opacity-0",
                 )}
               />
             </span>
             <span className="sr-only @xl:not-sr-only @xl:flex @xl:flex-col @xl:items-center @xl:gap-0.5 @xl:px-1 @xl:text-center">
-              <span className="font-mono text-mono-label text-fg-subtle group-aria-selected:text-accent">
+              <span
+                className={cx(
+                  "font-mono text-mono-label text-fg-subtle",
+                  t.number,
+                )}
+              >
                 {pad(i + 1)}
-              </span>
+              </span>{" "}
               <span className="text-small text-fg-muted transition-ui group-hover:text-fg group-aria-selected:text-fg">
                 {step.name}
               </span>
