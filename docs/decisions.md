@@ -696,3 +696,32 @@ Screens placed in the MDX:
   - **Frame comparisons.** The bento frame checks round opacity to two decimals (WebKit reported a settled 0.4 as 0.4033).
   - **Progress bar.** The progress-bar check accepts `transition-property: none`.
 - **Firefox navigations.** Desktop Firefox sometimes left Playwright "waiting for navigation to finish" when a test navigated a page a second time (also seen in Phase 4). Those tests now navigate once per page, opening a fresh page for each URL where they loop.
+
+**New UI strings for Tanishq to approve (Phase 5).** Anything not listed is the spec's own wording.
+
+- **Baby**
+  - Labels: "Rule" (as in "Rule 9 → 1"), "Fired", "Redacted", "You".
+  - Lines: "Check the screen." and "Baby never confirms by voice. No answer within 60 s means no."
+  - The privacy-pin note, from §10.1's route text.
+  - Headings: "Follow a turn", "Scenario", "Router ladder", "Transcript".
+  - Table headers: Scenario, Utterance, Route, Gate, Reply (shown).
+- **VYRO**
+  - Gauge labels: "CPU", "GPU", "CPU temperature", "CPU fan".
+  - Sparkline: "Last 60 s" and the "low … / high …" summary.
+  - Browser readout: "Logical processors", "Device memory", "Not shared by this browser", "Screen", "Device pixel ratio", "Chromium; the browser caps it".
+  - Footprint: "Reference PC", "VYRO footprint by version, on the reference PC".
+- **Reservoir RL**
+  - Controls: "Objective weights", "Nearest agent", "seed", "Weights", "vs".
+  - The hint: "Drag the cursor or tap the triangle. Arrow keys move it; Shift moves it further."
+  - Labels: "Mean ± sd · lower is better", "Nominal".
+  - "View data": the caption and the "Balanced PPO, seed 42 (nominal / drier climate)" rows.
+- **Forecasting**
+  - Tabs and picker: "Calibration explorer", "Calibration", "DeepAR seed".
+  - Card headings ("DeepAR · seed {n}", "DeepAR · mean ± sd over 5 seeds") and the "ARIMA {value}" reference line.
+  - Horizon bars: "ECE by forecast horizon · best seed (1337)", "h ahead".
+  - Recalibration tab: "Isotonic recalibration, fitted on the validation period", "Before and after, on the same run".
+  - Recalibration table: Metric, Before, After, Test ECE, Validation ECE, 90% interval width, Test-period fit (diagnostic).
+- **Jainav**
+  - Rail names: Sign in, Checkout, Verify, Fulfil, Invoice, Licence, Activate.
+  - "View data" columns: "Step", "What happens".
+- **MenuMesh:** "Menu language" (the toggle's accessible name), "English" / "हिंदी".
