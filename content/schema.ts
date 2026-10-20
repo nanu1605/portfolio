@@ -61,7 +61,7 @@ export const Metric = z.object({
   value: Text,
   label: Text,
   source: Href,
-  /** Where the source is a page that must not be linked (the MenuMesh staging site, A.4.4). */
+  /** False where the source must not be linked: the MenuMesh staging site (A.4.4) and the VYRO repo, which is going private. */
   linkSource: z.boolean().default(true),
   measuredOn: Text.optional(),
   note: Text.optional(),

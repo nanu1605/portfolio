@@ -10,7 +10,15 @@ const gh = (repo: string, branch: string, path = "") =>
     : `https://github.com/nanu1605/${repo}/${path.endsWith("/") ? "tree" : "blob"}/${branch}/${path.replace(/\/$/, "")}`;
 
 const baby = (path: string) => gh("baby", "master", path);
-const vyro = (path: string) => gh("vyro", "main", path);
+// The VYRO repo is going private (Tanishq, 20 Oct 2026), so its numbers name
+// the file as text instead of linking it.
+const vyro = (path: string, measuredOn?: string) => ({
+  source: gh("vyro", "main", path),
+  linkSource: false,
+  measuredOn: [measuredOn, `VYRO ${path}, private repo`]
+    .filter(Boolean)
+    .join(" · "),
+});
 const jainav = (path: string) => gh("jainav-infotech", "main", path);
 const rl = (path: string) => gh("reservoir-rl", "main", path);
 const fc = (path: string) => gh("probabilistic-forecasting", "main", path);
@@ -187,20 +195,17 @@ const raw = {
   "vyro.cpu": {
     value: "0.46%",
     label: "CPU with the window open",
-    source: vyro("README.md"),
-    measuredOn: "v0.2.0",
+    ...vyro("README.md", "v0.2.0"),
   },
   "vyro.ram": {
     value: "~125 MB",
     label: "RAM with the window open",
-    source: vyro("README.md"),
-    measuredOn: "v0.2.0; 120 MB at v0.1.4",
+    ...vyro("README.md", "v0.2.0; 120 MB at v0.1.4"),
   },
   "vyro.startup": {
     value: "0.76–1.02 s",
     label: "startup to first data",
-    source: vyro("README.md"),
-    measuredOn: "v0.1.4–0.2.0",
+    ...vyro("README.md", "v0.1.4–0.2.0"),
   },
   "vyro.installer": {
     value: "11.6 MB",
@@ -212,35 +217,33 @@ const raw = {
   "vyro.poll": {
     value: "~9 ms",
     label: "cost of one poll",
-    source: vyro("ROADMAP.md"),
+    ...vyro("ROADMAP.md"),
   },
   "vyro.releases": {
     value: "11",
     label: "public releases, 0.1.2 → 1.4.1",
     source: "https://github.com/nanu1605/vyro-releases/tags",
   },
-  "vyro.views": { value: "18", label: "views", source: vyro("src/nav.ts") },
+  "vyro.views": { value: "18", label: "views", ...vyro("src/nav.ts") },
   "vyro.themes": {
     value: "6",
     label: "themes, all WCAG AA",
-    source: vyro("README.md"),
+    ...vyro("README.md"),
   },
   "vyro.tests": {
     value: "614 + 132",
     label: "Rust core + frontend tests",
-    source: vyro("ROADMAP.md"),
-    measuredOn: "V2 milestone",
+    ...vyro("ROADMAP.md", "V2 milestone"),
   },
   "vyro.axe": {
     value: "664",
     label: "automated accessibility checks in CI",
-    source: vyro("ROADMAP.md"),
-    measuredOn: "v1.4",
+    ...vyro("ROADMAP.md", "v1.4"),
   },
   "vyro.tsTypes": {
     value: "201",
     label: "TypeScript type files generated from Rust",
-    source: vyro("README.md"),
+    ...vyro("README.md"),
   },
 
   "jainav.tests": {

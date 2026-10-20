@@ -6,7 +6,7 @@ import { TextLink } from "./text-link";
 
 /**
  * Where a metric was measured. A source that must not be linked (the
- * MenuMesh staging site) is named as text.
+ * MenuMesh staging site, the private VYRO repo) is named as text.
  */
 export function Source({
   id,

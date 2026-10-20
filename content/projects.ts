@@ -100,8 +100,8 @@ const raw = [
     ],
     role: "Product owner and architect; field testing on real hardware",
     period: "Sep – Oct 2026 (v1.4.1 on 20 Oct 2026)",
-    status:
-      "Beta · Free download · Open source (MIT or Apache-2.0) · a Jainav Infotech product",
+    // A.4.2 says open source and links the repo; the repo is going private.
+    status: "Beta · Free download · a Jainav Infotech product",
     platform: "Windows 10 (21H2+) and 11, x64",
     badges: ["Beta", "Free"],
     filters: ["products", "infra"],
@@ -119,7 +119,6 @@ const raw = [
         label: "Download",
         href: "https://github.com/nanu1605/vyro-releases/releases",
       },
-      { label: "Source", href: "https://github.com/nanu1605/vyro" },
       {
         label: "Product page",
         href: "https://jainavinfotech.in/products/vyro",

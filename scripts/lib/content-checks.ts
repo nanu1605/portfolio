@@ -58,6 +58,8 @@ const ROOT = process.cwd();
 const CONTENT = path.join(ROOT, "content");
 // The schema and the registry talk about placeholders rather than use them.
 const NOT_CONTENT = new Set(["schema.ts", "placeholders.ts"]);
+// Sources shown as text only (A.4.4; the VYRO repo is going private).
+const UNLINKABLE = /staging\.menumesh\.in|github\.com\/nanu1605\/vyro(?![\w-])/;
 
 async function contentFiles(dir = CONTENT): Promise<string[]> {
   const entries = await readdir(dir, { withFileTypes: true });
@@ -154,12 +156,19 @@ export async function runChecks() {
         if (!ids.has(id))
           fail(`content/${name}.ts ${at}: unknown metric {${id}}`);
       }
-      if (/staging\.menumesh\.in/.test(text))
+      if (UNLINKABLE.test(text))
         fail(
-          `content/${name}.ts ${at}: never link the MenuMesh staging site (A.4.4)`,
+          `content/${name}.ts ${at}: never link the MenuMesh staging site (A.4.4) or the VYRO repo, which is going private`,
         );
     }
   }
+
+  // Unlinkable sources stay as text: no links, and `linkSource: false` metrics.
+  for (const [id, m] of Object.entries(metrics))
+    if (m.linkSource && UNLINKABLE.test(m.source))
+      fail(
+        `metrics.ts ${id}: this source can't be linked; set linkSource: false`,
+      );
 
   // Projects: one entry per slug, unique order, real metrics and screens.
   const slugs = projects.map((p) => p.slug);
