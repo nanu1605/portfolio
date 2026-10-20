@@ -24,6 +24,8 @@ const nextConfig: NextConfig = {
     }));
   },
   turbopack: {
+    // This checkout, even when it sits inside another one (a worktree).
+    root: path.resolve("."),
     rules: {
       "*.css": {
         loaders: ["@tailwindcss/turbopack"],
