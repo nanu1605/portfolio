@@ -46,10 +46,50 @@ const finalFrame = (el: Locator) =>
     ),
   );
 
+type Looks = { elapsed: number; parts: { delay: number; look: string }[] };
+
+/** How each part looks now, and how far the tile's pass has got (ms). */
+const looks = (el: Locator) =>
+  el.evaluate((node) => {
+    const anims = node
+      .getAnimations({ subtree: true })
+      .filter((a): a is CSSAnimation => "animationName" in a)
+      .filter((a) => a.animationName.startsWith("demo-"));
+    return {
+      elapsed: Math.max(0, ...anims.map((a) => Number(a.currentTime ?? 0))),
+      parts: [...node.querySelectorAll<Element>(".demo-a")].map((part) => {
+        const s = getComputedStyle(part);
+        return {
+          delay: parseFloat(s.getPropertyValue("--t")) || 0,
+          look: [s.opacity, s.transform, s.strokeDashoffset].join(" | "),
+        };
+      }),
+    };
+  }) as Promise<Looks>;
+
+/**
+ * A pass starts from the start: every part still waiting out its delay
+ * shows its first keyframe, not the final frame it rests on. Returns how
+ * many parts were waiting.
+ */
+async function expectStartFrame(el: Locator, rest: Looks) {
+  const now = await looks(el);
+  const waiting = now.parts
+    .map((p, i) => ({ ...p, rest: rest.parts[i]!.look }))
+    .filter((p) => p.delay > now.elapsed + 50);
+  for (const p of waiting) expect(p.look).not.toBe(p.rest);
+  return waiting.length;
+}
+
 /** Opens Home at the bento, with the mouse away from it. */
 async function toWork(page: Page) {
   await page.goto("/");
   await page.mouse.move(0, 0);
+  // Hydrated (the theme toggle names its action), so the demo trigger in
+  // src/lib/touch-effects.ts is running.
+  await page.waitForFunction(
+    () => !document.querySelector('[aria-label="Toggle theme"]'),
+  );
   await page.locator("#work").evaluate((el) => el.scrollIntoView());
   await expect(tiles(page)).toHaveCount(6);
 }
@@ -123,29 +163,20 @@ test("a hover at 4x CPU throttling has no long task", async ({
   await tile(page, "mlops-drift-loop").hover();
   await page.mouse.move(0, 0);
 
-  // Best of three, so a busy test machine doesn't decide it. Each try is a
-  // raw pointer move, so Playwright's own hit-testing isn't timed.
+  // A raw pointer move, so Playwright's own hit-testing isn't timed.
   const box = (await t.boundingBox())!;
-  const tries: { longest: number; slowestEvent: number }[] = [];
-  for (let i = 0; i < 3; i++) {
-    await settle(page);
-    const stop = await throttle(page);
-    tries.push(
-      await during(page, () =>
-        page.mouse.move(box.x + box.width / 2, box.y + box.height / 2),
-      ),
-    );
-    await stop();
-    await page.mouse.move(0, 0);
-    if (tries.at(-1)!.longest < 50) break;
-  }
+  await settle(page);
+  const stop = await throttle(page);
+  const timing = await during(page, () =>
+    page.mouse.move(box.x + box.width / 2, box.y + box.height / 2),
+  );
+  await stop();
   await testInfo.attach("hover-timing.json", {
-    body: JSON.stringify(tries),
+    body: JSON.stringify(timing),
     contentType: "application/json",
   });
-  const best = tries.reduce((a, b) => (b.longest < a.longest ? b : a));
-  expect(best.longest).toBeLessThan(50);
-  expect(best.slowestEvent).toBeLessThan(200);
+  expect(timing.longest).toBeLessThan(50);
+  expect(timing.slowestEvent).toBeLessThan(200);
 });
 
 test("hover plays a demo once from the start, and again on the next hover", async ({
@@ -163,13 +194,15 @@ test("hover plays a demo once from the start, and again on the next hover", asyn
 
   await t.hover();
   expect(await running(t)).toBeGreaterThan(0);
-  // One pass, then it holds the drawn frame.
+  // One pass, then it holds the drawn frame; the attribute that kept it
+  // going goes once it ends.
   await expect
     .poll(async () => (await runs(t)).every((r) => r.state === "finished"), {
       timeout: 5_000,
     })
     .toBe(true);
   for (const part of await finalFrame(t)) expect(part.dash).toBe(0);
+  await expect(t).not.toHaveAttribute("data-demo-play");
   const shift = await page.evaluate(
     () => (window as typeof window & { __shift: number }).__shift,
   );
@@ -184,14 +217,60 @@ test("hover plays a demo once from the start, and again on the next hover", asyn
   expect(Math.min(...again.map((r) => r.time))).toBeLessThan(1_000);
 });
 
-test("keyboard focus on a tile's link plays its demo", async ({ page }) => {
+test("a pass starts from its first frame, not a flash of the last", async ({
+  page,
+}, testInfo) => {
+  test.skip(isTouch(testInfo.project.name), "hover needs a fine pointer");
+  await toWork(page);
+  let waiting = 0;
+  for (const slug of ["mlops-drift-loop", "jainav-platform", "vyro"]) {
+    const t = tile(page, slug);
+    await t.scrollIntoViewIfNeeded();
+    const rest = await looks(t);
+    await t.hover();
+    waiting += await expectStartFrame(t, rest);
+    await page.mouse.move(0, 0);
+  }
+  // The MLOps step and label, three Jainav dots, the VYRO readout.
+  expect(waiting).toBeGreaterThanOrEqual(4);
+});
+
+test("leaving a tile mid-pass lets the pass finish", async ({
+  page,
+}, testInfo) => {
+  test.skip(isTouch(testInfo.project.name), "hover needs a fine pointer");
+  await toWork(page);
+  const t = tile(page, "jainav-platform");
+  await t.scrollIntoViewIfNeeded();
+  await t.hover();
+  await page.waitForTimeout(300);
+  await page.mouse.move(0, 0);
+  await page.waitForTimeout(200);
+  expect(await running(t)).toBeGreaterThan(0);
+  await expect.poll(() => runs(t), { timeout: 5_000 }).toEqual([]);
+  await expect(t).not.toHaveAttribute("data-demo-play");
+  for (const part of await finalFrame(t)) expect(part.dash).toBe(0);
+});
+
+test("keyboard focus on a tile's link plays its demo", async ({
+  page,
+}, testInfo) => {
+  // On touch, the focus scroll would set it off by being in view.
+  test.skip(isTouch(testInfo.project.name), "keyboard on a fine pointer");
   await toWork(page);
   const t = tile(page, "jainav-platform");
   const link = t.getByRole("link", { name: "Jainav Infotech platform" });
+  await t.scrollIntoViewIfNeeded();
+  const rest = await looks(t);
+  expect(await runs(t)).toEqual([]);
   await page.keyboard.press("Tab");
   await link.focus();
   expect(await link.evaluate((el) => el.matches(":focus-visible"))).toBe(true);
-  await expect.poll(() => runs(t).then((r) => r.length)).toBeGreaterThan(0);
+  expect(await running(t)).toBeGreaterThan(0);
+  expect(await expectStartFrame(t, rest)).toBeGreaterThan(0);
+  // Focus moving on doesn't cut the pass short.
+  await page.keyboard.press("Tab");
+  expect(await running(t)).toBeGreaterThan(0);
 });
 
 test("touch plays each demo once at half in view, then holds", async ({
@@ -202,13 +281,17 @@ test("touch plays each demo once at half in view, then holds", async ({
   await page.goto("/");
   await expect(tiles(page)).toHaveCount(6);
   await expect(page.locator("[data-demo-play]")).toHaveCount(0);
+  // Each tile's resting frame, before any of them plays.
+  const all = await tiles(page).all();
+  const rests = await Promise.all(all.map(looks));
 
   const first = tiles(page).first();
-  // Just above the bento first, so it has rendered (content-visibility)
-  // and the scroll to it lands where it should on every engine.
+  // The section's heading just in view first, so the section renders
+  // (content-visibility: WebKit won't scroll to a tile in a skipped one),
+  // with the first tile still out of view.
   await page.locator("#work").evaluate(async (el) => {
     window.scrollTo({
-      top: el.getBoundingClientRect().top + window.scrollY - innerHeight,
+      top: el.getBoundingClientRect().top + window.scrollY - innerHeight + 80,
       behavior: "instant",
     });
     await new Promise((r) =>
@@ -216,8 +299,7 @@ test("touch plays each demo once at half in view, then holds", async ({
     );
   });
   await expect(page.locator("[data-demo-play]")).toHaveCount(0);
-  // WebKit's scrollIntoViewIfNeeded doesn't move this page; centre it here.
-  await first.evaluate((el) => el.scrollIntoView({ block: "center" }));
+  // goLive's own scroll is what brings the first tile into view.
   const live = await goLive(
     page,
     first,
@@ -249,11 +331,14 @@ test("touch plays each demo once at half in view, then holds", async ({
   expect(await running(first)).toBe(0);
   expect(await finalFrame(first)).toEqual(held);
 
-  // Every tile plays once it is half in view.
-  for (const t of await tiles(page).all()) {
+  // Every tile plays once it is half in view, from its first frame.
+  let waiting = 0;
+  for (const [i, t] of all.entries()) {
     await t.evaluate((el) => el.scrollIntoView({ block: "center" }));
     await expect(t).toHaveAttribute("data-demo-play", "");
+    waiting += await expectStartFrame(t, rests[i]!);
   }
+  expect(waiting).toBeGreaterThan(0);
 });
 
 test("a swipe over a demo scrolls the page and plays the next one", async ({
