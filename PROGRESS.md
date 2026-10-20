@@ -116,6 +116,7 @@ Done when: each centerpiece works with mouse, touch and keyboard; data matches A
 - [x] Lazy chunks 6.3–17.8 KB gzipped (budget 60 KB).
 - [x] Longest task 0 ms on every interaction at 4× throttle; slowest event 16–40 ms (INP budget 200 ms).
 - Lighthouse mobile, all 11 pages: performance 97–99, accessibility 100, best practices 96, SEO 100, LCP 1.65–1.93 s, CLS ≤ 0.001.
+- CI run 39489961806 (full matrix on main): 999 e2e passed, 0 flaky; 15 interaction-budget tests passed; Lighthouse mobile and desktop passed; audit clean; Vercel deployed.
 
 ## Phase 6 — Remaining pages
 

@@ -684,3 +684,15 @@ Screens placed in the MDX:
 
   The budget is 60 KB each. VDR, MyCounselHub and the bento demos ship no component JS.
 - **Poster-to-live layout shift:** 0 on every project.
+
+**CI after Phase 5.**
+- **Job limit: 60 minutes.** The full matrix now runs 20–28 minutes of e2e plus about 15 minutes of Lighthouse (mobile and desktop, four URLs). The 30-minute job timeout cancelled the desktop Lighthouse step, and the audit after it.
+- **Audit order.** `pnpm audit` now runs right after install, so a timeout can't skip it.
+- **Tests that only fail on a loaded runner:**
+  - **Swipes.** Stepper swipes are a share of the track's width (60%), not a fixed 220 px: on the 640 px Galaxy Tab the slide is wider, and 220 px snapped back.
+  - **MenuMesh phone floor.** The legibility floor for the portrait phone screen is 0.30. The ~65svh frame gives 0.32 in desktop Safari's and Firefox's 1280 × 720 window.
+  - **Scrolling in `goLive`.** It uses `el.scrollIntoView` rather than Playwright's `scrollIntoViewIfNeeded`, which waits for a stable box.
+  - **The TOC test** runs under reduced motion, so it checks the marking rather than Lenis's smooth scroll.
+  - **Frame comparisons.** The bento frame checks round opacity to two decimals (WebKit reported a settled 0.4 as 0.4033).
+  - **Progress bar.** The progress-bar check accepts `transition-property: none`.
+- **Firefox navigations.** Desktop Firefox sometimes left Playwright "waiting for navigation to finish" when a test navigated a page a second time (also seen in Phase 4). Those tests now navigate once per page, opening a fresh page for each URL where they loop.
