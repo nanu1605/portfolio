@@ -135,7 +135,7 @@ Tanishq asked for the best UI/UX, with animation, on phones, tablets and PCs bef
 
 1. The VYRO download page lists `Vyro_1.4.1_x64_en-US.msi` as the latest release.
 2. (Phase 5.)
-3. `nanu1605/vyro` is public. It's linked as A.4.2 says; Tanishq to confirm.
+3. Not linked: Tanishq is making `nanu1605/vyro` private (see "Answers after Phase 2").
 4. F1 Insights links its repo only. The archive links repos only, so the `f1insights.vercel.app` question doesn't arise.
 
 **Small calls.**
@@ -207,7 +207,7 @@ The page chrome is built from these primitives in the phase that specifies its b
 - **Dialog** is a native `<dialog>`. Esc and a click on the backdrop run the 150 ms fade-out before `close()`. Only dialogs get the scrim; popovers leave the page as it is.
 - **StatusBadge** shows its tone on the dot and keeps the text `fg-muted`, so it passes 4.5:1 everywhere. It also covers two badges the content uses beyond §5.7's list: "Launching soon" and "Client work".
 - **TextLink** grows its hit area to about 44 px on coarse pointers with an absolute `::before`, so the layout doesn't move. MDX links keep a static underline.
-- **"Source"** is the visible label on metric source links, with the metric's label as `sr-only` text. Appendix A gives no wording for it.
+- **"Source"** is the visible label on metric source links, with the metric's label as `sr-only` text. Appendix A gives no wording for it; Tanishq left the call to me, and it stays.
 
 **Tests.**
 
@@ -231,3 +231,13 @@ The page chrome is built from these primitives in the phase that specifies its b
 - The tests wait for `load` plus `document.fonts.ready` instead of `networkidle`. Next keeps prefetches open for routes that don't exist yet (`/work/*`, `/contact`), so the page never goes idle.
 - WebKit's Tab key skips links by default, so the focus test expects fewer stops there.
 - Firefox isn't installed on this machine; CI runs it on main.
+
+## Answers after Phase 2 — 20 Oct 2026
+
+- **The VYRO repo is going private**, so nothing links it, overriding A.4.2:
+  - The case study drops its "Source" link.
+  - "Open source (MIT or Apache-2.0)" is gone from its status line, and the known-issues line no longer mentions free open-source signing, which needs a public repo.
+  - The nine metrics sourced from the repo name the file as text ("v0.2.0 · VYRO README.md, private repo") with `linkSource: false`, like the MenuMesh staging prices. The URL stays in `metrics.ts` for checking.
+  - `check:content` fails if the repo appears in content, or if a metric sourced from it or from the staging site is linked. Downloads, releases and the live version come from the public `vyro-releases` repo and are unaffected.
+- **MenuMesh "How this was built"** (Tanishq left the text to me): "I designed the product — the guest, waiter, kitchen and counter flows — and made the architecture and product decisions. Claude Code wrote much of the implementation." It uses only §1's account of how the AI-native projects are built and A.4.4's role. Nothing about testing is claimed.
+- **VDR and MyCounselHub** figures cite `/resume`, as Tanishq confirmed. The Bosch figures also cite `/resume`, still awaiting confirmation.
