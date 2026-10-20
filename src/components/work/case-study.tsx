@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { microcopy } from "@content/microcopy";
 import type { Project } from "@content/schema";
 import { site } from "@content/site";
-import { Reveal, TextReveal } from "@/components/motion/motion";
+import { TextReveal } from "@/components/motion/motion";
 import { Button } from "@/components/ui/button";
 import { Glow } from "@/components/ui/card";
 import { Disclosure } from "@/components/ui/notes";
@@ -131,11 +131,14 @@ export function Tldr({ project: p }: { project: Project }) {
       </h2>
       <ul className="grid gap-4 lg:grid-cols-3">
         {p.tldr.map((item) => (
-          <li key={item.label}>
-            <Reveal className="grid h-full gap-2 rounded-lg border border-border bg-surface p-5 md:grid-cols-[10rem_1fr] md:gap-6 lg:flex lg:flex-col lg:gap-3">
-              <h3 className="text-small font-semibold text-fg">{item.label}</h3>
-              <p className="text-small text-fg-muted">{item.text}</p>
-            </Reveal>
+          // No scroll reveal: on pages without hero media the TL;DR is in
+          // the first viewport and can be the LCP element.
+          <li
+            key={item.label}
+            className="grid gap-2 rounded-lg border border-border bg-surface p-5 md:grid-cols-[10rem_1fr] md:gap-6 lg:flex lg:flex-col lg:gap-3"
+          >
+            <h3 className="text-small font-semibold text-fg">{item.label}</h3>
+            <p className="text-small text-fg-muted">{item.text}</p>
           </li>
         ))}
       </ul>
