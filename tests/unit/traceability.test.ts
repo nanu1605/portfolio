@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { metrics } from "@content/metrics";
 import { projects } from "@content/projects";
@@ -31,6 +31,42 @@ describe("every number traces to the spec", () => {
     for (const [id, metric] of Object.entries(metrics))
       expect(metric.value, id).toBe(rows.get(id));
   });
+
+  // Centerpiece copy (content/centerpieces/*.ts): every number written in
+  // its strings appears in the spec's §10 subsection, the A.4 case study or
+  // the project's Appendix B data. Numeric literals (crop boxes) aren't copy.
+  const subsection: Record<string, string> = {
+    baby: "10.1 Baby",
+    vyro: "10.2 VYRO",
+    "jainav-platform": "10.3 Jainav platform",
+    menumesh: "10.4 MenuMesh",
+    "reservoir-rl": "10.5 Reservoir RL",
+    "probabilistic-forecasting": "10.6 Probabilistic forecasting",
+  };
+  for (const [slug, heading] of Object.entries(subsection)) {
+    it(`${slug}: the centerpiece copy uses only the spec's numbers`, () => {
+      const start = spec.indexOf(`### ${heading}`);
+      expect(start, heading).toBeGreaterThan(-1);
+      const rest = spec.slice(start + 4);
+      const p = projects.find((p) => p.slug === slug)!;
+      const data = `content/data/${slug}.json`;
+      const allowed = numbers(
+        [
+          rest.slice(0, rest.search(/^#{2,3} /m)),
+          a4(p.title),
+          existsSync(data) ? readFileSync(data, "utf8") : "",
+        ].join("\n"),
+      );
+      const source = readFileSync(`content/centerpieces/${slug}.ts`, "utf8")
+        .replace(/\/\*[\s\S]*?\*\//g, "")
+        .split("\n")
+        .filter((line) => !line.trim().startsWith("//"))
+        .join("\n");
+      const strings = source.match(/"(?:[^"\\]|\\.)*"|`[^`]*`/g) ?? [];
+      const found = [...numbers(strings.join("\n"))];
+      expect(found.filter((n) => !allowed.has(n))).toEqual([]);
+    });
+  }
 
   for (const p of projects.filter((p) => p.caseStudy)) {
     it(`${p.slug}: the body and TL;DR use only A.4's numbers`, () => {
