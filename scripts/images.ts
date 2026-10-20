@@ -5,13 +5,11 @@
 //
 //   pnpm images [--force]
 
-import { spawnSync } from "node:child_process";
-import { copyFile, mkdir, stat, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
-import { createRequire } from "node:module";
+import { copyFile, mkdir, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
-import ffmpegPath from "ffmpeg-static";
 import sharp from "sharp";
+import { encode } from "./lib/ffmpeg";
 import { ScreenManifest } from "../content/schema";
 import manifestJson from "../assets/source/screens/manifest.json";
 
@@ -77,33 +75,6 @@ async function variants(
     blur: `data:image/webp;base64,${tiny.toString("base64")}`,
     variants: result,
   };
-}
-
-function ffmpeg(): string {
-  // pnpm blocks ffmpeg-static's download script on install (pnpm-workspace.yaml),
-  // so CI and Vercel skip the binary; fetch it here, the one place it's used.
-  if (!ffmpegPath)
-    throw new Error("ffmpeg-static has no binary for this platform");
-  if (!existsSync(ffmpegPath)) {
-    const installer = createRequire(import.meta.url).resolve(
-      "ffmpeg-static/install.js",
-    );
-    const run = spawnSync(process.execPath, [installer], { stdio: "inherit" });
-    if (run.status !== 0 || !existsSync(ffmpegPath))
-      throw new Error("ffmpeg-static download failed");
-  }
-  return ffmpegPath;
-}
-
-function encode(args: string[]) {
-  const run = spawnSync(
-    ffmpeg(),
-    ["-hide_banner", "-loglevel", "error", "-y", ...args],
-    {
-      stdio: "inherit",
-    },
-  );
-  if (run.status !== 0) throw new Error(`ffmpeg failed: ${args.join(" ")}`);
 }
 
 async function main() {
