@@ -1,4 +1,4 @@
-import type { KeyboardEvent, ReactNode } from "react";
+import type { CSSProperties, KeyboardEvent, ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
 import type {
   BabyDemo,
@@ -42,6 +42,10 @@ type Geometry = {
   inline: boolean;
   redact: Spot;
   edge: Record<Edge, string>;
+  /** A chevron on the agent loop, pointing back into the router. */
+  arrow: string;
+  /** Desktop: a hairline from the router's rule down to its ladder. */
+  leader?: string;
 };
 
 const EDGES = [
@@ -93,14 +97,14 @@ const spine = (node: Record<NodeId, P>) => ({
 
 /** Desktop: left to right, cloud above and local below the branch. */
 const across: Geometry = (() => {
-  const y = 88;
+  const y = 100;
   const node: Record<NodeId, P> = {
     wake: [46, y],
     vad: [124, y],
     stt: [214, y],
     router: [308, y],
-    cloud: [404, 44],
-    local: [404, 132],
+    cloud: [404, y - 44],
+    local: [404, y + 44],
     tools: [500, y],
     gate: [592, y],
     voice: [676, y],
@@ -110,19 +114,22 @@ const across: Geometry = (() => {
     y: y + 22,
     a: "middle",
   });
+  // The agent loop runs well clear of the cloud brain's label, with round
+  // corners, so it reads as a path back rather than a frame around it.
   const top = 8;
+  const r = 24;
   return {
     name: "across",
     w: 720,
-    h: 170,
+    h: 182,
     node,
     label: {
       wake: below("wake"),
       vad: below("vad"),
       stt: below("stt"),
       router: below("router"),
-      cloud: { x: 404, y: 28, a: "middle" },
-      local: { x: 404, y: 154, a: "middle" },
+      cloud: { x: 404, y: y - 60, a: "middle" },
+      local: { x: 404, y: y + 66, a: "middle" },
       tools: below("tools"),
       gate: below("gate"),
       voice: below("voice"),
@@ -130,7 +137,7 @@ const across: Geometry = (() => {
     rule: { x: 308, y: y + 38, a: "middle" },
     verdict: { x: 592, y: y + 38, a: "middle" },
     inline: false,
-    redact: { x: 460, y: 28, a: "start" },
+    redact: { x: 460, y: y - 60, a: "start" },
     edge: {
       ...spine(node),
       "router-cloud": sideways(node.router, node.cloud),
@@ -138,8 +145,10 @@ const across: Geometry = (() => {
       "cloud-tools": sideways(node.cloud, node.tools),
       "local-tools": sideways(node.local, node.tools),
       // The agent loop: a tool's result goes back through the router.
-      "gate-router": `M592 ${y}V${top + 16}Q592 ${top} 576 ${top}H324Q308 ${top} 308 ${top + 16}V${y}`,
+      "gate-router": `M592 ${y}V${top + r}Q592 ${top} ${592 - r} ${top}H${308 + r}Q308 ${top} 308 ${top + r}V${y}`,
     },
+    arrow: `M304 ${y - 13.5}L308 ${y - 9}L312 ${y - 13.5}`,
+    leader: `M308 ${y + 46}V182`,
   };
 })();
 
@@ -184,6 +193,7 @@ const down: Geometry = (() => {
       "local-tools": downward(node.local, node.tools),
       "gate-router": `M${x} 308H${loop + 10}Q${loop} 308 ${loop} 298V154Q${loop} 144 ${loop + 10} 144H${x}`,
     },
+    arrow: `M${x - 13} 140L${x - 8.5} 144L${x - 13} 148`,
   };
 })();
 
@@ -210,7 +220,7 @@ function Node({
   const lit = at >= 0;
   return (
     <>
-      <g transform={`translate(${x} ${y})`}>
+      <g transform={`translate(${x} ${y})`} data-node={id}>
         <path
           d={shape}
           strokeWidth={1.25}
@@ -226,7 +236,7 @@ function Node({
             <path
               d={shape}
               strokeWidth={1.25}
-              className="fill-baby stroke-baby"
+              className="fill-baby stroke-fg dark:stroke-baby"
             />
           </g>
         )}
@@ -349,6 +359,17 @@ function Graph({
   });
   const routers = r.flatMap((id, i) => (id === "router" ? [i] : []));
   const names = r.map((id) => demo.nodes[id]).join(" → ");
+  const drawn = [...lit].map(([e, i]) => (
+    <path
+      key={e}
+      d={geo.edge[e as Edge]}
+      pathLength={1}
+      strokeDasharray="1 2"
+      data-at={i}
+      data-fx="draw"
+    />
+  ));
+  const loop = lit.get("gate-router");
   return (
     <svg
       viewBox={`0 0 ${geo.w} ${geo.h}`}
@@ -370,18 +391,25 @@ function Graph({
             }
           />
         ))}
+        {geo.leader && <path d={geo.leader} />}
       </g>
-      <g fill="none" strokeWidth={2} className="stroke-baby">
-        {[...lit].map(([e, i]) => (
-          <path
-            key={e}
-            d={geo.edge[e as Edge]}
-            pathLength={1}
-            strokeDasharray="1 2"
-            data-at={i}
-            data-fx="draw"
-          />
-        ))}
+      {/* The route: a baby-blue glow under a core that holds 3:1 on the
+          surface in both themes (fg in light, where the blue alone is too
+          faint; the blue itself in dark). */}
+      <g fill="none" strokeWidth={5} opacity={0.3} className="stroke-baby">
+        {drawn}
+      </g>
+      <g
+        fill="none"
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="stroke-fg dark:stroke-baby"
+      >
+        {drawn}
+        {loop !== undefined && (
+          <path d={geo.arrow} data-at={loop + 1} data-fx="fade" />
+        )}
       </g>
       {NODES.map((id) => (
         <Node
@@ -411,7 +439,11 @@ function Graph({
       )}
       <g data-pulse="" className="opacity-0">
         <circle r={10} opacity={0.25} className="fill-baby" />
-        <circle r={3.5} className="fill-baby" />
+        <circle
+          r={3.5}
+          strokeWidth={1}
+          className="fill-baby stroke-fg dark:stroke-baby"
+        />
       </g>
     </svg>
   );
@@ -494,7 +526,10 @@ function Ladder({ demo, s }: { demo: BabyDemo; s: Scenario }) {
     </ol>
   );
   return (
-    <div className="border-b border-border p-4 @xl:p-5 lg:border-r lg:border-b-0">
+    <div
+      data-ladder=""
+      className="relative border-b border-border p-4 @xl:p-5 lg:col-start-2 lg:row-start-2 lg:border-b-0 lg:border-l"
+    >
       {/* Phones and tablets: the rule that decided the turn (the graph's
           "Rule 9 → 1" shows the re-route); opening the ladder swaps it for
           the whole list, where it is highlighted too. */}
@@ -533,8 +568,14 @@ function Ladder({ demo, s }: { demo: BabyDemo; s: Scenario }) {
           </Stack>
         </div>
       </div>
-      {/* Desktops: the ladder stays open under the router. */}
+      {/* Desktops: the ladder stays open under the router, its column
+          starting at the router's x; the graph's leader comes down the
+          column's edge and turns into the heading. */}
       <div className="hidden lg:block">
+        <span
+          aria-hidden="true"
+          className="absolute top-0 -left-px h-7 w-3 rounded-bl-sm border-b border-l border-border-strong"
+        />
         <p className={cx(label, "mb-3")}>{demo.ladderTitle}</p>
         {full}
       </div>
@@ -657,7 +698,10 @@ function Transcript({
   announce?: { text: string; lang?: string };
 }) {
   return (
-    <div data-transcript="" className="p-4 @xl:p-5">
+    <div
+      data-transcript=""
+      className="p-4 @xl:p-5 lg:col-start-1 lg:row-start-2"
+    >
       <p className={cx(label, "mb-3")}>{demo.transcript}</p>
       <Stack demo={demo} s={s}>
         {(sc) => (
@@ -681,6 +725,16 @@ function Transcript({
     </div>
   );
 }
+
+/**
+ * Where the desktop graph's router sits across the box: the graph is
+ * centred, min(box - its padding (lg:px-6), its max width (50rem)) wide,
+ * and the router is this share of the graph off its centre. Less half a
+ * pixel, so the ladder column's 1 px edge is centred on the router.
+ */
+const ROUTER = `calc(50% + min(100% - 3rem, 50rem) * ${
+  (across.node.router[0] - across.w / 2) / across.w
+} - 0.5px)`;
 
 export type ViewProps = {
   demo: BabyDemo;
@@ -741,8 +795,11 @@ export function View({
           ))}
         </div>
       </div>
-      <div className="grid @xl:max-lg:grid-cols-[19rem_1fr] lg:grid-cols-[1.2fr_1fr]">
-        <div className="border-b border-border p-4 @xl:max-lg:row-span-2 @xl:max-lg:border-r @xl:max-lg:border-b-0 @xl:max-lg:p-5 lg:col-span-2 lg:px-6 lg:py-7">
+      <div
+        style={{ "--router": ROUTER } as CSSProperties}
+        className="grid @xl:max-lg:grid-cols-[19rem_1fr] lg:grid-cols-[var(--router)_1fr]"
+      >
+        <div className="relative border-b border-border p-4 @xl:max-lg:row-span-2 @xl:max-lg:border-r @xl:max-lg:border-b-0 @xl:max-lg:p-5 lg:col-span-2 lg:px-6 lg:py-7">
           <Graph
             geo={down}
             demo={demo}
@@ -754,6 +811,11 @@ export function View({
             demo={demo}
             s={s}
             className="mx-auto hidden w-full max-w-[50rem] lg:block"
+          />
+          {/* The leader's run through the padding, to the ladder below. */}
+          <span
+            aria-hidden="true"
+            className="absolute -bottom-px left-(--router) hidden h-[30px] w-px bg-border-strong lg:block"
           />
         </div>
         <Ladder demo={demo} s={s} />
