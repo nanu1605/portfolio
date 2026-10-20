@@ -14,8 +14,9 @@ concurrency:
 jobs:
   checks:
     runs-on: ubuntu-latest
-    # The full matrix takes about 21 min of e2e since Phase 5.
-    timeout-minutes: 45
+    # Since Phase 5 the full matrix runs 20–27 min of e2e, then about
+    # 15 min of Lighthouse.
+    timeout-minutes: 60
     env:
       # PRs run the default device projects; main and nightly run the full
       # matrix from docs/cross-device.md §8.
@@ -29,6 +30,7 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+      - run: pnpm audit --prod --audit-level high
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
@@ -83,5 +85,3 @@ jobs:
           name: lighthouse
           path: lighthouse-report
           retention-days: 7
-
-      - run: pnpm audit --prod --audit-level high
