@@ -9,8 +9,8 @@ import { rlPoints } from "@/components/centerpieces/reservoir-rl";
 //
 // The markup is each demo's final frame. Parts marked .demo-a name their
 // keyframes in --k; globals.css ("Bento micro-demos") plays them once from
-// the start while the tile is hovered or holds keyboard focus, or once the
-// tile is 50% in view on touch (src/lib/reveal-script.ts), then holds.
+// the start when a pointer or focus enters the tile, or once the tile is
+// half in view on touch (src/lib/touch-effects.ts), then holds.
 
 type Vars = Record<`--${string}`, string | number>;
 

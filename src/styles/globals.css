@@ -546,21 +546,20 @@ dialog .menu-bar:last-child {
    src/components/home/micro-demos.tsx draws each demo's final frame. A
    part marked .demo-a names its keyframes in --k, with its delay (--t),
    duration (--d), easing (--e) and repeats (--n). It plays once, from the
-   start, while its tile ([data-demo]) is hovered by a fine pointer or holds
-   keyboard focus, or once the tile is half in view on touch
-   ([data-demo-play], set by the reveal script); then it holds the final
-   frame. Keyframes leave out `to`, so they end on the drawn state. Leaving
-   a tile mid-pass eases back to the final frame. */
+   start, while its tile ([data-demo]) has [data-demo-play], then holds the
+   final frame. src/lib/touch-effects.ts sets that attribute: for a pass
+   started by a mouse, pen or focus entering the tile, cleared when it
+   ends, so leaving mid-pass doesn't cut it short; on touch, once the tile
+   is half in view, and kept. The :hover and :focus-visible rules play it
+   before that script runs. Keyframes leave out `to`, so they end on the
+   drawn state, and `both` holds their start frame through the delay. */
 
 .demo-a {
-  animation: none var(--d, 600ms) var(--e, var(--ease-out)) var(--t, 0ms)
-    var(--n, 1) both;
+  /* No name here: a leading `none` would be read as the fill mode. */
+  animation: var(--d, 600ms) var(--e, var(--ease-out)) var(--t, 0ms) var(--n, 1)
+    both;
   transform-box: fill-box;
   transform-origin: center;
-  transition:
-    opacity var(--duration-base) var(--ease-out),
-    transform var(--duration-base) var(--ease-out),
-    stroke-dashoffset var(--duration-base) var(--ease-out);
 }
 
 /* Screen only, so print keeps the final frame too. */
@@ -805,7 +804,6 @@ dialog .menu-bar:last-child {
 
   .demo-a {
     animation: none;
-    transition: none;
   }
 }
 
