@@ -249,6 +249,19 @@ test("every tappable element changes on press, and nothing sticks after a tap", 
   await page.addStyleTag({
     content: "html { scroll-behavior: auto !important; }",
   });
+  // Release on the element (sliding off with the button held starts a link
+  // drag in WebKit, which swallows the next press) and cancel the click
+  // before the page or React sees it, so nothing navigates or opens.
+  await page.evaluate(() =>
+    window.addEventListener(
+      "click",
+      (event) => {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      },
+      true,
+    ),
+  );
   const targets = page.locator(
     "main a[href], main button, main summary, main [role=tab]",
   );
@@ -277,8 +290,6 @@ test("every tappable element changes on press, and nothing sticks after a tap", 
     // Large surfaces press 100 ms late; transitions take 150 ms.
     await page.waitForTimeout(450);
     const pressed = await look(el);
-    // Slide off before releasing, so nothing is clicked.
-    await page.mouse.move(0, 0);
     await page.mouse.up();
     if (pressed === before)
       unchanged.push(await el.evaluate((n) => n.outerHTML.slice(0, 80)));
