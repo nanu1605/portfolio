@@ -20,7 +20,8 @@
     "check:content": "tsx scripts/check-content.ts",
     "format": "prettier --write .",
     "prepare": "husky",
-    "images": "tsx scripts/images.ts"
+    "images": "tsx scripts/images.ts",
+    "capture:menumesh": "tsx scripts/capture/menumesh.ts"
   },
   "lint-staged": {
     "*.{ts,tsx,js,mjs}": [

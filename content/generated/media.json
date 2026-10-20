@@ -515,6 +515,527 @@
         }
       ]
     },
+    "menumesh/menumesh-home-hero.png": {
+      "width": 2880,
+      "height": 1344,
+      "blur": "data:image/webp;base64,UklGRj4AAABXRUJQVlA4IDIAAACwAQCdASoQAAcAAsBMJZwAAuQ5eQ8AAP71+Ja2XhTvOIAjGQcUawB+cqRff48yQwAAAA==",
+      "variants": [
+        {
+          "width": 640,
+          "height": 299,
+          "avif": "/media/screens/menumesh/menumesh-home-hero-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-home-hero-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 448,
+          "avif": "/media/screens/menumesh/menumesh-home-hero-960.avif",
+          "webp": "/media/screens/menumesh/menumesh-home-hero-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 597,
+          "avif": "/media/screens/menumesh/menumesh-home-hero-1280.avif",
+          "webp": "/media/screens/menumesh/menumesh-home-hero-1280.webp"
+        },
+        {
+          "width": 1920,
+          "height": 896,
+          "avif": "/media/screens/menumesh/menumesh-home-hero-1920.avif",
+          "webp": "/media/screens/menumesh/menumesh-home-hero-1920.webp"
+        },
+        {
+          "width": 2560,
+          "height": 1195,
+          "avif": "/media/screens/menumesh/menumesh-home-hero-2560.avif",
+          "webp": "/media/screens/menumesh/menumesh-home-hero-2560.webp"
+        }
+      ]
+    },
+    "menumesh/menumesh-language.png": {
+      "width": 2880,
+      "height": 1258,
+      "blur": "data:image/webp;base64,UklGRjwAAABXRUJQVlA4IDAAAACwAQCdASoQAAcAAsBMJZwAAujXhXzAAP724srGG1LruphO1Xc2ePrDUdr2s35RAAA=",
+      "variants": [
+        {
+          "width": 640,
+          "height": 280,
+          "avif": "/media/screens/menumesh/menumesh-language-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-language-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 419,
+          "avif": "/media/screens/menumesh/menumesh-language-960.avif",
+          "webp": "/media/screens/menumesh/menumesh-language-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 559,
+          "avif": "/media/screens/menumesh/menumesh-language-1280.avif",
+          "webp": "/media/screens/menumesh/menumesh-language-1280.webp"
+        },
+        {
+          "width": 1920,
+          "height": 839,
+          "avif": "/media/screens/menumesh/menumesh-language-1920.avif",
+          "webp": "/media/screens/menumesh/menumesh-language-1920.webp"
+        },
+        {
+          "width": 2560,
+          "height": 1118,
+          "avif": "/media/screens/menumesh/menumesh-language-2560.avif",
+          "webp": "/media/screens/menumesh/menumesh-language-2560.webp"
+        }
+      ]
+    },
+    "menumesh/menumesh-pricing.png": {
+      "width": 2880,
+      "height": 2426,
+      "blur": "data:image/webp;base64,UklGRkQAAABXRUJQVlA4IDgAAADwAQCdASoQAA0AAsBMJZwAAsf+ndlGgwgA/vnI86FveAb9fzn7qJrfkU2+b+pxa6W1vEl84R+AAA==",
+      "variants": [
+        {
+          "width": 640,
+          "height": 539,
+          "avif": "/media/screens/menumesh/menumesh-pricing-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-pricing-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 809,
+          "avif": "/media/screens/menumesh/menumesh-pricing-960.avif",
+          "webp": "/media/screens/menumesh/menumesh-pricing-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 1078,
+          "avif": "/media/screens/menumesh/menumesh-pricing-1280.avif",
+          "webp": "/media/screens/menumesh/menumesh-pricing-1280.webp"
+        },
+        {
+          "width": 1920,
+          "height": 1617,
+          "avif": "/media/screens/menumesh/menumesh-pricing-1920.avif",
+          "webp": "/media/screens/menumesh/menumesh-pricing-1920.webp"
+        },
+        {
+          "width": 2560,
+          "height": 2156,
+          "avif": "/media/screens/menumesh/menumesh-pricing-2560.avif",
+          "webp": "/media/screens/menumesh/menumesh-pricing-2560.webp"
+        }
+      ]
+    },
+    "menumesh/menumesh-demo-start-guest.png": {
+      "width": 640,
+      "height": 1330,
+      "blur": "data:image/webp;base64,UklGRqAAAABXRUJQVlA4IJQAAADwBACdASoQACEAPtFWpUwoJKOiKqwBABoJQBmG3AW//dgBUgB0xK9sPIoVw34WMgAA+3UKmugeythSKeQ6p3zUwbVBleUMeWdCmQNzfM2oeP3h/8Y217vMy9H/KocDHpkN/5ZPq4LFyn/y8Mwd1MTLyvW7vJ99Fg4pzJpcoIYgVSTMOVytRWhMLvskXe1sSKUAAAAA",
+      "variants": [
+        {
+          "width": 640,
+          "height": 1330,
+          "avif": "/media/screens/menumesh/menumesh-demo-start-guest-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-start-guest-640.webp"
+        }
+      ]
+    },
+    "menumesh/menumesh-demo-start-kitchen.png": {
+      "width": 1504,
+      "height": 1136,
+      "blur": "data:image/webp;base64,UklGRi4AAABXRUJQVlA4ICIAAACwAQCdASoQAAwAAsBMJaQAAvqpNu0AAP74ftBBHvSAQAAA",
+      "variants": [
+        {
+          "width": 640,
+          "height": 483,
+          "avif": "/media/screens/menumesh/menumesh-demo-start-kitchen-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-start-kitchen-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 725,
+          "avif": "/media/screens/menumesh/menumesh-demo-start-kitchen-960.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-start-kitchen-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 967,
+          "avif": "/media/screens/menumesh/menumesh-demo-start-kitchen-1280.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-start-kitchen-1280.webp"
+        }
+      ]
+    },
+    "menumesh/menumesh-demo-start-counter.png": {
+      "width": 1536,
+      "height": 1000,
+      "blur": "data:image/webp;base64,UklGRjQAAABXRUJQVlA4ICgAAACwAQCdASoQAAoAAsBMJZwAAu18PDkgAP73pp8dJTEkY8DoEEkjUHAA",
+      "variants": [
+        {
+          "width": 640,
+          "height": 417,
+          "avif": "/media/screens/menumesh/menumesh-demo-start-counter-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-start-counter-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 625,
+          "avif": "/media/screens/menumesh/menumesh-demo-start-counter-960.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-start-counter-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 833,
+          "avif": "/media/screens/menumesh/menumesh-demo-start-counter-1280.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-start-counter-1280.webp"
+        }
+      ]
+    },
+    "menumesh/menumesh-demo-ordered-guest.png": {
+      "width": 640,
+      "height": 1330,
+      "blur": "data:image/webp;base64,UklGRoYAAABXRUJQVlA4IHoAAACQBACdASoQACEAPtFcqE4oJSQiKqgBABoJQBj/3AW//dgADxh5AWXWQl8JsqAA+3UKkkNjgIn8xOR0NKT7phL7nI3SfBPQLxKayAg/V25df+yqEz6mnpm/sAq8f4N2IlBMYoDKF8yzF2/T8Eru57Sfq7RjP1q4IOAAAA==",
+      "variants": [
+        {
+          "width": 640,
+          "height": 1330,
+          "avif": "/media/screens/menumesh/menumesh-demo-ordered-guest-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-ordered-guest-640.webp"
+        }
+      ]
+    },
+    "menumesh/menumesh-demo-ordered-kitchen.png": {
+      "width": 1504,
+      "height": 1136,
+      "blur": "data:image/webp;base64,UklGRkAAAABXRUJQVlA4IDQAAADQAQCdASoQAAwAAsBMJZwC7AD0fu+7AAD+9pQeHnRP3fkqFRjJ7aWiI5LWYopSVB0GSgAA",
+      "variants": [
+        {
+          "width": 640,
+          "height": 483,
+          "avif": "/media/screens/menumesh/menumesh-demo-ordered-kitchen-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-ordered-kitchen-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 725,
+          "avif": "/media/screens/menumesh/menumesh-demo-ordered-kitchen-960.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-ordered-kitchen-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 967,
+          "avif": "/media/screens/menumesh/menumesh-demo-ordered-kitchen-1280.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-ordered-kitchen-1280.webp"
+        }
+      ]
+    },
+    "menumesh/menumesh-demo-ordered-counter.png": {
+      "width": 1536,
+      "height": 1000,
+      "blur": "data:image/webp;base64,UklGRkIAAABXRUJQVlA4IDYAAADQAQCdASoQAAoAAsBMJZwC7AERFQEAIAD+94O12f479DuyGXfKKFGx889WAA9N4rAKHrOgAAA=",
+      "variants": [
+        {
+          "width": 640,
+          "height": 417,
+          "avif": "/media/screens/menumesh/menumesh-demo-ordered-counter-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-ordered-counter-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 625,
+          "avif": "/media/screens/menumesh/menumesh-demo-ordered-counter-960.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-ordered-counter-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 833,
+          "avif": "/media/screens/menumesh/menumesh-demo-ordered-counter-1280.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-ordered-counter-1280.webp"
+        }
+      ]
+    },
+    "menumesh/menumesh-demo-preparing-guest.png": {
+      "width": 640,
+      "height": 1330,
+      "blur": "data:image/webp;base64,UklGRpQAAABXRUJQVlA4IIgAAABwBACdASoQACEAPtFcp04oJSOiKqgBABoJQBjS3VvKAAeMPIC0CLY1xwwMAAD7dQqSQ2OAifzE5HQ0pPumEvucjdJ8FBcEQE+m6oD9Xbqlf9lXR5XszzCoOrKUkkGj/lUWDDfbX2ETVrSLuaxQAHnbtrXen6+IFeTqj1wyr9c8KYBxdEJVoQAA",
+      "variants": [
+        {
+          "width": 640,
+          "height": 1330,
+          "avif": "/media/screens/menumesh/menumesh-demo-preparing-guest-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-preparing-guest-640.webp"
+        }
+      ]
+    },
+    "menumesh/menumesh-demo-preparing-kitchen.png": {
+      "width": 1504,
+      "height": 1136,
+      "blur": "data:image/webp;base64,UklGRkQAAABXRUJQVlA4IDgAAADQAQCdASoQAAwAAsBMJZwCw7D6Ia13gAD+9pQeHnXbMtHfexBiuNRXm9K4XH6D/L5l9r5BDOAAAA==",
+      "variants": [
+        {
+          "width": 640,
+          "height": 483,
+          "avif": "/media/screens/menumesh/menumesh-demo-preparing-kitchen-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-preparing-kitchen-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 725,
+          "avif": "/media/screens/menumesh/menumesh-demo-preparing-kitchen-960.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-preparing-kitchen-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 967,
+          "avif": "/media/screens/menumesh/menumesh-demo-preparing-kitchen-1280.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-preparing-kitchen-1280.webp"
+        }
+      ]
+    },
+    "menumesh/menumesh-demo-preparing-counter.png": {
+      "width": 1536,
+      "height": 1000,
+      "blur": "data:image/webp;base64,UklGRkIAAABXRUJQVlA4IDYAAADQAQCdASoQAAoAAsBMJZwC7AERFQEAIAD+94O12f479DuyGXfKKFGx889WAA9N4rAKHrOgAAA=",
+      "variants": [
+        {
+          "width": 640,
+          "height": 417,
+          "avif": "/media/screens/menumesh/menumesh-demo-preparing-counter-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-preparing-counter-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 625,
+          "avif": "/media/screens/menumesh/menumesh-demo-preparing-counter-960.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-preparing-counter-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 833,
+          "avif": "/media/screens/menumesh/menumesh-demo-preparing-counter-1280.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-preparing-counter-1280.webp"
+        }
+      ]
+    },
+    "menumesh/menumesh-demo-ready-guest.png": {
+      "width": 640,
+      "height": 1330,
+      "blur": "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAAAQBACdASoQACEAPtFep04oJSOiKqgBABoJQBhvlKoDxh5AWXWQl8JVQAD7dQqSQ2OAifzE5HQ0pPumEvucjdJ8E3cC5I4GdHoqAov+f2ylj+pvjE7V+wHlIvL5FddUlB674girK2gIRRpnLI/9rP7/FEegZ0Z2nTeyPjUJwbhgAA==",
+      "variants": [
+        {
+          "width": 640,
+          "height": 1330,
+          "avif": "/media/screens/menumesh/menumesh-demo-ready-guest-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-ready-guest-640.webp"
+        }
+      ]
+    },
+    "menumesh/menumesh-demo-ready-kitchen.png": {
+      "width": 1504,
+      "height": 1136,
+      "blur": "data:image/webp;base64,UklGRjwAAABXRUJQVlA4IDAAAADwAQCdASoQAAwAAsBMJZwC7AD0jYUqAAAA/vaUHh50G5mmV5odRXmW6/ChM14HwAA=",
+      "variants": [
+        {
+          "width": 640,
+          "height": 483,
+          "avif": "/media/screens/menumesh/menumesh-demo-ready-kitchen-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-ready-kitchen-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 725,
+          "avif": "/media/screens/menumesh/menumesh-demo-ready-kitchen-960.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-ready-kitchen-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 967,
+          "avif": "/media/screens/menumesh/menumesh-demo-ready-kitchen-1280.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-ready-kitchen-1280.webp"
+        }
+      ]
+    },
+    "menumesh/menumesh-demo-ready-counter.png": {
+      "width": 1536,
+      "height": 1000,
+      "blur": "data:image/webp;base64,UklGRkIAAABXRUJQVlA4IDYAAADQAQCdASoQAAoAAsBMJZwC7AERFQEAIAD+94O12f479DuyGXfKKFGx889WAA9N4rAKHrOgAAA=",
+      "variants": [
+        {
+          "width": 640,
+          "height": 417,
+          "avif": "/media/screens/menumesh/menumesh-demo-ready-counter-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-ready-counter-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 625,
+          "avif": "/media/screens/menumesh/menumesh-demo-ready-counter-960.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-ready-counter-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 833,
+          "avif": "/media/screens/menumesh/menumesh-demo-ready-counter-1280.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-ready-counter-1280.webp"
+        }
+      ]
+    },
+    "menumesh/menumesh-demo-served-guest.png": {
+      "width": 640,
+      "height": 1330,
+      "blur": "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAAAQBACdASoQACEAPtFcp04oJSOiKqgBABoJQBjRFGYDxh5AWXWQl8JsqAD7dQqSQ2OAifzE5HQ0pPumEvucjdJ8E9AtBxdN614Irqm/z+2Uo7y07Nn/Xyq7yHa+s7fUzwEFvBpclAFNKBNiZ17Dhp/xRVKfZ3oxPuQpdJPR8aNAAA==",
+      "variants": [
+        {
+          "width": 640,
+          "height": 1330,
+          "avif": "/media/screens/menumesh/menumesh-demo-served-guest-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-served-guest-640.webp"
+        }
+      ]
+    },
+    "menumesh/menumesh-demo-served-kitchen.png": {
+      "width": 1504,
+      "height": 1136,
+      "blur": "data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAADQAQCdASoQAAwAAsBMJaQAAxZgyCKikAD+9dL49eBzVUFyLkF5AwhsgVrtygQA",
+      "variants": [
+        {
+          "width": 640,
+          "height": 483,
+          "avif": "/media/screens/menumesh/menumesh-demo-served-kitchen-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-served-kitchen-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 725,
+          "avif": "/media/screens/menumesh/menumesh-demo-served-kitchen-960.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-served-kitchen-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 967,
+          "avif": "/media/screens/menumesh/menumesh-demo-served-kitchen-1280.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-served-kitchen-1280.webp"
+        }
+      ]
+    },
+    "menumesh/menumesh-demo-served-counter.png": {
+      "width": 1536,
+      "height": 1000,
+      "blur": "data:image/webp;base64,UklGRjwAAABXRUJQVlA4IDAAAADQAQCdASoQAAoAAsBMJZwC7AELKBQqoAD+94fcuBvlsn2pRxvOfudFKkoMtUSMAAA=",
+      "variants": [
+        {
+          "width": 640,
+          "height": 417,
+          "avif": "/media/screens/menumesh/menumesh-demo-served-counter-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-served-counter-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 625,
+          "avif": "/media/screens/menumesh/menumesh-demo-served-counter-960.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-served-counter-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 833,
+          "avif": "/media/screens/menumesh/menumesh-demo-served-counter-1280.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-served-counter-1280.webp"
+        }
+      ]
+    },
+    "menumesh/menumesh-demo-billed-guest.png": {
+      "width": 640,
+      "height": 1330,
+      "blur": "data:image/webp;base64,UklGRo4AAABXRUJQVlA4IIIAAABQBACdASoQACEAPtFYo0yoJSMrKqwBYBoJYgDH8KMwHjAw3dmly4I/Q5UAAPt1CpJDY4CJ/MTlbo0u9gK/5+vVyoaLDJf3sVl6g9byOtxGj//stv5CHqbtdJN+VXeQ7X1nb6md/UuGhVvY4zRWltvJpvIFGWZz24GeVh7joCfAAAAA",
+      "variants": [
+        {
+          "width": 640,
+          "height": 1330,
+          "avif": "/media/screens/menumesh/menumesh-demo-billed-guest-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-billed-guest-640.webp"
+        }
+      ]
+    },
+    "menumesh/menumesh-demo-billed-kitchen.png": {
+      "width": 1504,
+      "height": 1136,
+      "blur": "data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAADQAQCdASoQAAwAAsBMJaQAAxZgyCKikAD+9dL49eBzVUFyLkF5AwhsgVrtygQA",
+      "variants": [
+        {
+          "width": 640,
+          "height": 483,
+          "avif": "/media/screens/menumesh/menumesh-demo-billed-kitchen-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-billed-kitchen-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 725,
+          "avif": "/media/screens/menumesh/menumesh-demo-billed-kitchen-960.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-billed-kitchen-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 967,
+          "avif": "/media/screens/menumesh/menumesh-demo-billed-kitchen-1280.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-billed-kitchen-1280.webp"
+        }
+      ]
+    },
+    "menumesh/menumesh-demo-billed-counter.png": {
+      "width": 1536,
+      "height": 1000,
+      "blur": "data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAADQAQCdASoQAAoAAsBMJaQAAueHLwPwAAD+96n0BKlUOvQy0ec8KHDSI5fLhAAA",
+      "variants": [
+        {
+          "width": 640,
+          "height": 417,
+          "avif": "/media/screens/menumesh/menumesh-demo-billed-counter-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-billed-counter-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 625,
+          "avif": "/media/screens/menumesh/menumesh-demo-billed-counter-960.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-billed-counter-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 833,
+          "avif": "/media/screens/menumesh/menumesh-demo-billed-counter-1280.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-billed-counter-1280.webp"
+        }
+      ]
+    },
+    "menumesh/menumesh-demo-start-guest-hindi.png": {
+      "width": 640,
+      "height": 1330,
+      "blur": "data:image/webp;base64,UklGRqYAAABXRUJQVlA4IJoAAAAQBQCdASoQACEAPtFWpEyoJKOiKqwBABoJQBmG3AW//dgBUgB0wsfpk19fzoWNXy0oAPt1CproHsrYUjV3hQNTZ2f2atdasfuiLQNhUK1R4Uvyy+VPwpb9lUJn1NPTN/lUOBj0yG/4hkq6Esn8niUVt6w0O8SPE3x9t3uVPIbb+F3YSNseclHspHRc0yz2BVtyXGJ91vFDQAAA",
+      "variants": [
+        {
+          "width": 640,
+          "height": 1330,
+          "avif": "/media/screens/menumesh/menumesh-demo-start-guest-hindi-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-start-guest-hindi-640.webp"
+        }
+      ]
+    },
+    "menumesh/menumesh-hi-phone.png": {
+      "width": 1170,
+      "height": 3024,
+      "blur": "data:image/webp;base64,UklGRuAAAABXRUJQVlA4INQAAABwBQCdASoQACkAPr1MnkunJCKhtUgA4BeJQAg1XAALNuKkD3eq1yDhU/qJJGG4GBDjYN3gAP7u8TVwz35L4ft5nnSup1OGUCyPux9cMH48vONZA0VhSn1fi5H+X9JNCAh56rfsWEAolsY6i6znsjC5UPblV34uX108Md8wynNE167GoghffeVMln8A7hW5XnCfkltQ22exuAOYMQu7DFmHDi14pcv8+nGC2szqiZ9Kf0ogpGP+rGkpdhFY9TNEPtOfmUqIsltCG66enC7oEV2NswAAAA==",
+      "variants": [
+        {
+          "width": 640,
+          "height": 1654,
+          "avif": "/media/screens/menumesh/menumesh-hi-phone-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-hi-phone-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 2481,
+          "avif": "/media/screens/menumesh/menumesh-hi-phone-960.avif",
+          "webp": "/media/screens/menumesh/menumesh-hi-phone-960.webp"
+        }
+      ]
+    },
     "vyro/vyro-dashboard-poster.png": {
       "width": 1600,
       "height": 1090,
@@ -595,6 +1116,31 @@
           "webp": "/media/screens/baby/baby-turn-hinglish-poster-1920.webp"
         }
       ]
+    },
+    "menumesh/menumesh-demo-poster.png": {
+      "width": 1280,
+      "height": 800,
+      "blur": "data:image/webp;base64,UklGRkQAAABXRUJQVlA4IDgAAADwAQCdASoQAAoAAsBMJZQCw7EfaGJfngAA/vXwCEh2aZ8fTrV9w5I1c9oZdCiPqzUTUT58QpqIAA==",
+      "variants": [
+        {
+          "width": 640,
+          "height": 400,
+          "avif": "/media/screens/menumesh/menumesh-demo-poster-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-poster-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 600,
+          "avif": "/media/screens/menumesh/menumesh-demo-poster-960.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-poster-960.webp"
+        },
+        {
+          "width": 1280,
+          "height": 800,
+          "avif": "/media/screens/menumesh/menumesh-demo-poster-1280.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-poster-1280.webp"
+        }
+      ]
     }
   },
   "videos": {
@@ -612,6 +1158,11 @@
       "mp4": "/media/screens/baby/baby-turn-hinglish.mp4",
       "webm": "/media/screens/baby/baby-turn-hinglish.webm",
       "poster": "baby/baby-turn-hinglish-poster.png"
+    },
+    "menumesh/menumesh-demo.mp4": {
+      "mp4": "/media/screens/menumesh/menumesh-demo.mp4",
+      "webm": "/media/screens/menumesh/menumesh-demo.webm",
+      "poster": "menumesh/menumesh-demo-poster.png"
     }
   },
   "icons": {

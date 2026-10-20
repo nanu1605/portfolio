@@ -182,12 +182,310 @@
       ],
       "alt": "Baby inspector panel describing the core node: its live state of idle, listening, thinking, speaking or executing.",
       "use": "Case study: more than a chatbot"
+    },
+    {
+      "file": "menumesh/menumesh-home-hero.png",
+      "view": "Home: hero",
+      "alt": "MenuMesh home page: “Your menu on every table. Orders straight to the kitchen.”, beside a laptop, tablet and phone showing the staff and guest screens.",
+      "use": "Case study: hero",
+      "project": "menumesh",
+      "capturedOn": "2026-10-20",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        2880,
+        1344
+      ]
+    },
+    {
+      "file": "menumesh/menumesh-language.png",
+      "view": "Home: menu languages",
+      "alt": "MenuMesh “Your menu, in your guests’ language”: the same menu in English and हिन्दी.",
+      "use": "Case study: features",
+      "project": "menumesh",
+      "capturedOn": "2026-10-20",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        2880,
+        1258
+      ]
+    },
+    {
+      "file": "menumesh/menumesh-pricing.png",
+      "view": "Pricing",
+      "alt": "MenuMesh plans before GST: Starter ₹399, Growth ₹899 and Pro ₹1,799 a month.",
+      "use": "Case study: plans",
+      "project": "menumesh",
+      "capturedOn": "2026-10-20",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        2880,
+        2426
+      ]
+    },
+    {
+      "file": "menumesh/menumesh-demo-start-guest.png",
+      "view": "Demo: guest phone, start",
+      "alt": "MenuMesh guest phone: the Spice Route menu for table 5, with Paneer Tikka, Chicken 65, Dal Makhani and Butter Naan and an Add button on each.",
+      "use": "Case study: table to bill",
+      "project": "menumesh",
+      "capturedOn": "2026-10-20",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        640,
+        1330
+      ]
+    },
+    {
+      "file": "menumesh/menumesh-demo-start-kitchen.png",
+      "view": "Demo: kitchen tablet, start",
+      "alt": "MenuMesh kitchen tablet: table 5 is free and there are no orders yet.",
+      "use": "Case study: table to bill",
+      "project": "menumesh",
+      "capturedOn": "2026-10-20",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        1504,
+        1136
+      ]
+    },
+    {
+      "file": "menumesh/menumesh-demo-start-counter.png",
+      "view": "Demo: counter laptop, start",
+      "alt": "MenuMesh counter laptop: the bill screen for table 5, with no orders yet and a Make bill button.",
+      "use": "Case study: table to bill",
+      "project": "menumesh",
+      "capturedOn": "2026-10-20",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        1536,
+        1000
+      ]
+    },
+    {
+      "file": "menumesh/menumesh-demo-ordered-guest.png",
+      "view": "Demo: guest phone, ordered",
+      "alt": "MenuMesh guest phone after ordering: round 1 with one Paneer Tikka and two Butter Naan, both placed, and buttons to call the waiter, request the bill or order more.",
+      "use": "Case study: table to bill",
+      "project": "menumesh",
+      "capturedOn": "2026-10-20",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        640,
+        1330
+      ]
+    },
+    {
+      "file": "menumesh/menumesh-demo-ordered-kitchen.png",
+      "view": "Demo: kitchen tablet, ordered",
+      "alt": "MenuMesh kitchen tablet: table 5, round 1, with one Paneer Tikka and two Butter Naan marked new and a Start preparing button for each.",
+      "use": "Case study: table to bill",
+      "project": "menumesh",
+      "capturedOn": "2026-10-20",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        1504,
+        1136
+      ]
+    },
+    {
+      "file": "menumesh/menumesh-demo-ordered-counter.png",
+      "view": "Demo: counter laptop, ordered",
+      "alt": "MenuMesh counter laptop: table 5's bill can be made now, though some dishes aren't served yet.",
+      "use": "Case study: table to bill",
+      "project": "menumesh",
+      "capturedOn": "2026-10-20",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        1536,
+        1000
+      ]
+    },
+    {
+      "file": "menumesh/menumesh-demo-preparing-guest.png",
+      "view": "Demo: guest phone, preparing",
+      "alt": "MenuMesh guest phone: both dishes in round 1 now show as preparing.",
+      "use": "Case study: table to bill",
+      "project": "menumesh",
+      "capturedOn": "2026-10-20",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        640,
+        1330
+      ]
+    },
+    {
+      "file": "menumesh/menumesh-demo-preparing-kitchen.png",
+      "view": "Demo: kitchen tablet, preparing",
+      "alt": "MenuMesh kitchen tablet: both dishes for table 5 are preparing, with a Mark ready button for each.",
+      "use": "Case study: table to bill",
+      "project": "menumesh",
+      "capturedOn": "2026-10-20",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        1504,
+        1136
+      ]
+    },
+    {
+      "file": "menumesh/menumesh-demo-preparing-counter.png",
+      "view": "Demo: counter laptop, preparing",
+      "alt": "MenuMesh counter laptop: table 5's bill can be made now, though some dishes aren't served yet.",
+      "use": "Case study: table to bill",
+      "project": "menumesh",
+      "capturedOn": "2026-10-20",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        1536,
+        1000
+      ]
+    },
+    {
+      "file": "menumesh/menumesh-demo-ready-guest.png",
+      "view": "Demo: guest phone, ready",
+      "alt": "MenuMesh guest phone: both dishes in round 1 are ready.",
+      "use": "Case study: table to bill",
+      "project": "menumesh",
+      "capturedOn": "2026-10-20",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        640,
+        1330
+      ]
+    },
+    {
+      "file": "menumesh/menumesh-demo-ready-kitchen.png",
+      "view": "Demo: kitchen tablet, ready",
+      "alt": "MenuMesh kitchen tablet: both dishes for table 5 are ready, with a Mark served button for each.",
+      "use": "Case study: table to bill",
+      "project": "menumesh",
+      "capturedOn": "2026-10-20",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        1504,
+        1136
+      ]
+    },
+    {
+      "file": "menumesh/menumesh-demo-ready-counter.png",
+      "view": "Demo: counter laptop, ready",
+      "alt": "MenuMesh counter laptop: table 5's bill can be made now, though some dishes aren't served yet.",
+      "use": "Case study: table to bill",
+      "project": "menumesh",
+      "capturedOn": "2026-10-20",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        1536,
+        1000
+      ]
+    },
+    {
+      "file": "menumesh/menumesh-demo-served-guest.png",
+      "view": "Demo: guest phone, served",
+      "alt": "MenuMesh guest phone: both dishes in round 1 have been served.",
+      "use": "Case study: table to bill",
+      "project": "menumesh",
+      "capturedOn": "2026-10-20",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        640,
+        1330
+      ]
+    },
+    {
+      "file": "menumesh/menumesh-demo-served-kitchen.png",
+      "view": "Demo: kitchen tablet, served",
+      "alt": "MenuMesh kitchen tablet: everything for table 5 is served.",
+      "use": "Case study: table to bill",
+      "project": "menumesh",
+      "capturedOn": "2026-10-20",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        1504,
+        1136
+      ]
+    },
+    {
+      "file": "menumesh/menumesh-demo-served-counter.png",
+      "view": "Demo: counter laptop, served",
+      "alt": "MenuMesh counter laptop: every dish for table 5 is served and the bill is ready to make.",
+      "use": "Case study: table to bill",
+      "project": "menumesh",
+      "capturedOn": "2026-10-20",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        1536,
+        1000
+      ]
+    },
+    {
+      "file": "menumesh/menumesh-demo-billed-guest.png",
+      "view": "Demo: guest phone, billed",
+      "alt": "MenuMesh guest phone: “Your bill has been generated. Please pay at the counter or to your server.”, above round 1 with both dishes served.",
+      "use": "Case study: table to bill",
+      "project": "menumesh",
+      "capturedOn": "2026-10-20",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        640,
+        1330
+      ]
+    },
+    {
+      "file": "menumesh/menumesh-demo-billed-kitchen.png",
+      "view": "Demo: kitchen tablet, billed",
+      "alt": "MenuMesh kitchen tablet after table 5's bill is made.",
+      "use": "Case study: table to bill",
+      "project": "menumesh",
+      "capturedOn": "2026-10-20",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        1504,
+        1136
+      ]
+    },
+    {
+      "file": "menumesh/menumesh-demo-billed-counter.png",
+      "view": "Demo: counter laptop, billed",
+      "alt": "MenuMesh counter laptop: the bill for table 5, one Paneer Tikka and two Butter Naan with CGST and SGST at 2.5% each and the grand total, and Cash, UPI and Card buttons to record the payment.",
+      "use": "Case study: table to bill",
+      "project": "menumesh",
+      "capturedOn": "2026-10-20",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        1536,
+        1000
+      ]
+    },
+    {
+      "file": "menumesh/menumesh-demo-start-guest-hindi.png",
+      "view": "Demo: guest phone, menu in Hindi",
+      "alt": "MenuMesh guest phone with the menu in हिन्दी: पनीर टिक्का, चिकन 65, दाल मखनी and बटर नान.",
+      "use": "Case study: table to bill (हिंदी)",
+      "project": "menumesh",
+      "capturedOn": "2026-10-20",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        640,
+        1330
+      ]
+    },
+    {
+      "file": "menumesh/menumesh-hi-phone.png",
+      "view": "Home in Hindi, phone",
+      "alt": "MenuMesh's Hindi home page on a phone: the hero headline and buttons in हिन्दी.",
+      "use": "Case study: two languages",
+      "project": "menumesh",
+      "capturedOn": "2026-10-20",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        1170,
+        3024
+      ]
     }
   ],
   "videos": [
     {
       "file": "vyro/vyro-dashboard.mp4",
-      "poster": "vyro/vyro-dashboard-poster.png",
       "project": "vyro",
       "view": "Dashboard, live",
       "capturedOn": "2026-10-20",
@@ -196,15 +494,15 @@
         1600,
         1090
       ],
+      "alt": "VYRO dashboard updating live: the CPU gauge moves around 40% at about 5.3 GHz while the per-thread bars and sparklines change.",
+      "use": "VYRO case-study hero (autoplay muted loop when in view)",
+      "poster": "vyro/vyro-dashboard-poster.png",
       "durationSec": 12,
       "fps": 30,
-      "audio": false,
-      "alt": "VYRO dashboard updating live: the CPU gauge moves around 40% at about 5.3 GHz while the per-thread bars and sparklines change.",
-      "use": "VYRO case-study hero (autoplay muted loop when in view)"
+      "audio": false
     },
     {
       "file": "vyro/vyro-my-pc-3d.mp4",
-      "poster": "vyro/vyro-my-pc-3d-poster.png",
       "project": "vyro",
       "view": "My PC 3-D, rotated by hand",
       "capturedOn": "2026-10-20",
@@ -213,15 +511,15 @@
         1600,
         1090
       ],
+      "alt": "VYRO My PC view: the 3-D model of the PC turns slowly while airflow lines move through the case and parts show their temperatures.",
+      "use": "Case study, architecture section; not a seamless loop",
+      "poster": "vyro/vyro-my-pc-3d-poster.png",
       "durationSec": 10,
       "fps": 30,
-      "audio": false,
-      "alt": "VYRO My PC view: the 3-D model of the PC turns slowly while airflow lines move through the case and parts show their temperatures.",
-      "use": "Case study, architecture section; not a seamless loop"
+      "audio": false
     },
     {
       "file": "baby/baby-turn-hinglish.mp4",
-      "poster": "baby/baby-turn-hinglish-poster.png",
       "project": "baby",
       "view": "A Hinglish question answered",
       "capturedOn": "2026-10-20",
@@ -230,11 +528,29 @@
         1920,
         1030
       ],
+      "alt": "Baby is asked \"Mera GPU kitna busy hai abhi?\" and answers in Hinglish with the GPU load and VRAM in use, while its 3-D graph turns.",
+      "use": "Baby case-study hero (autoplay muted loop when in view)",
+      "poster": "baby/baby-turn-hinglish-poster.png",
       "durationSec": 16,
       "fps": 30,
-      "audio": false,
-      "alt": "Baby is asked \"Mera GPU kitna busy hai abhi?\" and answers in Hinglish with the GPU load and VRAM in use, while its 3-D graph turns.",
-      "use": "Baby case-study hero (autoplay muted loop when in view)"
+      "audio": false
+    },
+    {
+      "file": "menumesh/menumesh-demo.mp4",
+      "poster": "menumesh/menumesh-demo-poster.png",
+      "view": "Demo: “Show me”",
+      "alt": "MenuMesh's browser demo playing itself: a guest orders on the phone, the kitchen prepares and serves it, and the counter makes the bill.",
+      "use": "Case study: table to bill",
+      "durationSec": 15,
+      "fps": 30,
+      "project": "menumesh",
+      "capturedOn": "2026-10-20",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        1280,
+        800
+      ],
+      "audio": false
     }
   ]
 }
