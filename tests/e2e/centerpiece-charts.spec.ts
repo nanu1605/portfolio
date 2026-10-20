@@ -156,14 +156,23 @@ test.describe("reservoir weight mixer", () => {
     const eco = at(spots.ecology_focused);
     await page.mouse.click(eco.x, eco.y);
     await expect(select).toHaveValue("2");
-    // Drag the handle over to the Supply corner.
-    const from = await centre();
-    const to = at(spots.supply_focused);
-    await page.mouse.move(from.x, from.y);
+    // Grab the handle off its centre and drag it over to the Supply corner:
+    // the cursor keeps the grab offset, before and after the release.
+    const c = await centre();
+    const grab = { x: c.x + 12, y: c.y + 8 };
+    const spot = at(spots.supply_focused);
+    await page.mouse.move(grab.x, grab.y);
     await page.mouse.down();
-    await page.mouse.move(to.x, to.y, { steps: 12 });
+    await page.mouse.move(spot.x + 12, spot.y + 8, { steps: 12 });
+    const near = async () => {
+      const p = await centre();
+      return Math.max(Math.abs(p.x - spot.x), Math.abs(p.y - spot.y));
+    };
+    await expect.poll(near).toBeLessThan(2);
     await page.mouse.up();
     await expect(select).toHaveValue("1");
+    await page.waitForTimeout(100); // a click or a late frame would show by now
+    expect(await near()).toBeLessThan(2);
     await expect(triangle).toBeVisible();
   });
 
@@ -218,6 +227,14 @@ test.describe("reservoir weight mixer", () => {
     await expect(root).toContainText(
       "inflow mean x0.8, noise x1.3, no retraining",
     );
+    // The headline run has its own results file, and rows in "View data".
+    await expect(root.getByRole("link", { name: "Source" })).toHaveAttribute(
+      "href",
+      /shift_results\.json/,
+    );
+    await expect(
+      page.locator("th", { hasText: "Balanced PPO, seed 42 (drier climate)" }),
+    ).toBeAttached();
     await expect(root).toContainText(
       "Each point is one training run (one seed). Two runs with the same balanced weights landed at different points — see Limitations.",
     );
@@ -254,6 +271,7 @@ test.describe("forecasting calibration explorer", () => {
     expect(live.shift).toBeLessThan(0.001);
     // The 5-seed mean comes from the raw row, never the recalibrated one.
     await expect(crps(root)).toHaveText("43.62 ± 1.75");
+    await expect(root.locator("dl dd").nth(4)).toHaveText("74% ± 4%");
   });
 
   test("a seed chip updates the cards, by click or tap", async ({
@@ -303,6 +321,10 @@ test.describe("forecasting calibration explorer", () => {
     await expect(panel).toContainText("0.098");
     await expect(panel).toContainText(
       "A fit on the test period itself reaches 0.020.",
+    );
+    await expect(panel.getByRole("link", { name: "Source" })).toHaveAttribute(
+      "href",
+      /recalibration_results\.json/,
     );
     await page.keyboard.press("ArrowLeft");
     await expect(
@@ -368,6 +390,10 @@ test.describe("forecasting calibration explorer", () => {
 });
 
 test.describe("interaction budgets at 4× CPU throttle", () => {
+  // Alone, these measure no long task at all; beside two other busy
+  // workers a throttled CPU now and then stretches one past 50 ms. One
+  // fresh retry (reported as flaky) still fails a real regression.
+  test.describe.configure({ retries: 1 });
   test.beforeEach(({ browserName }) => {
     test.skip(browserName !== "chromium", "long tasks and event timing");
   });
@@ -385,6 +411,27 @@ test.describe("interaction budgets at 4× CPU throttle", () => {
     });
     await reset();
     await record(testInfo, "reservoir-interaction", numbers);
+    expect(numbers.longest).toBeLessThan(50);
+    expect(numbers.slowestEvent).toBeLessThan(200);
+  });
+
+  test("reservoir: dragging the cursor", async ({ page }, testInfo) => {
+    const { root } = await open(page, "reservoir-rl");
+    const { at, centre, select } = await parts(page, root);
+    const from = await centre();
+    const to = at({ x: 285, y: 264 }); // ecology_focused
+    const swipe = isTouch(testInfo) ? await finger(page) : undefined;
+    const reset = await throttle(page);
+    const numbers = await during(page, async () => {
+      if (swipe) return swipe(from, to);
+      await page.mouse.move(from.x, from.y);
+      await page.mouse.down();
+      await page.mouse.move(to.x, to.y, { steps: 20 });
+      await page.mouse.up();
+    });
+    await reset();
+    await expect(select).toHaveValue("2");
+    await record(testInfo, "reservoir-drag", numbers);
     expect(numbers.longest).toBeLessThan(50);
     expect(numbers.slowestEvent).toBeLessThan(200);
   });
