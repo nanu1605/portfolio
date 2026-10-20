@@ -2,6 +2,34 @@
 @import "./tokens.css";
 @import "lenis/dist/lenis.css";
 
+/* Size-adjusted fallbacks (src/styles/fonts.ts). The overrides are the ones
+   next/font computes against Arial; the extra sources cover the systems
+   without it: Liberation Sans is metric-compatible with Arial (Linux), and
+   Helvetica (Apple) and Roboto (Android) are close in width. */
+@font-face {
+  font-family: "Jakarta Fallback";
+  src:
+    local("Arial"), local("ArialMT"), local("Liberation Sans"),
+    local("LiberationSans"), local("Helvetica"), local("Roboto"),
+    local("Roboto-Regular");
+  ascent-override: 98.88%;
+  descent-override: 21.15%;
+  line-gap-override: 0%;
+  size-adjust: 104.98%;
+}
+
+@font-face {
+  font-family: "JetBrains Fallback";
+  src:
+    local("Arial"), local("ArialMT"), local("Liberation Sans"),
+    local("LiberationSans"), local("Helvetica"), local("Roboto"),
+    local("Roboto-Regular");
+  ascent-override: 75.79%;
+  descent-override: 22.29%;
+  line-gap-override: 0%;
+  size-adjust: 134.59%;
+}
+
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 /* Phone landscape gets its own hero and menu (cross-device §1). */
 @custom-variant phone-landscape (@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023.98px));
