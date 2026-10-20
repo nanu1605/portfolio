@@ -58,9 +58,12 @@ for (const [i, p] of studies.entries()) {
     );
   });
 
-  test(`${p.slug}: no axe violations in either theme`, async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: "reduce" });
-    for (const theme of ["dark", "light"]) {
+  // One fresh page per theme, so init scripts don't stack.
+  for (const theme of ["dark", "light"] as const) {
+    test(`${p.slug}: no axe violations in the ${theme} theme`, async ({
+      page,
+    }) => {
+      await page.emulateMedia({ reducedMotion: "reduce" });
       await page.addInitScript((t) => localStorage.setItem("theme", t), theme);
       await page.goto(`/work/${p.slug}`);
       await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
@@ -68,9 +71,9 @@ for (const [i, p] of studies.entries()) {
       const results = await new AxeBuilder({ page })
         .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
         .analyze();
-      expect(results.violations, theme).toEqual([]);
-    }
-  });
+      expect(results.violations).toEqual([]);
+    });
+  }
 }
 
 test("the reading progress bar moves by transform only", async ({ page }) => {
