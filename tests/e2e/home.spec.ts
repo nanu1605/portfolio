@@ -187,9 +187,13 @@ test("every link on Home goes somewhere real", async ({
 }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-chromium", "runs once");
   // §7 routes. Pages built in later phases are listed, not fetched.
-  const built = ["/", "/styleguide"];
-  const planned = [
+  const built = [
+    "/",
+    "/styleguide",
     "/work",
+    ...projects.filter((p) => p.caseStudy).map((p) => `/work/${p.slug}`),
+  ];
+  const planned = [
     "/company",
     "/about",
     "/open-source",
@@ -198,7 +202,6 @@ test("every link on Home goes somewhere real", async ({
     "/resume",
     "/contact",
     "/privacy",
-    ...projects.map((p) => `/work/${p.slug}`),
   ];
   await page.goto("/");
   const hrefs = await page

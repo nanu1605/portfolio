@@ -1,7 +1,13 @@
 import { expect, test, type Page } from "@playwright/test";
+import { projects } from "../../content/projects";
 
 // Routes to sweep for horizontal overflow. Add each route as it lands.
-const routes = ["/", "/styleguide"];
+const routes = [
+  "/",
+  "/styleguide",
+  "/work",
+  ...projects.filter((p) => p.caseStudy).map((p) => `/work/${p.slug}`),
+];
 
 // docs/cross-device.md §8: 320 is the WCAG 1.4.10 reflow width, 744 is
 // iPad mini portrait, 844×390 is phone landscape.
