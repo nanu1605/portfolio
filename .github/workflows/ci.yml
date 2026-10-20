@@ -49,7 +49,7 @@ jobs:
           else
             pnpm test:e2e
           fi
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: ${{ always() }}
         with:
           name: playwright-report
@@ -61,7 +61,7 @@ jobs:
         env:
           PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report-budget
         run: pnpm test:budget
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: ${{ always() }}
         with:
           name: playwright-report-budget
@@ -76,7 +76,7 @@ jobs:
       - name: Lighthouse (desktop)
         if: ${{ env.FULL_MATRIX == 'true' }}
         run: pnpm exec lhci autorun --collect.settings.preset=desktop --upload.outputDir=lighthouse-report/desktop
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: ${{ always() }}
         with:
           name: lighthouse
