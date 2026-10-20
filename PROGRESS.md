@@ -17,7 +17,7 @@ Done when:
 - [x] `/` renders a placeholder, and the theme toggle works without a flash
 - [x] a hex colour in a component fails `check:tokens`
 - [x] CI is green (run 39376359564, 20 Oct 2026)
-- [ ] the Vercel preview URL works (Tanishq connects the repo to Vercel)
+- [x] the Vercel URL works (https://portfolio-eight-gamma-4x0xpdi5wk.vercel.app, checked 20 Oct 2026)
 
 ## Phase 1 — Content layer
 
