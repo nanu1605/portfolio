@@ -244,6 +244,11 @@ test("every tappable element changes on press, and nothing sticks after a tap", 
 }, testInfo) => {
   test.slow();
   await open(page);
+  // Smooth scrolling lets WebKit still be moving the page when the press
+  // lands, so jump instead.
+  await page.addStyleTag({
+    content: "html { scroll-behavior: auto !important; }",
+  });
   const targets = page.locator(
     "main a[href], main button, main summary, main [role=tab]",
   );
@@ -253,8 +258,20 @@ test("every tappable element changes on press, and nothing sticks after a tap", 
   for (let i = 0; i < count; i++) {
     const el = targets.nth(i);
     if (!(await el.isVisible())) continue;
-    // hover() scrolls, waits for the element to be stable and moves there.
-    await el.hover();
+    await el.scrollIntoViewIfNeeded();
+    // Press only once the element itself is under the pointer.
+    await expect
+      .poll(async () => {
+        const box = (await el.boundingBox())!;
+        const x = box.x + box.width / 2;
+        const y = box.y + box.height / 2;
+        await page.mouse.move(x, y);
+        return el.evaluate(
+          (node, [px, py]) => node.contains(document.elementFromPoint(px, py)),
+          [x, y],
+        );
+      })
+      .toBe(true);
     const before = await look(el);
     await page.mouse.down();
     // Large surfaces press 100 ms late; transitions take 150 ms.
