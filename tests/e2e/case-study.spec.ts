@@ -99,7 +99,10 @@ test("the reading progress bar moves by transform only", async ({ page }) => {
       ),
     getComputedStyle(el).transitionProperty,
   ]);
-  expect(props.filter((p) => p !== "transform" && p !== "all")).toEqual([]);
+  // "none" (WebKit, at times) and "all" with no duration both mean no transition.
+  expect(
+    props.filter((p) => !["transform", "all", "none"].includes(p)),
+  ).toEqual([]);
   expect(await scale()).toBeLessThan(0.05);
   await page.evaluate(() =>
     window.scrollTo({ top: document.body.scrollHeight, behavior: "instant" }),
@@ -115,6 +118,9 @@ test("the reading progress bar moves by transform only", async ({ page }) => {
 test("the TOC marks the section in view from 1024 px, and is absent below", async ({
   page,
 }) => {
+  // Instant anchor jumps: this checks the marking, not Lenis's smooth
+  // scroll, which can stop short on a loaded CI machine.
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/work/reservoir-rl");
   const toc = page.getByRole("navigation", { name: "On this page" });
   const wide = page.viewportSize()!.width >= 1024;

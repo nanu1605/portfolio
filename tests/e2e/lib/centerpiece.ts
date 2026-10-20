@@ -68,7 +68,11 @@ export async function goLive(page: Page, root: Locator, ready: Locator) {
   await page.waitForLoadState("load");
   const before = new Set((await jsBytes(page)).map((r) => r.url));
   await page.evaluate(() => ((window as Win).__shift = 0));
-  await root.scrollIntoViewIfNeeded();
+  // A plain scroll: Playwright's scrollIntoViewIfNeeded waits for the box
+  // to be stable, which Lenis on desktop Firefox can keep it from being.
+  await root.evaluate((el) =>
+    el.scrollIntoView({ block: "center", behavior: "instant" }),
+  );
   await expect(ready).toBeVisible();
   // Two frames, so a late shift from the swap is counted.
   await page.evaluate(

@@ -38,9 +38,12 @@ const finalFrame = (el: Locator) =>
       (part) => {
         const s = getComputedStyle(part);
         const dashed = part.getAttribute("pathLength") === "1";
+        // Rounded: WebKit can report a settled opacity a hair off (0.4033).
         return {
-          opacity: s.opacity,
-          dash: dashed ? parseFloat(s.strokeDashoffset) : 0,
+          opacity: Number(s.opacity).toFixed(2),
+          dash: dashed
+            ? Math.round(parseFloat(s.strokeDashoffset) * 100) / 100
+            : 0,
         };
       },
     ),
@@ -422,8 +425,8 @@ test("reduced motion keeps the final frame and runs nothing", async ({
     const parts = await finalFrame(t);
     for (const part of parts) expect(part.dash).toBe(0);
     // Every part is drawn, except the pulse ring, which ends faded.
-    expect(parts.filter((p) => p.opacity !== "1").length).toBeLessThanOrEqual(
-      1,
-    );
+    expect(
+      parts.filter((p) => p.opacity !== "1.00").length,
+    ).toBeLessThanOrEqual(1);
   }
 });
