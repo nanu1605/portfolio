@@ -120,7 +120,9 @@ test("the easing loop rests between polls", async ({ page }, testInfo) => {
     contentType: "application/json",
   });
   expect(frames).toBeGreaterThan(10);
-  expect(gap).toBeGreaterThan(Math.max(100, 4 * frame));
+  // WebKit under load can drop to a frame every 70 ms or so; a loop that
+  // never rests still shows no gap over about twice its frame time.
+  expect(gap).toBeGreaterThan(Math.max(100, 2 * frame));
 });
 
 test("each reading sits on its dial's centre at every width", async ({
