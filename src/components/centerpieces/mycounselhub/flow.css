@@ -1,0 +1,89 @@
+/* §10.9 automation flow: once in view (the shared reveal sets
+   [data-revealed] on the list), each step lights up in turn and the link to
+   the next one draws. One pass, about 3.5 s, then it holds (WCAG 2.2.2).
+   Transform and opacity only. Reduced motion, no JS and print show the
+   final state. Phones: down the rail; from a 36rem container: one row. */
+
+.mch-flow {
+  --step: var(--duration-reveal);
+}
+
+.mch-node,
+.mch-lit,
+.mch-link {
+  transition:
+    opacity var(--duration-slow) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
+  transition-delay: calc(var(--i) * var(--step));
+}
+
+.mch-lit {
+  transition-delay: calc(var(--i) * var(--step) + var(--duration-fast));
+}
+
+.mch-link {
+  position: absolute;
+  top: 3rem;
+  bottom: 0;
+  left: 1.5rem;
+  width: 1px;
+  background-color: var(--accent);
+  transform-origin: top;
+  transition-duration: var(--duration-slow);
+  transition-delay: calc(var(--i) * var(--step) + var(--duration-base));
+}
+
+.mch-node:last-child .mch-link {
+  display: none;
+}
+
+@container (min-width: 36rem) {
+  .mch-link {
+    top: 1.5rem;
+    bottom: auto;
+    left: 3.625rem;
+    right: -0.375rem;
+    width: auto;
+    height: 1px;
+    transform-origin: left;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html.js .mch-flow:not([data-revealed]) .mch-node {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+
+  html.js .mch-flow:not([data-revealed]) .mch-lit {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  html.js .mch-flow:not([data-revealed]) .mch-link {
+    transform: scaleY(0);
+  }
+
+  @container (min-width: 36rem) {
+    html.js .mch-flow:not([data-revealed]) .mch-link {
+      transform: scaleX(0);
+    }
+  }
+}
+
+.mch-flow[data-revealed="instant"] :is(.mch-node, .mch-lit, .mch-link) {
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(.mch-node, .mch-lit, .mch-link) {
+    transition: none;
+  }
+}
+
+@media print {
+  :is(.mch-node, .mch-lit, .mch-link) {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

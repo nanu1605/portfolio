@@ -1,0 +1,101 @@
+/* §10.8 pipeline strip. Each stage fades in with the shared reveal
+   ([data-reveal="fade"], batch stagger via [data-reveal-i]); its connector
+   to the next stage then draws (transform only). Phones: down the rail;
+   tablets (3 × 2) and desktop (one row): across. Reduced motion, no JS and
+   print show the drawn connectors. */
+
+.vdr-pipeline {
+  --gap-x: 1.5rem;
+}
+
+.vdr-connector {
+  position: absolute;
+  top: 3rem;
+  bottom: 0;
+  left: 1.5rem;
+  width: 1px;
+  background-color: var(--border-strong);
+  transform-origin: top;
+  transition: transform var(--duration-slow) var(--ease-out)
+    var(--duration-base);
+}
+
+.vdr-stage:last-child .vdr-connector {
+  display: none;
+}
+
+.vdr-stage[data-reveal-i="1"] .vdr-connector {
+  transition-delay: calc(var(--duration-base) + var(--stagger));
+}
+.vdr-stage[data-reveal-i="2"] .vdr-connector {
+  transition-delay: calc(var(--duration-base) + 2 * var(--stagger));
+}
+.vdr-stage[data-reveal-i="3"] .vdr-connector {
+  transition-delay: calc(var(--duration-base) + 3 * var(--stagger));
+}
+.vdr-stage[data-reveal-i="4"] .vdr-connector {
+  transition-delay: calc(var(--duration-base) + 4 * var(--stagger));
+}
+.vdr-stage[data-reveal-i="5"] .vdr-connector {
+  transition-delay: calc(var(--duration-base) + 5 * var(--stagger));
+}
+
+@media (min-width: 768px) {
+  .vdr-pipeline {
+    column-gap: var(--gap-x);
+  }
+
+  /* From the tile's right edge to the next tile, with a little air. */
+  .vdr-connector {
+    top: 1.5rem;
+    bottom: auto;
+    left: 3.625rem;
+    right: calc(0.625rem - var(--gap-x));
+    width: auto;
+    height: 1px;
+    transform-origin: left;
+  }
+
+  /* Row ends of the 3 × 2 grid. */
+  .vdr-stage:nth-child(3n) .vdr-connector {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .vdr-pipeline {
+    --gap-x: 1rem;
+  }
+
+  .vdr-stage:nth-child(3n):not(:last-child) .vdr-connector {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html.js .vdr-stage:not([data-revealed]) .vdr-connector {
+    transform: scaleY(0);
+  }
+
+  @media (min-width: 768px) {
+    html.js .vdr-stage:not([data-revealed]) .vdr-connector {
+      transform: scaleX(0);
+    }
+  }
+}
+
+.vdr-stage[data-revealed="instant"] .vdr-connector {
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vdr-connector {
+    transition: none;
+  }
+}
+
+@media print {
+  .vdr-connector {
+    transform: none !important;
+  }
+}
