@@ -22,7 +22,7 @@ const force = process.argv.includes("--force");
 
 // 640 and 960 serve phone figures and bento posters (docs/cross-device.md).
 const SCREEN_WIDTHS = [640, 960, 1280, 1920, 2560];
-const HERO_WIDTHS = [640, 960, 1280, 1600];
+const HERO_WIDTHS = [640, 768, 960, 1280, 1600];
 const ABOUT_WIDTHS = [800, 1200];
 const ICON_WIDTHS = [128, 256];
 const AVIF = { quality: 60, effort: 4 };

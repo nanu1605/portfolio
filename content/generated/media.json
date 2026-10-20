@@ -12,6 +12,12 @@
           "webp": "/media/photo/hero-640.webp"
         },
         {
+          "width": 768,
+          "height": 931,
+          "avif": "/media/photo/hero-768.avif",
+          "webp": "/media/photo/hero-768.webp"
+        },
+        {
           "width": 960,
           "height": 1164,
           "avif": "/media/photo/hero-960.avif",
