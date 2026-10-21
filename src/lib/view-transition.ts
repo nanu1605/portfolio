@@ -3,6 +3,8 @@
 // names only that transition's elements: the filter's cards, never the
 // page's cover morph. Instant under reduced motion and where unsupported.
 
+let latest = 0;
+
 export function viewTransition(kind: "theme" | "filter", update: () => void) {
   const root = document.documentElement;
   if (
@@ -10,8 +12,10 @@ export function viewTransition(kind: "theme" | "filter", update: () => void) {
     matchMedia("(prefers-reduced-motion: reduce)").matches
   )
     return update();
+  const id = ++latest;
   root.dataset.vt = kind;
-  document
-    .startViewTransition(update)
-    .finished.finally(() => delete root.dataset.vt);
+  document.startViewTransition(update).finished.finally(() => {
+    // A newer transition skips this one; its flag stays until it ends.
+    if (id === latest) delete root.dataset.vt;
+  });
 }
