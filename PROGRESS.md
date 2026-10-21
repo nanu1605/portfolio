@@ -102,11 +102,12 @@ Done when: all 9 pages render with correct metadata; every number traces to Appe
 ## Phase 5 — Centerpieces and micro-demos
 
 - [x] Centerpieces §10.1–10.6 and §10.8–10.9: Baby "Follow a turn", VYRO gauge panel, Jainav stepper + build timeline, MenuMesh "Table to bill", Reservoir weight mixer, Forecasting calibration explorer, VDR pipeline strip, MyCounselHub flow. Each lazy island loads within 200 px of view over a same-box server poster; "View data" tables kept.
-- [~] §10.7 MLOps: `make experiment` ran (scratch clone at 0a0b95f, synthetic data): 20 batches, mean F1 0.268 before promotion and 0.780 after. Copying the series into `content/data/` was blocked by the permission check; until Tanishq decides, the case study keeps the loop and the two documented levels.
+- [x] §10.7 MLOps: `make experiment` ran (scratch clone at 0a0b95f, synthetic data): 20 batches, mean F1 0.268 before promotion and 0.780 after. Tanishq approved the import on 21 Oct 2026; the per-batch "Watch it recover" chart scrubs with scroll (pinned from 768 × 600), lights the loop at the tick, reads by key and tap, and fails the build if the series and the 0.27 → 0.78 headline ever disagree.
+- [x] MenuMesh kitchen and bill recaptured at phone width for the phone stepper (smallest text 5.7 → 10.9 px and 7.1 → 12.6 px on a 360 px phone).
 - [x] Home bento micro-demos (§10.10): CSS/SVG, hover or focus on fine pointers, once at 50% in view on touch, static under reduced motion.
 - [x] ↔ Container-query layouts; scroll-snap steppers that scroll only their track; MenuMesh sticky story at `(min-width: 768px) and (min-height: 600px)`; reservoir handle-only touch drag + tap-to-place; VYRO Pause/Play; Baby's first scenario plays once in view; micro-demos once in view on touch.
 - [x] ↔ Tests: mouse, touch (tap, CDP swipe and finger drags) and keyboard per centerpiece; poster swap shift 0; chunks ≤ 60 KB; 4× throttle budgets in `pnpm test:budget` (run alone, also in CI).
-- [x] C.4 item 2 (forecasting test windows): the test histories skip the validation months for every model. Wording for A.4.6 awaits Tanishq.
+- [x] C.4 item 2 (forecasting test windows): the test histories skip the validation months for every model. A.4.6's Setup now says so (wording approved 21 Oct 2026).
 - [x] Phase 4 defects fixed: mono fallback reflow (CLS 0.129 on MLOps) and the TL;DR reveal delaying LCP (2.6 s on Forecasting).
 
 Done when: each centerpiece works with mouse, touch and keyboard; data matches Appendix B; lazy chunks within budget; no main-thread tasks over 50 ms during interaction.
@@ -144,7 +145,7 @@ Done when: the palette is fully keyboard accessible; every route has a share ima
 - [ ] Production env vars, Resend domain verified, Turnstile for `tanishq.website`.
 - [ ] Domain in Vercel, `www` redirect, HTTPS.
 - [ ] Redirect the old site (§16.5).
-- [ ] Search Console verified, sitemap submitted.
+- [~] Search Console verified (DNS TXT record, 21 Oct 2026); keep that record when adding Vercel's, and recreate it if the nameservers move to Vercel. Sitemap still to submit.
 - [ ] Lighthouse on production URLs; placeholder report empty or only allow-listed items.
 - [ ] Draft (don't push) the `nanu1605/nanu1605` profile README.
 - [ ] Tanishq adds the site to LinkedIn.
@@ -169,6 +170,6 @@ Done when: `https://tanishq.website` serves production; the old URL redirects; a
 
 ## Placeholders still pending
 
-`{{FOUNDED}}` (shows "2026"), `{{EDITOR}}`, `{{UDEMY_COURSE_TITLE}}`, `{{X_URL}}` (hidden), `{{MYCOUNSELHUB_URL}}`, `{{VDR_IMAGES}}`, `{{NOW_ITEMS}}`, `{{VYRO_PRO}}` (default no), `{{REGISTRAR}}`, `{{GSC_TXT}}`.
-Resolved: `{{REPO}}` = `nanu1605/portfolio` (public), `{{CONFIRM_AI_NATIVE}}` = true, `{{BOSCH_DOCS_TRACK}}` = include.
+`{{FOUNDED}}` (shows "2026"), `{{VDR_IMAGES}}` (Tanishq will share).
+Resolved: `{{REPO}}` = `nanu1605/portfolio` (public), `{{CONFIRM_AI_NATIVE}}` = true, `{{BOSCH_DOCS_TRACK}}` = include. On 21 Oct 2026: `{{EDITOR}}` = Visual Studio Code, `{{UDEMY_COURSE_TITLE}}` = Learn Ethical Hacking From Scratch, `{{X_URL}}` = https://x.com/tanishq11567281 (shown), `{{MYCOUNSELHUB_URL}}` = no link, `{{NOW_ITEMS}}` = left to me (no Master's item), `{{VYRO_PRO}}` = yes, launching soon, `{{REGISTRAR}}` = GoDaddy, `{{GSC_TXT}}` = already verified by a DNS TXT record (`google-site-verification=…`, seen in public DNS on 21 Oct 2026).
 The allow-list and fallbacks live in `content/placeholders.ts`; `pnpm check:content` prints where each one is used.

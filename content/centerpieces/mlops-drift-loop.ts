@@ -1,5 +1,5 @@
 // §10.7 "Watch it recover". Strings from the spec say where they come
-// from; the ones marked "New" still need Tanishq's approval. Every number
+// from; the ones marked "New" are listed in docs/decisions.md. Every number
 // comes from content/data/mlops-timeline.json (@content/charts); `{name}`
 // slots are filled in code.
 

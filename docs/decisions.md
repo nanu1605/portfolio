@@ -398,7 +398,7 @@ Tanishq said "Go", which approved Phase 4. The two wording questions weren't ans
 **Figures.** Every chart was simple enough to redraw as themed SVG from Appendix B, so no fallback PNGs are used. Each chart has a "View data" table.
 - **Reservoir RL:** two Pareto scatters. The rule curve is a star, and the sweep's balanced agent (seed 45) is ringed and named. The caption carries §10.5's seed footnote.
 - **Forecasting:** a reliability diagram whose DeepAR line is the point-wise mean of the five seeds, labelled "computed" (§10.6), plus ECE by horizon for the best seed.
-- **MLOps:** the loop as a flow, and the two documented F1 levels as bars, with no intermediate points (§10.7).
+- **MLOps:** the loop as a flow, and the two documented F1 levels as bars, with no intermediate points (§10.7). Replaced by the per-batch chart in the Phase 5 follow-ups.
 - **Flows:**
   - the Jainav order-to-licence steps and build timeline;
   - the VDR stages, as schematic icons;
@@ -520,7 +520,7 @@ Screens placed in the MDX:
 - **Result:** 20 batches of 400.
   - The mean F1 up to promotion is 0.2682 and after it 0.7797, matching the README's documented ≈ 0.27 → ≈ 0.78.
   - Drift was detected, and the challenger promoted, on the same controller tick (t = 13,799.5, the fifth batch). Version 2 serves from the sixth batch.
-- **Not in the repo yet.** The permission check blocked writing the exported series into `content/data/` ("Code from External"). The per-batch chart waits for Tanishq. Until then the case study keeps the loop diagram and the two documented levels.
+- **Imported on 21 Oct 2026.** The permission check first blocked writing the exported series into `content/data/` ("Code from External"). Tanishq approved the import, and the per-batch chart replaced the two documented levels (see Phase 5 follow-ups).
 
 **C.4 item 2 (forecasting test windows).**
 - Checked `src/probforecast/evaluation/rolling.py` and its callers (`pipelines/run_baselines.py`, `run_deepar.py`, `run_recalibration.py`) at commit `d0b3ce0`.
@@ -597,7 +597,7 @@ Screens placed in the MDX:
   - Scan shows that start screen too.
   - The `ordered-guest` capture is no longer used.
 - **Phone legibility.** Crops are done in CSS (a `detail` box per screen, in capture pixels), so no new image files were needed.
-  - **Still small:** the landscape kitchen and counter captures read at about 7–8 px on 360 px phones. Narrower captures would need a new capture run.
+  - **Kitchen and bill:** the landscape captures read at about 7–8 px on 360 px phones, so the phone stepper now uses phone-width captures (Phase 5 follow-ups).
 - **Accent.** The Stepper's `tone="menumesh"` uses the product accent for fills only. The current step number stays `fg`.
 
 **Virtual Dressing Room (§10.8) and MyCounselHub (§10.9).**
@@ -697,7 +697,7 @@ Screens placed in the MDX:
   - **Progress bar.** The progress-bar check accepts `transition-property: none`.
 - **Firefox navigations.** Desktop Firefox sometimes left Playwright "waiting for navigation to finish" when a test navigated a page a second time (also seen in Phase 4). Those tests now navigate once per page, opening a fresh page for each URL where they loop.
 
-**New UI strings for Tanishq to approve (Phase 5).** Anything not listed is the spec's own wording.
+**New UI strings (Phase 5).** Anything not listed is the spec's own wording. Tanishq left them to me on 21 Oct 2026; they stand as listed.
 
 - **Baby**
   - Labels: "Rule" (as in "Rule 9 → 1"), "Fired", "Redacted", "You".
@@ -725,3 +725,93 @@ Screens placed in the MDX:
   - Rail names: Sign in, Checkout, Verify, Fulfil, Invoice, Licence, Activate.
   - "View data" columns: "Step", "What happens".
 - **MenuMesh:** "Menu language" (the toggle's accessible name), "English" / "हिंदी".
+
+## Phase 5 follow-ups (21 Oct 2026)
+
+Tanishq answered the Phase 5 questions and most placeholders.
+
+**MLOps — "Watch it recover" (§10.7).**
+- **Data import approved.** `content/data/mlops-timeline.json` holds the exported series with its provenance: the repo, commit `0a0b95f`, the commands, the one-line patch, the synthetic data, the export date (20 Oct 2026), and the drift and promotion ticks from the run's own log.
+- **Data.** The chart draws only the 20 exported batches, as straight segments between them; nothing is smoothed or added. `content/charts.ts` checks the series when it loads:
+  - the mean F1 up to and including promotion must round to 0.27, and the mean after it to 0.78;
+  - v1 serves up to the promotion tick and v2 after it.
+
+  If any of these fails, the build fails, so the chart and the headline can't disagree.
+- **The tick.** Drift and promotion share the controller tick after batch 5 (t = 13,799.5 is batch 5's median t, per the repo's `run.py`). A dashed rule sits between batch 5 and batch 6, with both labels stacked above the plot.
+- **The loop.**
+  - Serve and Monitor are lit from the start.
+  - At the tick, the line holds on batch 5 for four scroll steps while Detect, Retrain, Gate and Reload light in turn.
+  - When batch 6 draws, Serve and Monitor are lit again and the other four are ticked. Serve's tag reads v1 or v2.
+  - A visible status line describes the state. A polite live region says it too, but only after the reader scrolls, presses a key or taps, so nothing is announced on load.
+- **Which layout shows.** CSS picks it; there is no `matchMedia` in JS.
+  - **Phones:** no pinning. The loop sits above the chart, so it is in view at the tick.
+  - **Tablets 900 px tall or more:** the loop is below the chart.
+  - **Desktop:** the loop is beside the chart.
+  - **Tablets under 900 px tall:** the loop is also beside the chart. This departs from cross-device §6, which puts it below on tablets: at 768 × 600 a stacked loop would squeeze the pinned plot to 176 px.
+  - **Pinning:** from 768 × 600 the figure pins, and a one-viewport `::after` spacer is the scroll track.
+- **Scroll progress is JS on every engine.** Stable Firefox has no CSS scroll timelines, and this chart carries data.
+  - There is one passive scroll listener, with one rect read per frame, and only while the track is within 100 px of the viewport.
+  - React renders only when the step changes, at most 24 times per pass.
+  - Pinned layouts: progress is how far the reader is through the track.
+  - Phones: the draw runs from the plot's foot entering the viewport until the plot is fully in view.
+- **Never final → empty (the count-up rule).**
+  - The poster is the final state.
+  - A plot that is more than half on screen when its chunk mounts keeps the final state until it has been wholly off screen. The review caught the erase on tall windows and after reloads mid-page.
+  - From the top of the page, the plot is below the fold, so the switch to the scroll state happens out of sight.
+- **Reading a batch.** The plot is a `role="slider"` (arrow keys, Home, End). A tap or click picks the nearest batch. The line is drawn at least as far as the picked batch, and the pick clears when the chart leaves the viewport.
+- **Reduced motion:** the final state, with no pin and no spacer.
+- **Measured.**
+  - Lazy chunk: 6.6 KB on phones and 16.5 KB on desktop (including shared chunks fetched at the same moment).
+  - Poster-to-live shift: 0.
+  - At 4× CPU throttle while scrubbing and stepping, the longest task is 0 ms and the slowest event 24 ms.
+- **Unchanged.** The Work cover and the Home bento keep the two documented levels (§10.10). The Phase 4 bars, and their "Only the two documented levels are shown" caption, are gone from the case study.
+
+**MenuMesh phone captures (§10.4).**
+- **New captures.** `pnpm capture:menumesh --phone` captures the demo's kitchen tablet (ready) and counter laptop (billed) at phone width, where the demo shows one device at a time. The only clicks are the demo controls and its "Device to show" switch.
+- **430 px, not 390.** At 390 px, staging's kitchen covers the dish names with the "Ready" badge ("Panee" next to "Ready"). At 430 the names fit. Re-run at 390 once MenuMesh fixes that layout.
+- **Partial runs.** A partial run replaces only the files it captured in the manifest. A full run behaves as before.
+- **Where they show.** The phone stepper shows the phone captures for "Cook and serve" and "Bill and pay". The sticky story (from 768 × 600) keeps the landscape ones.
+- **Device names.** The alt text and view lines name the device ("MenuMesh kitchen tablet, at phone width: …"), so they never suggest that the kitchen runs on a phone.
+- **Legibility on a 360 px phone.** The smallest text went from 5.7 px to 10.9 px on the kitchen, and from 7.1 px to 12.6 px on the bill. The test floor is a scale of 10 / (14 × 3): 14 px text, captured at 3×, renders at 10 px or more. Slide heights don't change.
+- **Caption date.** The caption now shows a range of capture dates ("20 – 21 Oct 2026"), using `Intl.DateTimeFormat#formatRange`. A single date prints as before.
+- **Bill on 3× phones.** It is upscaled by about 12%, because the largest generated variant is 960 px wide.
+
+**C.4 item 2 → A.4.6.** The approved sentence follows the test split in the forecasting Setup: "Each test window is forecast from the training data and the earlier test hours; the validation months aren't in its history (the same for every model)." It sits there, before the results and the shift explanation, because it applies to every model in the table.
+
+**VYRO.**
+- **Bento needle.** It keeps the real `vyro.cpu` (0.46%, measured on v0.2.0).
+- **Latest release.** `lib/github.ts` already reads the latest release from `nanu1605/vyro-releases`. On 21 Oct 2026 that is still v1.4.1 (a 12,210,176-byte MSI, 11.6 MB), so the fallbacks in `metrics.ts` are current.
+- **CI.** The build logs show no "release lookup failed" warning, so the live value is in use.
+
+**UI strings.** Tanishq left the Phase 5 list to me; it stands as listed. The MLOps chart adds these, on the same footing:
+- the caption and labels: "Realized F1 on each unseen batch, as the real serving process and controller replay the synthetic shift.", "Synthetic data";
+- the slider and axes: "Realized F1 by unseen batch", "Unseen batch", "Realized F1", "Batch";
+- the readout and hint: "Batch {n} of {total}: F1 {f1}, {version}", "Tap a point or use the arrow keys to read a batch.";
+- the versions: "Stale champion", "Promoted challenger";
+- the loop: "The loop", and the status lines "Serving v1, the stale champion, and monitoring for drift.", "Drift detected: retraining a challenger, which must beat the champion by at least 0.01 F1 and clear a 0.50 floor.", "Serving v2, the promoted challenger. The loop is back at Serve.";
+- "View data": "Realized F1 per unseen batch · commit {commit}, exported {date}", "Median t", "F1", "Model", "Event", "at the controller tick after this batch".
+
+**Placeholders.**
+- `{{EDITOR}}`: Visual Studio Code, on /uses.
+- `{{UDEMY_COURSE_TITLE}}`: "Learn Ethical Hacking From Scratch".
+  - Read from the certificate Tanishq sent: Udemy, 27 June 2020, 14.5 hours, certificate UC-c416d825-adcd-48a6-a078-26e2cd91edd5.
+  - The line is now shown, linked to the certificate page, and never labelled CEH (C.3).
+- `{{X_URL}}`: https://x.com/tanishq11567281.
+  - The share parameter `?s=11` was dropped.
+  - X now shows in the footer. Phase 7 adds it to the Person JSON-LD `sameAs`. Instagram stays off.
+- `{{MYCOUNSELHUB_URL}}`: no link to the live site. The client stays unnamed beyond "MyCounselHub".
+- `{{NOW_ITEMS}}`: left to me, without the Master's item.
+  - The list is A.9's draft minus "Master's applications", plus "VYRO Pro. Getting the Pro edition ready; it launches soon." Last updated 21 Oct 2026.
+  - The hero pill reads "Now · Shipping VYRO {vyro.version} · Getting MenuMesh ready for launch". It is about as long as before, so the hero layout doesn't change.
+- `{{VYRO_PRO}}`: yes, launching soon. It gets three short mentions, never with a price (C.3): the VYRO case study's "Next" line, the Company page's VYRO card and the Now list.
+- `{{REGISTRAR}}`: GoDaddy, for Phase 8's DNS records.
+- `{{GSC_TXT}}`: already verified.
+  - Search Console is verified by a DNS TXT record on tanishq.website, seen in public DNS on 21 Oct 2026.
+  - Phase 8 keeps that record when adding Vercel's, and recreates it if the nameservers move to Vercel. The sitemap is still to submit.
+- **Still open:** `{{VDR_IMAGES}}` (Tanishq will share it) and `{{FOUNDED}}` (shows "2026").
+- **The Master's plan is still mentioned in three places:**
+  - About ("Next, I'm applying for a Master's…");
+  - the resume summary;
+  - the contact form's "Research or a Master's programme" topic.
+
+  Tanishq's note was about the Now list, so these keep the wording of A.8, A.14 and A.12 until Tanishq says otherwise.
