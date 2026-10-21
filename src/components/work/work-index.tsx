@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { flushSync } from "react-dom";
 import { Chip } from "@/components/ui/tag";
+import { viewTransition } from "@/lib/view-transition";
 
 type Filter = { id: string; label: string };
 
@@ -57,9 +58,7 @@ export function WorkIndex({
             .replace("{total}", String(total)),
         );
       });
-    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!document.startViewTransition || reduced) apply();
-    else document.startViewTransition(apply);
+    viewTransition("filter", apply);
   };
 
   return (

@@ -4,6 +4,7 @@ import { microcopy } from "@content/microcopy";
 import { archive, projects, workFilters, workIntro } from "@content/projects";
 import { screen } from "@content/screens";
 import { site } from "@content/site";
+import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { BentoTile } from "@/components/ui/card";
 import { Picture } from "@/components/ui/figure";
 import { LinkedReadout } from "@/components/ui/readout";
@@ -42,19 +43,19 @@ const counts = Object.fromEntries(
 const STACK_SHOWN = 4;
 const archiveYears = [...archive].sort((a, b) => b.year - a.year);
 
-// Each card is its own View Transition group, so it glides when the
-// filter changes (globals.css).
-const transition = (name: string) =>
-  ({
-    viewTransitionName: name,
-    viewTransitionClass: "work-card",
-  }) as CSSProperties;
+// Each card is its own View Transition group while the filter changes, so
+// it glides (globals.css names [data-vt-name] only then).
+const transition = (name: string) => ({
+  "data-vt-name": "",
+  style: { "--vt-name": name } as CSSProperties,
+});
 
 /** All work (§8.3): the case studies, then the archive as a compact list. */
 export default async function Work() {
   const live = await liveMetrics();
   return (
     <div className="px-page py-section pt-12 md:pt-16">
+      <Breadcrumbs path="/work" />
       <div className="mx-auto flex max-w-site flex-col gap-10">
         <header className="flex flex-col gap-4">
           <h1 className="text-h1">{page.title}</h1>
@@ -85,7 +86,7 @@ export default async function Work() {
                 <li
                   key={p.slug}
                   data-filters={p.filters.join(" ")}
-                  style={transition(`work-${p.slug}`)}
+                  {...transition(`work-${p.slug}`)}
                 >
                   {/* No scroll reveal: the first row is above the fold, and
                       the filter's glide is this page's motion (§6.3). */}
@@ -108,14 +109,22 @@ export default async function Work() {
                     }
                     media={
                       cover ? (
-                        <Picture
-                          image={cover.image}
-                          alt=""
-                          // The first cover is the LCP on phones.
-                          priority={i === 0}
-                          sizes="(min-width: 1280px) 400px, (min-width: 1024px) 31vw, (min-width: 640px) 47vw, 100vw"
-                          className="aspect-[16/10] object-cover object-top-left"
-                        />
+                        // Morphs into the case-study hero (morph.tsx).
+                        <div
+                          data-morph={p.heroMedia ? "" : undefined}
+                          style={
+                            { "--morph": `cover-${p.slug}` } as CSSProperties
+                          }
+                        >
+                          <Picture
+                            image={cover.image}
+                            alt=""
+                            // The first cover is the LCP on phones.
+                            priority={i === 0}
+                            sizes="(min-width: 1280px) 400px, (min-width: 1024px) 31vw, (min-width: 640px) 47vw, 100vw"
+                            className="aspect-[16/10] object-cover object-top-left"
+                          />
+                        </div>
                       ) : (
                         covers[p.slug]
                       )
@@ -150,7 +159,7 @@ export default async function Work() {
           <section
             data-archive=""
             aria-labelledby="archive-title"
-            style={transition("work-archive")}
+            {...transition("work-archive")}
             className="flex flex-col gap-4"
           >
             <h2 id="archive-title" className="text-h3">

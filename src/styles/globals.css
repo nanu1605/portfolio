@@ -709,6 +709,73 @@ dialog .menu-bar:last-child {
   }
 }
 
+/* ── View Transitions (§6.2, cross-device §4) ───────────────────────────
+   Route changes: app/template.tsx fades the old page out where it was and
+   the new one in, opacity only and within 150 ms, so reduced motion keeps
+   it. From 768 px with motion allowed, a /work cover morphs into its
+   case-study hero. Same-page transitions set [data-vt] on <html>
+   (src/lib/view-transition.ts): the theme cross-fades the whole page, and
+   the Work filter names its cards. Only one set of names is live at a
+   time, so the filter never morphs a cover. Clicks pass through. */
+
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-group(root) {
+  animation-duration: var(--duration-fast);
+}
+
+:root[data-vt="theme"]::view-transition-group(root) {
+  animation-duration: var(--duration-base);
+}
+
+::view-transition-old(.page) {
+  animation: fade-out var(--duration-fast) var(--ease-out) both;
+}
+
+::view-transition-new(.page) {
+  animation: fade-in var(--duration-fast) var(--ease-out) both;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  :root:not([data-vt]) [data-morph]:not([data-out]) {
+    view-transition-name: var(--morph);
+    view-transition-class: morph;
+  }
+}
+
+::view-transition-group(.morph) {
+  animation-duration: var(--duration-base);
+  animation-timing-function: var(--ease-out);
+}
+
+/* A cover with no partner on the other page fades with the page. */
+::view-transition-old(.morph):only-child,
+::view-transition-new(.morph):only-child {
+  animation-duration: var(--duration-fast);
+}
+
+/* iOS swipe-back has already animated (Enhancements). */
+:root[data-vt="skip"]::view-transition-group(*),
+:root[data-vt="skip"]::view-transition-old(*),
+:root[data-vt="skip"]::view-transition-new(*) {
+  animation: none;
+}
+
+/* Nothing moves: groups (the root's, a morph) jump to the end. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*) {
+    animation: none;
+  }
+}
+
 /* ── Work index (§8.3, §6.3) ────────────────────────────────────────────
    One attribute on the index decides what shows, so a ?filter= link
    applies before first paint (the inline script in work-index.tsx) and
@@ -724,8 +791,9 @@ dialog .menu-bar:last-child {
   display: none;
 }
 
-::view-transition {
-  pointer-events: none;
+:root[data-vt="filter"] [data-vt-name] {
+  view-transition-name: var(--vt-name);
+  view-transition-class: work-card;
 }
 
 ::view-transition-group(.work-card) {

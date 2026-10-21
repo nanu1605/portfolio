@@ -13,6 +13,7 @@ import { Tag } from "@/components/ui/tag";
 import { TextLink } from "@/components/ui/text-link";
 import { resolve } from "@/lib/fill";
 import type { liveMetrics } from "@/lib/github";
+import { MorphTarget } from "./morph";
 
 // The case-study template (§8.4): hero, TL;DR, the centerpiece slot, the
 // MDX body, "How this was built", then previous and next.
@@ -108,7 +109,12 @@ export function CaseStudyHero({
         // Phones: full bleed; wider: framed, in the product's accent glow.
         <div className="relative isolate mx-auto mt-12 max-w-site">
           {p.accent && <Glow accent={p.accent} />}
-          {media}
+          {/* The /work cover lands here (app/work/page.tsx). */}
+          {p.cover.screen ? (
+            <MorphTarget slug={p.slug}>{media}</MorphTarget>
+          ) : (
+            media
+          )}
         </div>
       )}
     </header>

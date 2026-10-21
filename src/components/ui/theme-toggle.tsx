@@ -36,7 +36,10 @@ export function ThemeToggle({
   return (
     <button
       type="button"
-      onClick={() => setTheme(next)}
+      // The cross-fade loads on the first switch (Home's JS budget).
+      onClick={() =>
+        void import("@/lib/theme").then((m) => m.switchTheme(next, setTheme))
+      }
       aria-label={label}
       className={cx(
         "inline-flex size-11 items-center justify-center rounded-md text-fg-muted transition-ui hover:bg-surface-2 hover:text-fg active:bg-surface-2",
