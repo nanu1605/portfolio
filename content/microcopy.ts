@@ -33,6 +33,12 @@ export const microcopy = z
         linkedin: z.string(),
         medium: z.string(),
       }),
+      home: z.string(),
+      results: z.object({
+        none: z.string(),
+        one: z.string(),
+        other: z.string().includes("{n}"),
+      }),
     }),
     jarvisToast: z.object({ text: z.string(), link: z.string() }),
     consoleGreeting: z.string(),
@@ -47,6 +53,7 @@ export const microcopy = z
       openMenu: z.string(),
       closeMenu: z.string(),
       search: z.string(),
+      closeSearch: z.string(),
       toLight: z.string(),
       toDark: z.string(),
       pause: z.string(),
@@ -106,6 +113,14 @@ export const microcopy = z
         linkedin: "Open LinkedIn",
         medium: "Open Medium",
       },
+      // Phase 7: the home page's name and the result count (not in A.13;
+      // listed in decisions.md).
+      home: "Home",
+      results: {
+        none: "No results",
+        one: "1 result",
+        other: "{n} results",
+      },
     },
     jarvisToast: {
       text: "“Hey Jarvis” wakes up Baby, my voice assistant. This website can't hear you — promise.",
@@ -124,6 +139,8 @@ export const microcopy = z
       openMenu: "Open menu",
       closeMenu: "Close menu",
       search: "Search",
+      // Phase 7: the phone palette's close button (cross-device §10).
+      closeSearch: "Close search",
       toLight: "Switch to light theme",
       toDark: "Switch to dark theme",
       pause: "Pause",

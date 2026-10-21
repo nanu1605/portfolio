@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { cx } from "@/lib/cx";
 import { closeWithExit } from "@/lib/overlay";
+import { iconButton } from "./icon-button";
 
 // The header's interactive parts. Content arrives as props from the server
 // component in header.tsx, so no content module (or Zod) ships to the browser.
@@ -115,9 +116,6 @@ export function NavLinks({
     </nav>
   );
 }
-
-const iconButton =
-  "inline-flex size-11 items-center justify-center rounded-md text-fg-muted transition-ui hover:bg-surface-2 hover:text-fg active:bg-surface-2";
 
 /** The two bars; inside the dialog, CSS turns them into an X. */
 function Bars() {
