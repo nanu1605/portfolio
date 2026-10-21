@@ -28,6 +28,6 @@ export const uses = z
       "Claude Code",
       "Git and GitHub Actions",
       "`uv` for Python, `pnpm` for JavaScript",
-      "{{EDITOR}}",
+      "Visual Studio Code",
     ],
   });

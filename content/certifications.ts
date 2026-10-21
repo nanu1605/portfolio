@@ -30,7 +30,7 @@ export const certifications = z.array(Certification).parse([
   },
   {
     // Never "Certified Ethical Hacker (CEH)": that's EC-Council's credential (C.3).
-    title: "{{UDEMY_COURSE_TITLE}}",
+    title: "Learn Ethical Hacking From Scratch",
     issuer: "Udemy",
     date: "Jun 2020",
     url: "https://www.udemy.com/certificate/UC-c416d825-adcd-48a6-a078-26e2cd91edd5/",

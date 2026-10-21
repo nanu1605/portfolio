@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Href, HrefOrPending } from "./schema";
+import { Href } from "./schema";
 
 // Identity, links, nav and SEO defaults (A.1), plus the launch flags (§4.2).
 
@@ -19,7 +19,7 @@ export const site = z
       github: Href,
       linkedin: Href,
       medium: Href,
-      x: HrefOrPending,
+      x: Href,
     }),
     nav: z.array(z.object({ label: z.string(), href: Href })),
     /** The header's ghost button and the menu's last link (§8.1). */
@@ -46,7 +46,7 @@ export const site = z
       github: "https://github.com/nanu1605",
       linkedin: "https://www.linkedin.com/in/tanishqjain010/",
       medium: "https://medium.com/@tanishqjain010",
-      x: "{{X_URL}}",
+      x: "https://x.com/tanishq11567281",
     },
     nav: [
       { label: "Work", href: "/work" },

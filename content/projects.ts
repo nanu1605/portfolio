@@ -516,8 +516,8 @@ const raw = [
       "Google Calendar and Meet APIs",
       "MySQL",
     ],
-    // Linked only with the client's permission (A.4.9).
-    links: [{ label: "Live", href: "{{MYCOUNSELHUB_URL}}" }],
+    // No link to the live site, at Tanishq's request (A.4.9).
+    links: [],
     metrics: ["mch.services"],
     readout: "{mch.services} service lines",
     featured: false,

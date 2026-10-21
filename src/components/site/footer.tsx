@@ -24,6 +24,7 @@ const social = [
   { label: "GitHub", href: site.links.github },
   { label: "LinkedIn", href: site.links.linkedin },
   { label: "Medium", href: site.links.medium },
+  { label: "X", href: site.links.x },
 ];
 
 const row =

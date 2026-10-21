@@ -67,9 +67,9 @@ export const home = z
       headline: "From model to machine.",
       subline:
         "I'm Tanishq Jain. I build machine-learning systems and software that hold up outside the notebook — and ship them through my company, Jainav Infotech.",
-      // {{NOW_ITEMS}}: follows the Now list once Tanishq confirms it.
+      // Follows the Now list (content/now.ts).
       statusPill:
-        "Now · Shipping VYRO {vyro.version} · Applying for an MSc in AI/ML for 2027",
+        "Now · Shipping VYRO {vyro.version} · Getting MenuMesh ready for launch",
       ctas: [
         { label: "See my work", href: "/#work" },
         { label: "Get in touch", href: "/contact" },
