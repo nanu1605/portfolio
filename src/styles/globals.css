@@ -903,4 +903,10 @@ dialog .menu-bar:last-child {
   [data-progress] {
     display: none;
   }
+
+  /* The web resume prints on A4 (§8.10); tokens.css forces light. */
+  @page {
+    size: A4;
+    margin: 16mm 18mm;
+  }
 }

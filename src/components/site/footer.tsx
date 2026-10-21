@@ -42,7 +42,7 @@ export function Footer() {
   const copyEmail = home.sections.contact.buttons[0]!.label;
 
   return (
-    <footer className="defer-render border-t border-border px-page pt-16 pb-[max(2.5rem,env(safe-area-inset-bottom))]">
+    <footer className="defer-render border-t border-border px-page print:hidden pt-16 pb-[max(2.5rem,env(safe-area-inset-bottom))]">
       <div className="mx-auto grid max-w-site gap-10 md:grid-cols-2 lg:grid-cols-12">
         <div className="flex flex-col items-start gap-4 lg:col-span-5">
           <p className="text-small text-fg">{microcopy.footer.bio}</p>

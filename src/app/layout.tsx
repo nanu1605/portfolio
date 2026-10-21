@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { ThemeProvider } from "next-themes";
 import { microcopy } from "@content/microcopy";
+import { site } from "@content/site";
 import { Enhancements } from "@/components/site/enhancements";
 import { Footer } from "@/components/site/footer";
 import { Header } from "@/components/site/header";
@@ -11,7 +12,7 @@ import "@/styles/globals.css";
 
 export const metadata: Metadata = {
   // Canonical URLs resolve against the production domain (§11).
-  metadataBase: new URL("https://tanishq.website"),
+  metadataBase: new URL(site.url),
   title: {
     default: "Tanishq Jain — ML & systems engineer",
     template: "%s — Tanishq Jain",

@@ -48,8 +48,9 @@ export function Button(props: ButtonProps | LinkProps) {
 
   if (rest.href !== undefined) {
     const { href, ...anchor } = rest as Omit<LinkProps, keyof Common>;
-    // Site paths go through next/link; mailto and other sites are plain links.
-    return href.startsWith("/") ? (
+    // Site pages go through next/link; downloads, mailto and other sites
+    // are plain links.
+    return href.startsWith("/") && !anchor.download ? (
       <Link href={href} className={classes} {...fx} {...anchor}>
         {content}
       </Link>

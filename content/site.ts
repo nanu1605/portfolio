@@ -11,6 +11,8 @@ const Page = z.object({
 export const site = z
   .object({
     name: z.string(),
+    /** The canonical origin (§16): metadata, and the PDF's absolute links. */
+    url: z.url(),
     role: z.string(),
     location: z.string(),
     timezone: z.string(),
@@ -38,6 +40,7 @@ export const site = z
   })
   .parse({
     name: "Tanishq Jain",
+    url: "https://tanishq.website",
     role: "ML & systems engineer",
     location: "Indore, India",
     timezone: "IST, UTC+5:30",

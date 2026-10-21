@@ -88,6 +88,15 @@ export function renderTokensCss() {
       "color-scheme: light;",
       ...themeVars("light"),
     ]),
+    // Paper is light: printing (the resume, §8.10) forces the light tokens,
+    // even inside regions pinned to dark (the hero).
+    `@media print {\n${block(":root,\n[data-theme]", [
+      "color-scheme: light;",
+      ...themeVars("light"),
+    ])
+      .split("\n")
+      .map((l) => `  ${l}`)
+      .join("\n")}\n}`,
     "",
   ].join("\n\n");
 }

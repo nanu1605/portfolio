@@ -18,6 +18,16 @@ export const resume = z
         }),
       )
       .min(1),
+    /** Section headings, as §8.10 names them. */
+    labels: z.object({
+      summary: z.string(),
+      experience: z.string(),
+      projects: z.string(),
+      openSource: z.string(),
+      education: z.string(),
+      skills: z.string(),
+      certifications: z.string(),
+    }),
     /** Section order for the web page and the PDF (§8.10). */
     sections: z.array(
       z.enum([
@@ -92,6 +102,15 @@ export const resume = z
         ],
       },
     ],
+    labels: {
+      summary: "Summary",
+      experience: "Experience",
+      projects: "Selected projects",
+      openSource: "Open source",
+      education: "Education",
+      skills: "Skills",
+      certifications: "Certifications",
+    },
     sections: [
       "summary",
       "experience",

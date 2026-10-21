@@ -28,7 +28,7 @@ const wordmark = (
  */
 export function Header() {
   return (
-    <HeaderShell className="glass sticky top-0 z-40 border-b border-border">
+    <HeaderShell className="glass sticky top-0 z-40 border-b border-border print:hidden">
       <div className="mx-auto flex h-(--header-h) max-w-wide items-center gap-1 px-page">
         {wordmark}
         <NavLinks
