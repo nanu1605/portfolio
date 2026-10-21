@@ -99,6 +99,11 @@ export const site = z
           title: "Contact",
           description: "Email me or send a message.",
         },
+        // Phase 6: the privacy note's own first sentence (A.13).
+        "/privacy": {
+          title: "Privacy",
+          description: "This site sets no cookies and runs no ad trackers.",
+        },
       },
     },
     flags: { menumeshLive: false, jainavLive: false },

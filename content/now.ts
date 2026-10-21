@@ -5,10 +5,12 @@ import { z } from "zod";
 
 export const now = z
   .object({
+    updatedLabel: z.string(),
     updated: z.iso.date(),
     items: z.array(z.object({ title: z.string(), body: z.string() })).min(1),
   })
   .parse({
+    updatedLabel: "Last updated",
     updated: "2026-10-21",
     items: [
       {

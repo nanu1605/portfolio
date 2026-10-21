@@ -5,11 +5,21 @@ import { z } from "zod";
 export const uses = z
   .object({
     intro: z.string(),
+    labels: z.object({
+      desktop: z.string(),
+      whyItMatters: z.string(),
+      development: z.string(),
+    }),
     desktop: z.array(z.string()).min(1),
     whyItMatters: z.array(z.string()),
     development: z.array(z.string()).min(1),
   })
   .parse({
+    labels: {
+      desktop: "Desktop",
+      whyItMatters: "Why it matters",
+      development: "Development",
+    },
     intro:
       "The machine I build and test on. It's also why some of my design decisions look the way they do.",
     desktop: [
