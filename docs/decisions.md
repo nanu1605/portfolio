@@ -885,13 +885,17 @@ Tanishq answered the Phase 5 questions and most placeholders.
   - entries don't split across pages.
 - **The PDF:**
   - `@react-pdf/renderer` inside a `force-static` route handler, so it's rendered once at build time and served as a static file;
-  - A4, one column, 2 pages, about 15 KB;
+  - A4, one column, 2 pages, about 35 KB;
   - the colours are the light theme's tokens;
   - case-study and certificate titles link to `https://tanishq.website/…`, so `site.url` is now in `content/site.ts`, and the layout's `metadataBase` uses it too.
-- **Fonts: Helvetica for now.**
-  - Embedding the site's fonts needs static TTFs from Google Fonts (OFL). The variable woff2 files that next/font downloads give only the regular weight, and their Latin subset lacks "→".
-  - Downloading the TTFs is waiting for Tanishq's OK.
-  - Until then the PDF uses Helvetica, a standard PDF font: selectable, but not embedded, and it has no "→". The two pipeline bullets therefore show "'" where the arrows go.
+- **Fonts: the site's own, embedded.**
+  - The variable woff2 files that next/font downloads give only the regular weight, and their Latin subset lacks "→". So Tanishq approved downloading static TTFs from Google Fonts (21 Oct 2026).
+  - `assets/fonts/` holds the five files, with their OFL licences (about 414 KB; not served):
+    - Plus Jakarta Sans 400, 600 and 700;
+    - JetBrains Mono 400 and 500.
+  - The text matches the site's roles: Jakarta for the body, 600 for titles and 700 for the name; JetBrains Mono for the section labels (500) and the dates (400).
+  - react-pdf embeds subsets with ToUnicode maps, so the text stays selectable. Every character the resume uses has a glyph, "→" included.
+  - A first build used Helvetica while the download waited for approval; Helvetica has no "→".
 
 **Contact (§8.11, §14).**
 - **Where messages go:** `src/lib/contact-server.ts` decides from the environment.

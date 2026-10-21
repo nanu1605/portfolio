@@ -122,7 +122,7 @@ Done when: each centerpiece works with mouse, touch and keyboard; data matches A
 ## Phase 6 — Remaining pages
 
 - [x] Company (A.7), About (A.8), Open source (A.6), Now (A.9), Uses (A.10), Privacy and 404 (A.13), each with its signature moment: company cards lift in before their glows, the About timeline draws with scroll, the open-source dots pop in by date (axis break placed from the data), the 404 needle drops to zero.
-- [~] Resume web page and `/resume.pdf` (§8.10, A.14): both from one builder; the PDF is A4, 2 pages, rendered at build time. It uses Helvetica until Tanishq OKs downloading the site fonts' static TTFs (embedded fonts, and the "→" glyph).
+- [x] Resume web page and `/resume.pdf` (§8.10, A.14): both from one builder; the PDF is A4, 2 pages, rendered at build time, with the site's fonts embedded (static TTFs in `assets/fonts/`, OFL, approved 21 Oct 2026).
 - [x] Contact and `/api/contact` (§8.11): Zod, honeypot, 32 KB body limit, 5 per 10 min per IP (per instance), Turnstile, Resend over REST; `.outbox/` off Vercel with Cloudflare's test keys; on Vercel without keys the form opens the email app (mailto fallback).
 - [x] §14 security headers (CSP with Turnstile, HSTS, nosniff, referrer and permissions policies).
 - [x] ↔ Per-device layouts: vertical open-source dot timeline below 640 px, About sticky photo off below 600 px height, contact field attributes (`autocomplete`, `enterkeyhint`, `field-sizing`), flexible/compact Turnstile, 404 hint hidden on touch.
@@ -130,7 +130,7 @@ Done when: each centerpiece works with mouse, touch and keyboard; data matches A
 
 Done when: the PDF downloads, has selectable text and fits on at most 2 pages; the contact e2e test passes; "Now" shows its date.
 
-- [x] `/resume.pdf`: `application/pdf`, 2 A4 pages, text drawn as text (checked in `tests/e2e/pages.spec.ts`).
+- [x] `/resume.pdf`: `application/pdf`, 2 A4 pages, embedded fonts with ToUnicode maps, text drawn as text (checked in `tests/e2e/pages.spec.ts`).
 - [x] Contact e2e: validation, touch input attributes, success with the Turnstile test keys into `.outbox/`, endpoint errors, honeypot and the rate limit.
 - [x] Now shows "Last updated 21 October 2026".
 - Lighthouse mobile (local, one run): /about 97, /contact, /open-source, /company and /resume 99; accessibility 100, best practices 96, SEO 100, LCP 1.61–1.90 s, CLS 0.
