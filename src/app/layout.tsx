@@ -22,6 +22,16 @@ export const metadata: Metadata = {
 };
 
 const themeColors = { dark: colors.bg.dark, light: colors.bg.light };
+const profiles = Object.values(site.links);
+// Vercel's plain-HTML setup for Web Analytics and Speed Insights (§12): its
+// React components would add their code to every page. The queues let
+// events (lib/track.ts) wait for the scripts, which load after the page
+// does; Speed Insights still reads the earlier Web Vitals from the buffer.
+const vercelScripts = [
+  "window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};",
+  "window.si=window.si||function(){(window.siq=window.siq||[]).push(arguments)};",
+  'addEventListener("load",function(){["/_vercel/insights/script.js","/_vercel/speed-insights/script.js"].forEach(function(src){var s=document.createElement("script");s.src=src;document.head.appendChild(s)})});',
+].join("");
 
 export const viewport: Viewport = {
   // Content can reach under notches; gutters add the safe-area insets.
@@ -61,7 +71,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             {children}
           </main>
           <Footer />
-          <Enhancements themeColors={themeColors} />
+          <Enhancements
+            themeColors={themeColors}
+            greeting={microcopy.consoleGreeting}
+            profiles={profiles}
+            jarvis={microcopy.jarvisToast}
+          />
+          {/* Cookie-free page views and field Web Vitals (§12). Vercel
+              serves the scripts, so off Vercel (a laptop, CI) they'd 404. */}
+          {process.env.VERCEL && (
+            <script dangerouslySetInnerHTML={{ __html: vercelScripts }} />
+          )}
         </ThemeProvider>
       </body>
     </html>

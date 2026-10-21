@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { track } from "@/lib/track";
 import { Button } from "@/components/ui/button";
 import { cx } from "@/lib/cx";
 
@@ -159,6 +160,7 @@ export function ContactForm({
         errors?: Partial<Record<Field, string>>;
       };
       if (res.ok && json.ok) {
+        track("contact_submit", { status: "success" });
         setStatus({ kind: "sent", to: value("email").trim() });
         el.reset();
         fresh();
@@ -169,9 +171,11 @@ export function ContactForm({
         setStatus({ kind: "idle" });
         return;
       }
+      track("contact_submit", { status: "error" });
       setStatus({ kind: "error" });
       fresh();
     } catch {
+      track("contact_submit", { status: "error" });
       setStatus({ kind: "error" });
       fresh();
     }

@@ -382,6 +382,21 @@ dialog[open] {
   }
 }
 
+/* The "hey jarvis" toast also rises in (jarvis-toast.tsx); reduced motion: no rise. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-toast]:popover-open {
+    transition:
+      opacity var(--duration-fast) var(--ease-out),
+      transform var(--duration-base) var(--ease-out);
+  }
+
+  @starting-style {
+    [data-toast]:popover-open {
+      transform: translateY(16px);
+    }
+  }
+}
+
 [data-closing] {
   animation: fade-out var(--duration-fast) var(--ease-out) forwards;
 }

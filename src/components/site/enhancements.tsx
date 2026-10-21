@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { start as startTouchEffects } from "@/lib/touch-effects";
+import type JarvisToast from "./jarvis-toast";
 
 // Page-wide behaviour that needs the browser (docs/cross-device.md §2).
 // Width decides layout; input decides effects, re-checked live.
@@ -38,10 +39,23 @@ function whileMatches(query: string, enable: () => Promise<() => void>) {
 
 export function Enhancements({
   themeColors,
+  greeting,
+  profiles,
+  jarvis,
 }: {
   themeColors: { dark: string; light: string };
+  /** For curious engineers (§6.5, A.13). */
+  greeting: string;
+  /** Profile links, which count as `social` outbound clicks (§12). */
+  profiles: string[];
+  /** The "hey jarvis" toast's copy (A.13). */
+  jarvis: { text: string; link: string };
 }) {
   const { resolvedTheme } = useTheme();
+  // How many times "hey jarvis" has been typed; each opens the toast again.
+  const [heard, setHeard] = useState(0);
+  // The toast, from the after-load module.
+  const [Toast, setToast] = useState<typeof JarvisToast | null>(null);
 
   // Android and iOS tint their toolbars from theme-color.
   useEffect(() => {
@@ -54,6 +68,27 @@ export function Enhancements({
   }, [resolvedTheme, themeColors]);
 
   useEffect(() => startTouchEffects(), []);
+
+  // Ctrl K, "hey jarvis", the greeting, analytics, the swipe-back check and
+  // the bento demos wait for the load event (src/lib/after-load.ts).
+  useEffect(() => {
+    let stop = () => {};
+    const start = () =>
+      void import("@/lib/after-load").then((m) => {
+        setToast(() => m.JarvisToast);
+        stop = m.start({
+          profiles,
+          greeting,
+          onJarvis: () => setHeard((n) => n + 1),
+        });
+      });
+    if (document.readyState === "complete") start();
+    else addEventListener("load", start, { once: true });
+    return () => {
+      removeEventListener("load", start);
+      stop();
+    };
+  }, [profiles, greeting]);
 
   useEffect(
     () =>
@@ -78,5 +113,5 @@ export function Enhancements({
     [],
   );
 
-  return null;
+  return heard > 0 && Toast && <Toast times={heard} {...jarvis} />;
 }
