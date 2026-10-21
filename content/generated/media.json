@@ -1036,6 +1036,44 @@
         }
       ]
     },
+    "menumesh/menumesh-demo-ready-kitchen-phone.png": {
+      "width": 1194,
+      "height": 1674,
+      "blur": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAABwAwCdASoQABYAPtFUo0uoJKMhsAgBABoJYwAAW/BBV95ixoAA/u6mIthd9scuSsTCgIb5mWLGuvXSSrexlv6W878eGzg7WCLa85hk3QqUbM+q+DVgwqgAAAA=",
+      "variants": [
+        {
+          "width": 640,
+          "height": 897,
+          "avif": "/media/screens/menumesh/menumesh-demo-ready-kitchen-phone-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-ready-kitchen-phone-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 1346,
+          "avif": "/media/screens/menumesh/menumesh-demo-ready-kitchen-phone-960.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-ready-kitchen-phone-960.webp"
+        }
+      ]
+    },
+    "menumesh/menumesh-demo-billed-counter-phone.png": {
+      "width": 1194,
+      "height": 1617,
+      "blur": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAABwAwCdASoQABYAPtFUo0uoJKMhsAgBABoJaUwAADaSBELhyoAA/vCM50gLswOQTBn6g/rMtwQc0jx38UIowqm9mMziVMbrDZ72PvToC+72n1gWc4xyGymU06bId2+7nspSnzvFwAA=",
+      "variants": [
+        {
+          "width": 640,
+          "height": 867,
+          "avif": "/media/screens/menumesh/menumesh-demo-billed-counter-phone-640.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-billed-counter-phone-640.webp"
+        },
+        {
+          "width": 960,
+          "height": 1300,
+          "avif": "/media/screens/menumesh/menumesh-demo-billed-counter-phone-960.avif",
+          "webp": "/media/screens/menumesh/menumesh-demo-billed-counter-phone-960.webp"
+        }
+      ]
+    },
     "vyro/vyro-dashboard-poster.png": {
       "width": 1600,
       "height": 1090,

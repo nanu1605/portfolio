@@ -481,6 +481,32 @@
         1170,
         3024
       ]
+    },
+    {
+      "file": "menumesh/menumesh-demo-ready-kitchen-phone.png",
+      "view": "Demo: kitchen, ready, phone",
+      "alt": "MenuMesh kitchen screen on a phone: both dishes for table 5 are ready, with a Mark served button for each and a Mark all served button.",
+      "use": "Case study: table to bill (phone)",
+      "project": "menumesh",
+      "capturedOn": "2026-10-21",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        1194,
+        1674
+      ]
+    },
+    {
+      "file": "menumesh/menumesh-demo-billed-counter-phone.png",
+      "view": "Demo: counter, billed, phone",
+      "alt": "MenuMesh counter screen on a phone: the bill for table 5, one Paneer Tikka and two Butter Naan with CGST and SGST at 2.5% each and the grand total, and Cash, UPI and Card buttons to record the payment.",
+      "use": "Case study: table to bill (phone)",
+      "project": "menumesh",
+      "capturedOn": "2026-10-21",
+      "build": "MenuMesh staging site, pre-launch",
+      "size": [
+        1194,
+        1617
+      ]
     }
   ],
   "videos": [

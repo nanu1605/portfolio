@@ -1,9 +1,11 @@
 // Captures MenuMesh screens (spec §15.2) into assets/source/screens/menumesh
 // and updates the manifest; then run `pnpm images`. Read-only: no sign-up,
 // login, form or contact button. The only clicks are the /demo controls
-// (nothing there is saved) and the demo's language toggle.
+// (nothing there is saved), the demo's language toggle and, at phone width,
+// its device switcher.
 //
-//   pnpm capture:menumesh   (MENUMESH_BASE_URL switches the site at launch)
+//   pnpm capture:menumesh           (MENUMESH_BASE_URL switches the site)
+//   pnpm capture:menumesh --phone   (only the phone kitchen and bill)
 
 import { mkdir, mkdtemp, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -26,6 +28,10 @@ const BUILD = BASE.includes("staging")
   ? "MenuMesh staging site, pre-launch"
   : "MenuMesh";
 const MAX_VIDEO_BYTES = 3 * 1024 ** 2;
+
+// The phone pass runs at a large phone's width: at 390 px the kitchen
+// squeezes each dish name under its status badge ("Panee" + "Ready").
+const largePhone = { ...phone, viewport: { width: 430, height: 932 } };
 
 const shots: Shot[] = [];
 const file = (name: string) => `menumesh/${name}.png`;
@@ -227,6 +233,55 @@ async function demo(page: Page) {
   });
 }
 
+/**
+ * The kitchen and the bill at phone width, where the demo shows one device
+ * at a time ("Device to show"): legible in the case study's phone stepper.
+ */
+async function phoneDemo(page: Page) {
+  await page.goto(`${BASE}/demo`);
+  await settle(page);
+  const run = (name: string) => states.find((s) => s.name === name)!.run(page);
+  const show = (device: string) =>
+    page
+      .getByRole("group", { name: "Device to show" })
+      .getByRole("button", { name: device })
+      .click();
+  const ready = await step("phone: kitchen, ready", async () => {
+    await run("ordered");
+    await show("Kitchen");
+    await run("preparing");
+    await run("ready");
+    await page.waitForTimeout(600);
+    await shoot(
+      frame(page, panels.kitchen),
+      {
+        file: file("menumesh-demo-ready-kitchen-phone"),
+        view: "Demo: kitchen, ready, phone",
+        alt: "MenuMesh kitchen screen on a phone: both dishes for table 5 are ready, with a Mark served button for each and a Mark all served button.",
+        use: "Case study: table to bill (phone)",
+      },
+      shots,
+    );
+  });
+  if (!ready) return;
+  await step("phone: counter, billed", async () => {
+    await run("served");
+    await show("Counter");
+    await run("billed");
+    await page.waitForTimeout(600);
+    await shoot(
+      frame(page, panels.counter),
+      {
+        file: file("menumesh-demo-billed-counter-phone"),
+        view: "Demo: counter, billed, phone",
+        alt: "MenuMesh counter screen on a phone: the bill for table 5, one Paneer Tikka and two Butter Naan with CGST and SGST at 2.5% each and the grand total, and Cash, UPI and Card buttons to record the payment.",
+        use: "Case study: table to bill (phone)",
+      },
+      shots,
+    );
+  });
+}
+
 async function hindiHome(page: Page) {
   await step("/hi at phone size", async () => {
     await page.goto(`${BASE}/hi`);
@@ -337,9 +392,16 @@ async function main() {
   await mkdir(DIR, { recursive: true });
   const browser = await chromium.launch();
   try {
+    if (process.argv.includes("--phone")) {
+      await phoneDemo(await (await browser.newContext(largePhone)).newPage());
+      await updateManifest("menumesh", BUILD, shots, [], true);
+      console.log(`${shots.length} screens. Next: pnpm images`);
+      return;
+    }
     const page = await (await browser.newContext(desktop)).newPage();
     await site(page);
     await demo(page);
+    await phoneDemo(await (await browser.newContext(largePhone)).newPage());
     const mobile = await (await browser.newContext(phone)).newPage();
     await hindiHome(mobile);
     const videos = await record(browser);
