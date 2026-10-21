@@ -1,0 +1,112 @@
+{
+  "source": "https://github.com/nanu1605/mlops-drift-retrain",
+  "commit": "0a0b95f",
+  "command": "uv sync --extra dev; uv run python -m mlops_drift.data.ingest; uv run python -m mlops_drift.experiments.run (the steps of `make experiment`, run directly: no make on Windows)",
+  "patch": "One added line in src/mlops_drift/experiments/run.py, after the timeline is built, writes `timeline` to timeline.json.",
+  "data": "The repo's synthetic generator (no CICIDS2017 CSVs present): 20 batches of 400 rows.",
+  "exported": "2026-10-20",
+  "drift_detected_t": 13799.5,
+  "promoted_t": 13799.5,
+  "timeline": [
+    {
+      "t": 12199.5,
+      "f1": 0.26548672566371684,
+      "version": "1"
+    },
+    {
+      "t": 12599.5,
+      "f1": 0.22608695652173913,
+      "version": "1"
+    },
+    {
+      "t": 12999.5,
+      "f1": 0.25210084033613445,
+      "version": "1"
+    },
+    {
+      "t": 13399.5,
+      "f1": 0.24509803921568626,
+      "version": "1"
+    },
+    {
+      "t": 13799.5,
+      "f1": 0.3524229074889868,
+      "version": "1"
+    },
+    {
+      "t": 14199.5,
+      "f1": 0.8032786885245902,
+      "version": "2"
+    },
+    {
+      "t": 14599.5,
+      "f1": 0.7800586510263929,
+      "version": "2"
+    },
+    {
+      "t": 14999.5,
+      "f1": 0.7904509283819628,
+      "version": "2"
+    },
+    {
+      "t": 15399.5,
+      "f1": 0.7633136094674556,
+      "version": "2"
+    },
+    {
+      "t": 15799.5,
+      "f1": 0.7957559681697612,
+      "version": "2"
+    },
+    {
+      "t": 16199.5,
+      "f1": 0.7741935483870968,
+      "version": "2"
+    },
+    {
+      "t": 16599.5,
+      "f1": 0.7808988764044944,
+      "version": "2"
+    },
+    {
+      "t": 16999.5,
+      "f1": 0.7712082262210797,
+      "version": "2"
+    },
+    {
+      "t": 17399.5,
+      "f1": 0.7883597883597884,
+      "version": "2"
+    },
+    {
+      "t": 17799.5,
+      "f1": 0.7884057971014493,
+      "version": "2"
+    },
+    {
+      "t": 18199.5,
+      "f1": 0.7958656330749354,
+      "version": "2"
+    },
+    {
+      "t": 18599.5,
+      "f1": 0.75,
+      "version": "2"
+    },
+    {
+      "t": 18999.5,
+      "f1": 0.7611111111111111,
+      "version": "2"
+    },
+    {
+      "t": 19399.5,
+      "f1": 0.7721179624664879,
+      "version": "2"
+    },
+    {
+      "t": 19799.5,
+      "f1": 0.7799442896935933,
+      "version": "2"
+    }
+  ]
+}
