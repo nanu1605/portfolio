@@ -205,7 +205,13 @@ test("View data lists every batch, the events and the provenance", async ({
   const details = page.locator("details", {
     has: page.locator("caption", { hasText: series.commit }),
   });
-  await details.locator("summary").click();
+  // Mid-viewport, clear of the header as it slides away.
+  const summary = details.locator("summary");
+  await summary.evaluate((el) =>
+    el.scrollIntoView({ block: "center", behavior: "instant" }),
+  );
+  await summary.click();
+  await expect(details).toHaveAttribute("open", "");
   const table = details.getByRole("table");
   await expect(table.locator("caption")).toContainText(
     `commit ${series.commit}, exported 20 Oct 2026`,
