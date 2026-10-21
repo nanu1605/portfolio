@@ -319,6 +319,9 @@ test.describe("MenuMesh: table to bill", () => {
         });
         await expect(steps.nth(i)).toHaveAttribute("aria-current", "step");
         await expect(shown(alt(step.screen))).toHaveCount(1);
+        // The phone-width captures are the stepper's alone.
+        if ("phone" in step)
+          await expect(shown(alt(step.phone.screen))).toHaveCount(0);
         await expect(frame).toBeInViewport({ ratio: 0.9 });
         // Legible: the whole phone at the frame's height; the landscape
         // screens' details across the column. The ~65svh frame gives the
@@ -362,16 +365,29 @@ test.describe("MenuMesh: table to bill", () => {
     await expect(
       order.getByRole("img", { name: alt(tableToBill.steps[1].screen) }),
     ).toBeVisible();
-    // Legible on a phone: the menu at least 240 px wide; the bill's detail
-    // the slide's width.
+    // Legible on a phone: the menu at least 240 px wide. The kitchen and
+    // the bill use their phone-width captures, whose smallest text (14 px,
+    // captured at 3x) must render at 10 px or more: 0.26 and 0.30 on a
+    // 360 px phone.
     const img = (i: number) =>
       box.locator(`#table-to-bill-step-${i} [aria-hidden="false"] img`);
     expect(
       await scale(img(1), tableToBill.steps[1].screen),
     ).toBeGreaterThanOrEqual(0.37);
-    expect(
-      await scale(img(3), tableToBill.steps[3].screen),
-    ).toBeGreaterThanOrEqual(0.24);
+    for (const [i, phone] of [
+      [2, tableToBill.steps[2].phone],
+      [3, tableToBill.steps[3].phone],
+    ] as const) {
+      await expect(img(i)).toHaveAccessibleName(alt(phone.screen));
+      expect(await scale(img(i), phone.screen)).toBeGreaterThanOrEqual(
+        10 / (14 * 3),
+      );
+    }
+    // Every slide as tall as the tallest, so a swipe never shifts the page.
+    const heights = await box
+      .locator('[role="tabpanel"]')
+      .evaluateAll((els) => els.map((el) => el.getBoundingClientRect().height));
+    expect(new Set(heights).size).toBe(1);
 
     const hindi = order.getByRole("button", { name: "हिंदी" });
     expect((await hindi.boundingBox())!.height).toBeGreaterThanOrEqual(44);
