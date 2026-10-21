@@ -7,6 +7,15 @@ const routes = [
   "/styleguide",
   "/work",
   ...projects.filter((p) => p.caseStudy).map((p) => `/work/${p.slug}`),
+  "/company",
+  "/about",
+  "/open-source",
+  "/now",
+  "/uses",
+  "/privacy",
+  "/resume",
+  "/contact",
+  "/not-a-page",
 ];
 
 // docs/cross-device.md §8: 320 is the WCAG 1.4.10 reflow width, 744 is

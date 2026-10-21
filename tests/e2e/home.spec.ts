@@ -192,17 +192,17 @@ test("every link on Home goes somewhere real", async ({
     "/styleguide",
     "/work",
     ...projects.filter((p) => p.caseStudy).map((p) => `/work/${p.slug}`),
-  ];
-  const planned = [
     "/company",
     "/about",
     "/open-source",
     "/now",
     "/uses",
     "/resume",
+    "/resume.pdf",
     "/contact",
     "/privacy",
   ];
+  const planned: string[] = [];
   await page.goto("/");
   const hrefs = await page
     .locator("a[href]")
