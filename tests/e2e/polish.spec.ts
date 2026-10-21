@@ -51,6 +51,8 @@ async function recordTransitions(page: Page) {
     document.startViewTransition = ((arg: never) => {
       const entry = {
         kind: document.documentElement.dataset.vt ?? null,
+        // Set once the transition has started (or was skipped).
+        settled: false,
         animations: [] as {
           pseudo: string;
           duration: number;
@@ -88,7 +90,8 @@ async function recordTransitions(page: Page) {
             ];
           });
         })
-        .catch(() => {});
+        .catch(() => {})
+        .finally(() => (entry.settled = true));
       return t;
     }) as typeof document.startViewTransition;
   });
@@ -96,6 +99,7 @@ async function recordTransitions(page: Page) {
 
 type Transition = {
   kind: string | null;
+  settled: boolean;
   animations: { pseudo: string; duration: number; props: string[] }[];
 };
 /** What a transition may animate besides position: opacity and its blending. */
@@ -108,8 +112,15 @@ const images = (t: Transition) =>
   t.animations.filter(
     (a) => a.pseudo !== "::view-transition" && !a.pseudo.includes("group"),
   );
-const transitions = (page: Page) =>
-  page.evaluate(() => (window as unknown as { __vt: Transition[] }).__vt);
+/** The recorded transitions, once the first `count` have started. */
+async function transitions(page: Page, count = 1) {
+  const all = () =>
+    page.evaluate(() => (window as unknown as { __vt: Transition[] }).__vt);
+  await expect
+    .poll(async () => (await all()).filter((t) => t.settled).length)
+    .toBeGreaterThanOrEqual(count);
+  return all();
+}
 const supportsTransitions = (page: Page) =>
   page.evaluate(() => "startViewTransition" in document);
 
@@ -317,10 +328,11 @@ test("a /work cover morphs into its case-study hero from 768 px", async ({
   const morph = t!.animations.find(
     (a) => a.pseudo === "::view-transition-group(cover-baby)",
   );
-  // What the engine recorded, if this fails.
-  const seen = JSON.stringify(t!.animations.map((a) => a.pseudo));
-  if (wide) expect(morph?.props, seen).toContain("transform");
-  else expect(morph).toBeUndefined();
+  const pseudos = t!.animations.map((a) => a.pseudo);
+  if (wide) {
+    expect(pseudos).toContain("::view-transition-group(cover-baby)");
+    expect(morph!.props).toContain("transform");
+  } else expect(morph).toBeUndefined();
 });
 
 test("the theme and the Work filter run their own transitions", async ({
@@ -339,7 +351,6 @@ test("the theme and the Work filter run their own transitions", async ({
 
   await page.locator('[data-chip="ml"]').click();
   await expect(page).toHaveURL(/\?filter=ml$/);
-  await expect.poll(async () => (await transitions(page)).length).toBe(1);
   const [filter] = await transitions(page);
   expect(filter!.kind).toBe("filter");
   expect(filter!.animations.some((a) => a.pseudo.includes("work-"))).toBe(true);
@@ -354,8 +365,7 @@ test("the theme and the Work filter run their own transitions", async ({
   if (!(await toggle.isVisible())) return;
   await toggle.click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
-  await expect.poll(async () => (await transitions(page)).length).toBe(2);
-  const theme = (await transitions(page))[1]!;
+  const theme = (await transitions(page, 2))[1]!;
   expect(theme.kind).toBe("theme");
   expect(
     theme.animations.map((a) => a.pseudo).filter((p) => !p.endsWith("(root)")),
