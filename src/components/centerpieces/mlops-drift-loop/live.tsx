@@ -17,7 +17,9 @@ import { batchAt, MlopsView, progress, steps, type MlopsData } from "./view";
 // No CSS scroll timeline: stable Firefox has none, and this carries data.
 // One passive scroll listener, one rect read per frame, and only while the
 // track is near the viewport; React renders only when the step changes.
-// Reduced motion keeps the final step.
+// Reduced motion keeps the final step. So does a plot that is more than
+// half on screen when the chunk mounts, until it has been wholly off
+// screen: never final → empty (the count-up rule, cross-device §4).
 
 /** The least scroll (px) a phone draw takes, however little room is left. */
 const MIN_SPAN = 120;
@@ -37,6 +39,7 @@ export default function MlopsLive({ data }: { data: MlopsData }) {
     if (reduced || !plot || !pin || !track) return;
     let frame = 0;
     let near = false;
+    let hold: boolean | undefined; // set by the first observer entry
     let header = 0;
     const readHeader = () => {
       header =
@@ -48,6 +51,11 @@ export default function MlopsLive({ data }: { data: MlopsData }) {
     };
     const update = () => {
       frame = 0;
+      if (hold) {
+        const c = plot.getBoundingClientRect();
+        if (c.top < innerHeight && c.bottom > 0) return;
+        hold = false;
+      }
       const t = track.getBoundingClientRect();
       const b = pin.getBoundingClientRect();
       const run = t.height - b.height;
@@ -80,8 +88,16 @@ export default function MlopsLive({ data }: { data: MlopsData }) {
     const observer = new IntersectionObserver(
       ([entry]) => {
         near = !!entry?.isIntersecting;
+        if (hold === undefined) {
+          const c = plot.getBoundingClientRect();
+          const seen = Math.min(c.bottom, innerHeight) - Math.max(c.top, 0);
+          hold = near && seen > c.height / 2;
+        }
         if (near) schedule();
-        else setSelected(undefined);
+        else {
+          hold = false;
+          setSelected(undefined);
+        }
       },
       { rootMargin: "100px 0px" },
     );

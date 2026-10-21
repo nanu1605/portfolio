@@ -58,7 +58,9 @@ const scrub = (page: Page, by: number) =>
       const svg = document.querySelector(".mlops-plot")!;
       const readout = document.querySelector<HTMLElement>("[data-readout]")!;
       const t = track.getBoundingClientRect();
-      const from = t.top + scrollY - innerHeight;
+      // Wholly below the viewport first: a chart that was on screen when
+      // it loaded stays final until it has left.
+      const from = t.top + scrollY - innerHeight - 1;
       const to = t.bottom + scrollY;
       const out: Sample[] = [];
       for (let y = from; y <= to; y += by) {
@@ -104,6 +106,20 @@ test("loads within budget and swaps without a shift", async ({
   expect(live.bytes).toBeLessThanOrEqual(60_000);
   expect(live.shift).toBeLessThan(0.001);
   await expect(slider).toHaveAttribute("aria-valuemax", String(points.length));
+});
+
+test("a chart on screen when it loads stays final until it leaves", async ({
+  page,
+}) => {
+  // goLive brings the chart to mid-screen before its chunk mounts.
+  const { readout } = await open(page);
+  await page.evaluate(async () => {
+    scrollBy({ top: 40, behavior: "instant" });
+    await new Promise((r) =>
+      requestAnimationFrame(() => requestAnimationFrame(r)),
+    );
+  });
+  await expect(readout).toHaveAttribute("data-readout", String(points.length));
 });
 
 test("the line draws with scroll and the loop lights at the tick", async ({
