@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { openSource, pullRequests } from "@content/open-source";
 import { DotTimeline } from "@/components/open-source/dot-timeline";
+import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { Page, pageMetadata } from "@/components/site/page";
 import { Figure } from "@/components/ui/figure";
 import { Inline } from "@/components/ui/inline";
@@ -53,6 +54,7 @@ export default function OpenSource() {
   const litmusRepo = "litmuschaos/litmus";
   return (
     <Page title={openSource.title} intro={openSource.intro}>
+      <Breadcrumbs path="/open-source" />
       <section
         aria-labelledby="pecan"
         className="flex max-w-text flex-col gap-5"

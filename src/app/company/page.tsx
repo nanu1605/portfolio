@@ -1,6 +1,7 @@
 import { company } from "@content/company";
 import { site } from "@content/site";
 import { Reveal } from "@/components/motion/motion";
+import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { Page, pageMetadata } from "@/components/site/page";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -26,6 +27,7 @@ export default function Company() {
       title={company.title}
       intro={company.subtitle}
     >
+      <Breadcrumbs path="/company" />
       <p className="-mt-6 max-w-text text-fg-muted">{company.intro}</p>
 
       <section aria-labelledby="principles" className="flex flex-col gap-8">

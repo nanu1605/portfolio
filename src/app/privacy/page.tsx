@@ -1,5 +1,6 @@
 import { microcopy } from "@content/microcopy";
 import { site } from "@content/site";
+import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { Page, pageMetadata } from "@/components/site/page";
 
 export const metadata = pageMetadata("/privacy");
@@ -9,6 +10,7 @@ export default function Privacy() {
   const [before, after] = microcopy.privacy.split(site.email);
   return (
     <Page title={site.seo.pages["/privacy"]!.title}>
+      <Breadcrumbs path="/privacy" />
       <p className="max-w-text text-body-lg text-fg-muted">
         {before}
         <a

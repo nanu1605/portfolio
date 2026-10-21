@@ -3,7 +3,22 @@ import type { ReactNode } from "react";
 import { site } from "@content/site";
 import { cx } from "@/lib/cx";
 
-/** Title, description and canonical URL of a §7 route (A.1). */
+/**
+ * Open Graph for a page (§11). A page's `openGraph` replaces the layout's,
+ * so it carries the site-wide fields too; the image comes from the route's
+ * opengraph-image.tsx.
+ */
+export const openGraph = (path: string, title: string, description?: string) =>
+  ({
+    type: "website",
+    siteName: site.name,
+    locale: "en_IN",
+    url: path,
+    title: path === "/" ? title : site.seo.titleTemplate.replace("%s", title),
+    description: description ?? site.seo.description,
+  }) satisfies Metadata["openGraph"];
+
+/** Title, description, canonical URL and Open Graph of a §7 route (A.1). */
 export function pageMetadata(path: string): Metadata {
   const page = site.seo.pages[path];
   if (!page) throw new Error(`No SEO entry for ${path} in content/site.ts`);
@@ -11,6 +26,7 @@ export function pageMetadata(path: string): Metadata {
     title: page.title,
     description: page.description,
     alternates: { canonical: path },
+    openGraph: openGraph(path, page.title, page.description),
   };
 }
 

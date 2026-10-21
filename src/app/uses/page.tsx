@@ -1,5 +1,6 @@
 import { site } from "@content/site";
 import { uses } from "@content/uses";
+import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { Page, pageMetadata } from "@/components/site/page";
 import { Inline } from "@/components/ui/inline";
 import { resolve } from "@/lib/fill";
@@ -15,6 +16,7 @@ export default function Uses() {
   ];
   return (
     <Page title={site.seo.pages["/uses"]!.title} intro={uses.intro}>
+      <Breadcrumbs path="/uses" />
       <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
         {lists.map((list) => (
           <section key={list.title} className="flex flex-col gap-4">

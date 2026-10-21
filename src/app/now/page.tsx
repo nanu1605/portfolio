@@ -1,5 +1,6 @@
 import { now } from "@content/now";
 import { site } from "@content/site";
+import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { Page, pageMetadata } from "@/components/site/page";
 
 export const metadata = pageMetadata("/now");
@@ -15,6 +16,7 @@ const updated = new Intl.DateTimeFormat("en-GB", {
 export default function Now() {
   return (
     <Page title={site.seo.pages["/now"]!.title}>
+      <Breadcrumbs path="/now" />
       <div className="flex max-w-text flex-col gap-8">
         <p className="font-mono text-mono-label text-fg-subtle">
           {now.updatedLabel}{" "}

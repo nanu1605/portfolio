@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { microcopy } from "@content/microcopy";
+import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { pageMetadata } from "@/components/site/page";
 import { Button } from "@/components/ui/button";
 import { resumeHeader, resumeSections, type Entry } from "@/lib/resume";
@@ -27,6 +28,7 @@ function EntryTitle({ entry }: { entry: Entry }) {
 export default function Resume() {
   return (
     <div className="px-page py-section pt-12 md:pt-16 print:p-0">
+      <Breadcrumbs path="/resume" />
       <article className="mx-auto flex max-w-text flex-col gap-12 print:gap-6">
         <header className="flex flex-col gap-4">
           <div className="flex flex-col-reverse gap-6 sm:flex-row sm:items-start sm:justify-between">

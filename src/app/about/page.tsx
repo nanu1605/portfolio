@@ -5,6 +5,7 @@ import { experience } from "@content/experience";
 import { home } from "@content/home";
 import { media } from "@content/screens";
 import { Reveal } from "@/components/motion/motion";
+import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { Page, pageMetadata } from "@/components/site/page";
 import { Card } from "@/components/ui/card";
 import { Picture } from "@/components/ui/figure";
@@ -28,6 +29,7 @@ export default function About() {
   });
   return (
     <Page title={about.title}>
+      <Breadcrumbs path="/about" />
       <div className="grid gap-12 md:grid-cols-12 md:gap-x-10">
         <div className="md:col-span-5 lg:row-span-2">
           <div className="max-w-80 md:max-w-none lg:[@media(min-height:600px)]:sticky lg:[@media(min-height:600px)]:top-[calc(var(--header-h)+2rem)]">

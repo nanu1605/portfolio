@@ -7,10 +7,14 @@ import type { ProjectSlug } from "@content/schema";
 import {
   CaseStudyHero,
   CaseStudyNav,
+  caseStudyGraph,
   HowBuilt,
   Tldr,
 } from "@/components/work/case-study";
 import { centerpieces } from "@/components/centerpieces";
+import { Breadcrumbs } from "@/components/site/breadcrumbs";
+import { JsonLd } from "@/components/site/json-ld";
+import { openGraph } from "@/components/site/page";
 import { Screen, ScreenVideo } from "@/components/work/media";
 import { ReadingProgress } from "@/components/work/reading-progress";
 import { Toc } from "@/components/work/toc";
@@ -61,6 +65,7 @@ export async function generateMetadata({
     title: p.title,
     description: p.oneLiner,
     alternates: { canonical: `/work/${p.slug}` },
+    openGraph: openGraph(`/work/${p.slug}`, p.title, p.oneLiner),
   };
 }
 
@@ -91,6 +96,8 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
 
   return (
     <article aria-labelledby="case-study-title">
+      <JsonLd data={caseStudyGraph(p)} />
+      <Breadcrumbs path={`/work/${p.slug}`} />
       <ReadingProgress />
       <CaseStudyHero project={p} live={live} media={media} />
       <div className="px-page pb-section">

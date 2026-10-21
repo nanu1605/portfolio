@@ -2,6 +2,7 @@ import { contact } from "@content/contact";
 import { microcopy } from "@content/microcopy";
 import { site } from "@content/site";
 import { ContactForm } from "@/components/contact/form";
+import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { pageMetadata } from "@/components/site/page";
 import { CopyButton } from "@/components/ui/copy-button";
 import { contactConfig } from "@/lib/contact-server";
@@ -16,6 +17,7 @@ export default function Contact() {
   const { mode, siteKey } = contactConfig();
   return (
     <div className="px-page py-section pt-12 md:pt-16">
+      <Breadcrumbs path="/contact" />
       <div className="mx-auto grid max-w-site gap-12 lg:grid-cols-12">
         <div className="flex flex-col gap-6 lg:col-span-5">
           <h1 className="text-h1">{contact.title}</h1>

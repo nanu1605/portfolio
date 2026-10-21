@@ -13,6 +13,7 @@ import { Tag } from "@/components/ui/tag";
 import { TextLink } from "@/components/ui/text-link";
 import { resolve } from "@/lib/fill";
 import type { liveMetrics } from "@/lib/github";
+import { absolute, ref } from "@/lib/structured-data";
 import { MorphTarget } from "./morph";
 
 // The case-study template (§8.4): hero, TL;DR, the centerpiece slot, the
@@ -205,4 +206,42 @@ export function CaseStudyNav({
       </TextLink>
     </nav>
   );
+}
+
+/** The Windows apps that get a SoftwareApplication entry (§11). */
+const apps = new Set(["baby", "vyro"]);
+
+/** JSON-LD (§11): a case study's source repo and, for VYRO and Baby, the app itself. */
+export function caseStudyGraph(p: Project) {
+  const links = shownLinks(p);
+  const source = links.find((l) => l.label === "Source");
+  const download = links.find((l) => l.label === "Download");
+  const url = absolute(`/work/${p.slug}`);
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      source && {
+        "@type": "SoftwareSourceCode",
+        name: p.title,
+        description: p.oneLiner,
+        url,
+        codeRepository: source.href,
+        author: ref("person"),
+      },
+      apps.has(p.slug) && {
+        "@type": "SoftwareApplication",
+        name: p.title,
+        description: p.oneLiner,
+        url,
+        operatingSystem: "Windows",
+        applicationCategory: "UtilitiesApplication",
+        ...(download && { downloadUrl: download.href }),
+        author: ref("person"),
+        // Only while it's free (C.3: no prices otherwise).
+        ...(p.badges.includes("Free") && {
+          offers: { "@type": "Offer", price: 0, priceCurrency: "INR" },
+        }),
+      },
+    ].filter(Boolean),
+  };
 }
