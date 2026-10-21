@@ -134,6 +134,7 @@ Done when: the PDF downloads, has selectable text and fits on at most 2 pages; t
 - [x] Contact e2e: validation, touch input attributes, success with the Turnstile test keys into `.outbox/`, endpoint errors, honeypot and the rate limit.
 - [x] Now shows "Last updated 21 October 2026".
 - Lighthouse mobile (local, one run): /about 97, /contact, /open-source, /company and /resume 99; accessibility 100, best practices 96, SEO 100, LCP 1.61–1.90 s, CLS 0.
+- CI run 39604816330 (full matrix on main): 1372 e2e passed, 1 flaky (the Firefox CSS-only layout check, which stalls now and then and predates this phase); 17 interaction-budget tests passed; Lighthouse mobile and desktop passed; audit clean; Vercel deployed.
 
 ## Phase 7 — Polish and SEO
 
