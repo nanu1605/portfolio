@@ -16,8 +16,4 @@ export const placeholders = z.record(z.string(), PlaceholderInfo).parse({
     neededBy: "Phase 5",
     note: "Tanishq's own photo run through the Virtual Dressing Room pipeline. Schematic stand-in until then.",
   },
-  GSC_TXT: {
-    neededBy: "Phase 8",
-    note: "Search Console verification record (optional).",
-  },
 });

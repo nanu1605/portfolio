@@ -62,7 +62,7 @@ describe("resolve", () => {
 
   it("uses a placeholder's fallback, and hides text without one", () => {
     expect(resolve("{{FOUNDED}} – present")).toBe("2026 – present");
-    expect(resolve("{{GSC_TXT}}")).toBeNull();
+    expect(resolve("{{VDR_IMAGES}}")).toBeNull();
   });
 
   it("leaves runtime fields alone and throws on unknown metrics", () => {
