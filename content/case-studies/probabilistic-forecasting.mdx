@@ -4,7 +4,7 @@
 - **Splits:**
   - train to June 2016;
   - validate July–December 2016;
-  - test January–February 2017, on 59 non-overlapping 24-hour windows.
+  - test January–February 2017, on 59 non-overlapping 24-hour windows. Each test window is forecast from the training data and the earlier test hours; the validation months aren't in its history (the same for every model).
 - **DeepAR:** a one-week context, a 24-hour horizon and Student-t outputs, trained over 5 seeds.
 - **Scoring:** every model produces 100 sample paths, and the same code scores them all.
 
