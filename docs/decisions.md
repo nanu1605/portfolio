@@ -815,3 +815,142 @@ Tanishq answered the Phase 5 questions and most placeholders.
   - the contact form's "Research or a Master's programme" topic.
 
   Tanishq's note was about the Now list, so these keep the wording of A.8, A.14 and A.12 until Tanishq says otherwise.
+
+## Phase 6 — Remaining pages — 21 Oct 2026
+
+**Pages.** Company, About, Open source, Now, Uses, Privacy, 404, Resume (+ `/resume.pdf`) and Contact (+ `/api/contact`). Each takes its copy from `content/`, and its title, description and canonical URL from `site.seo.pages` through `pageMetadata()` (`src/components/site/page.tsx`). `/privacy` got an SEO entry; its description is the privacy note's own first sentence.
+
+**Company (§8.5, A.7).**
+- **Order:** the spec's order (hero, principles, products, services, platform link, CTAs).
+- **Signature moment:** the product cards lift in through the shared reveal, then each accent glow fades in after its own card.
+  - This applies only inside `[data-lift]`, so the Home band's cards stay as they were.
+  - The reveal's batch index is now also a CSS variable (`--reveal-i`), so a glow can wait for its card. The stagger itself is unchanged.
+  - Cards in a row come in together, 75 ms apart; stacked cards come in one by one as each enters view.
+- **Launch flags:** while `jainavLive` is false:
+  - the CTA row shows "jainavinfotech.in · launching soon" as text, with a GitHub button;
+  - VYRO's jainavinfotech.in link is hidden.
+- **Link names:** every product link names its product for screen readers (for example "Download: VYRO"), so the repeated "Download" and "Case study" links are distinct.
+
+**About (§8.6, A.8).**
+- **Layout:**
+  - phones: the photo (at most 320 px), then the story;
+  - from md: the photo (5 columns) beside the story, with the timeline and the rest full width below, so the dates column isn't squeezed on tablets;
+  - from lg with at least 600 px of height: the rest sits in the story column and the photo stays sticky (cross-device §5).
+- **The timeline draws** (§6.3, cross-device §4).
+  - A 1 px accent line scales on a CSS view timeline: `animation-range: cover 50vh cover calc(100% - 50vh)`. This makes its drawn end follow the middle of the screen.
+  - Stable Firefox has no view timelines, so `src/components/motion/draw-line.tsx` sets the same transform from a scroll listener. It measures the list the line spans, because the line's own box is scaled by that transform.
+  - No Motion, as everywhere else.
+  - Reduced motion and print show the line drawn.
+- **CGPA:** shown, as §21 says.
+- **Still mentioned:** the Master's plan stays in the story (A.8) until Tanishq says otherwise.
+
+**Open source (§8.7, A.6).**
+- **PR links:**
+  - each PR number in the copy links to its PR, but only if it's in `content/data/open-source.json` (the merged PRs);
+  - issue #4147 stays plain text.
+- **The dot timeline** (§6.3, cross-device §4) is server-rendered HTML and CSS, so it ships no JS.
+  - Each dot sits at its merge date.
+  - The axis breaks wherever merges are more than 90 days apart. That gives one break, placed from the data, between the last PEcAn merge (23 Oct 2022) and #4186 (27 Oct 2023).
+  - Merges within three days of each other stack across the axis, so dots never overlap.
+  - LitmusChaos is a ring and PEcAn a filled dot, so the project isn't told by colour alone. A legend sits under the axis.
+  - Vertical below 640 px, horizontal from there.
+  - The dots pop in by date, 75 ms apart, once the axis is in view; under reduced motion and in print they're all shown.
+  - "View data" lists every PR, linked.
+- **Month names:** "Sep", not en-GB's "Sept", to match the copy ("Jul – Sep 2022").
+
+**Now, Uses, Privacy.**
+- **Now:** "Last updated 21 October 2026", in a `<time>` element.
+- **Uses:** a line with a placeholder would still be hidden (none is left), and backticks render as code.
+- **Privacy:** the email address is a mail link.
+
+**404 (§8.12, §6.3).**
+- `app/not-found.tsx`, which returns a 404 status.
+- A VYRO-style dial whose needle drops to zero in a 600 ms CSS keyframe and rests there. Under reduced motion it starts at zero.
+- The "Ctrl K / ⌘K" hint shows only with a fine pointer (`any-pointer-fine`), as cross-device §3 says. The search it points to arrives in Phase 7.
+
+**Resume (§8.10, A.14).**
+- **One source:** `src/lib/resume.ts` builds the header and the seven sections once, in the §8.10 order, for both the page and the PDF.
+  - Placeholders are resolved: the founding year shows "2026".
+  - A.6 becomes two lines (the Home cards).
+  - A.11 becomes one line per group.
+- **Header:** name, email, `tanishq.website`, LinkedIn, GitHub and "Indore, India". No address, no phone.
+- **Web page:**
+  - one 68ch column, with the PDF button at the top;
+  - dates go on their own line on phones.
+  - The button reuses A.13's "Download resume" and is a plain `download` link: `Button` now sends download links past `next/link`.
+- **Print:**
+  - `tokens.css` gains a print block that forces the light tokens on every page, including regions pinned to dark;
+  - the header and footer are hidden;
+  - `@page` is A4 with 16 × 18 mm margins;
+  - entries don't split across pages.
+- **The PDF:**
+  - `@react-pdf/renderer` inside a `force-static` route handler, so it's rendered once at build time and served as a static file;
+  - A4, one column, 2 pages, about 15 KB;
+  - the colours are the light theme's tokens;
+  - case-study and certificate titles link to `https://tanishq.website/…`, so `site.url` is now in `content/site.ts`, and the layout's `metadataBase` uses it too.
+- **Fonts: Helvetica for now.**
+  - Embedding the site's fonts needs static TTFs from Google Fonts (OFL). The variable woff2 files that next/font downloads give only the regular weight, and their Latin subset lacks "→".
+  - Downloading the TTFs is waiting for Tanishq's OK.
+  - Until then the PDF uses Helvetica, a standard PDF font: selectable, but not embedded, and it has no "→". The two pipeline bullets therefore show "'" where the arrows go.
+
+**Contact (§8.11, §14).**
+- **Where messages go:** `src/lib/contact-server.ts` decides from the environment.
+  - **Live:** with Resend and Turnstile configured, messages are sent.
+  - **Off Vercel** (a laptop, CI) and not configured: messages are written to `.outbox/`, using Cloudflare's published always-pass test keys. These are public test values, not secrets.
+    - The spec says "in development"; this covers `next start` too, so the CI end-to-end tests exercise the outbox.
+  - **On Vercel but not configured** (previews today): the form stays visible, and Send opens the visitor's email app with the topic and message filled in. This is the mailto fallback; the endpoint answers 503. No new copy was needed.
+- **The endpoint's checks, in order:**
+  1. a 32 KB body limit;
+  2. the honeypot (a hidden `website` field: if a bot fills it, the reply is "ok" and nothing is sent);
+  3. Zod, with A.12's messages for name, email and message;
+  4. the rate limit: 5 per 10 minutes per address, counted on valid submissions;
+  5. server-side Turnstile verification;
+  6. Resend, in plain text, with reply-to set to the sender.
+- **Plain text:** names and subjects are collapsed to one line and control characters are removed, so nothing can inject a header.
+- **Rate limit details:**
+  - It is in memory, so it applies per server instance. That is recorded in the code with a `ponytail:` note.
+  - The address comes from `x-forwarded-for`, which Vercel sets itself.
+- **No new packages:**
+  - Resend is called over its REST API with `fetch`;
+  - Turnstile uses its explicit-render script.
+  - `resend` and `@marsidev/react-turnstile` are pre-approved but not needed.
+- **Form:**
+  - **Client checks:** native validity, shown with A.12's messages; a field of spaces counts as empty. Each error is tied to its field (`aria-invalid`, `aria-describedby`), and the first bad field gets focus.
+  - **Status:** success and errors are announced in a polite live region.
+  - **Touch:** `autocomplete`, `type=email`, `enterkeyhint`, a native `<select>`, and `field-sizing: content` with a 6-row minimum. Controls are 48 px tall with 17 px text.
+  - **Turnstile:** `flexible`, with 65 px reserved; under a 300 px container it is `compact`, with 140 px reserved. It follows the site theme.
+- **Still mentioned:** the "Research or a Master's programme" topic stays (A.12) until Tanishq says otherwise.
+
+**Security headers (§14).** They come in now because the contact form brings the first third party.
+- **CSP:**
+  - `default-src 'self'`;
+  - scripts from `'self' 'unsafe-inline'` (the theme and reveal scripts) plus `https://challenges.cloudflare.com`;
+  - `frame-src` for Turnstile;
+  - `frame-ancestors 'none'`, `object-src 'none'`, `base-uri 'self'` and `form-action 'self'`;
+  - development adds `'unsafe-eval'` for React's tooling.
+  - Vercel Analytics (Phase 7) is served from this origin, so it needs no change.
+- **Other headers:**
+  - HSTS: two years, with subdomains, without preload;
+  - `nosniff`;
+  - `strict-origin-when-cross-origin`;
+  - `Permissions-Policy` turning off the camera, microphone and geolocation.
+
+**New UI strings (Phase 6).** These are on the same footing as Phase 5's (Tanishq left new strings to me on 21 Oct 2026):
+- Open source: "Merged pull requests", "Each dot is one merged pull request, on the day it merged.", "PEcAn", "LitmusChaos", and the table columns "PR", "Project", "Title", "Opened", "Merged".
+- The 404 dial: "0" and "RPM", both decorative (`aria-hidden`).
+- The rest are the spec's own labels:
+  - A.7's "Principles", "Products" and "Email the company";
+  - A.8's "Experience", "Education", "Certifications" and "Languages";
+  - A.9's "Last updated";
+  - A.10's "Desktop", "Why it matters" and "Development";
+  - A.14's "Relevant coursework";
+  - A.6's "What the PRs did";
+  - §8.10's section names.
+
+**Measured (local, 21 Oct 2026).**
+- **Lighthouse mobile, one run each:**
+  - /about: performance 97, LCP 1.90 s;
+  - /contact, /open-source, /company and /resume: performance 99, LCP 1.61–1.72 s;
+  - every page: accessibility 100, best practices 96, SEO 100, CLS 0.
+- **Interaction budgets:** 17 passed.
+- **End-to-end:** the default device projects passed, except one known flake, which passes 20 times out of 20 when run alone. desktop-webkit, tablet-portrait-ios and tablet-android also passed the new specs. Firefox runs in CI.
