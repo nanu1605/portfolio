@@ -201,20 +201,25 @@ html.js [data-reveal="fade"]:not([data-revealed]) {
     transform var(--duration-reveal) var(--ease-out);
 }
 
+/* The batch index as a variable too, so content inside (the Company
+   glows) can follow its card. */
 [data-reveal-i="1"] {
-  transition-delay: var(--stagger);
+  --reveal-i: 1;
 }
 [data-reveal-i="2"] {
-  transition-delay: calc(2 * var(--stagger));
+  --reveal-i: 2;
 }
 [data-reveal-i="3"] {
-  transition-delay: calc(3 * var(--stagger));
+  --reveal-i: 3;
 }
 [data-reveal-i="4"] {
-  transition-delay: calc(4 * var(--stagger));
+  --reveal-i: 4;
 }
 [data-reveal-i="5"] {
-  transition-delay: calc(5 * var(--stagger));
+  --reveal-i: 5;
+}
+[data-reveal-i] {
+  transition-delay: calc(var(--reveal-i, 0) * var(--stagger));
 }
 
 /* Headline words: each word rises inside a mask padded for descenders. */
@@ -753,6 +758,77 @@ dialog .menu-bar:last-child {
 @keyframes progress {
   to {
     transform: scaleX(1);
+  }
+}
+
+/* ── Remaining pages (§6.3, cross-device §4) ────────────────────────────
+   Each moment is screen-only and needs motion allowed, so reduced motion
+   and print get the final state with no extra rules. */
+
+/* Company: the product cards lift in, then each glow fades in after its
+   card. */
+@media screen and (prefers-reduced-motion: no-preference) {
+  html.js [data-lift] [data-reveal]:not([data-revealed]) [data-glow] {
+    opacity: 0;
+  }
+
+  [data-lift] [data-glow] {
+    transition: opacity var(--duration-slow) var(--ease-out);
+    transition-delay: calc(
+      var(--duration-reveal) / 2 + var(--reveal-i, 0) * var(--stagger)
+    );
+  }
+
+  [data-lift] [data-revealed="instant"] [data-glow] {
+    transition: none;
+  }
+}
+
+/* About: the timeline's accent line draws as it passes mid-screen, on a
+   view timeline (draw-line.tsx covers stable Firefox). */
+[data-draw-line] {
+  transform-origin: top;
+}
+
+@media screen and (prefers-reduced-motion: no-preference) {
+  html.js [data-draw-line] {
+    transform: scaleY(0);
+  }
+
+  @supports (animation-timeline: view()) {
+    html.js [data-draw-line] {
+      animation: draw-down linear both;
+      animation-timeline: view();
+      animation-range: cover 50vh cover calc(100% - 50vh);
+    }
+  }
+}
+
+@keyframes draw-down {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+/* 404: the needle drops to zero (600 ms) and rests there. */
+[data-needle-drop] {
+  transform-box: view-box;
+  transform-origin: 100px 100px;
+  transform: rotate(-135deg);
+}
+
+@media screen and (prefers-reduced-motion: no-preference) {
+  [data-needle-drop] {
+    animation: needle-drop var(--duration-slow) var(--ease-out) both;
+  }
+}
+
+@keyframes needle-drop {
+  from {
+    transform: rotate(30deg);
   }
 }
 

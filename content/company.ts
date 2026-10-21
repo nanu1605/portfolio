@@ -33,8 +33,19 @@ export const company = z
       pending: z.object({ text: z.string(), repo: Link }),
     }),
     email: z.email(),
+    /** Section names and the email CTA (A.7). */
+    labels: z.object({
+      principles: z.string(),
+      products: z.string(),
+      email: z.string(),
+    }),
   })
   .parse({
+    labels: {
+      principles: "Principles",
+      products: "Products",
+      email: "Email the company",
+    },
     eyebrow: "Founder",
     title: "Jainav Infotech",
     subtitle: "A product company from Indore, Madhya Pradesh.",

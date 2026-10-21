@@ -12,6 +12,13 @@ export const about = z
       body: z.array(z.string()).min(1),
     }),
     languages: z.array(z.object({ name: z.string(), level: z.string() })),
+    /** Headings for the A.5 and A.14 sections (A.8 "Also on this page"). */
+    sections: z.object({
+      experience: z.string(),
+      education: z.string(),
+      certifications: z.string(),
+      languages: z.string(),
+    }),
   })
   .parse({
     title: "About",
@@ -34,4 +41,10 @@ export const about = z
       { name: "English", level: "proficient" },
       { name: "Hindi", level: "native" },
     ],
+    sections: {
+      experience: "Experience",
+      education: "Education",
+      certifications: "Certifications",
+      languages: "Languages",
+    },
   });

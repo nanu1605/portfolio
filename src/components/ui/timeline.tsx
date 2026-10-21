@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { DrawLine } from "@/components/motion/draw-line";
 import { cx } from "@/lib/cx";
 
 export type TimelineItem = {
@@ -16,17 +17,20 @@ export type TimelineItem = {
  */
 export function Timeline({
   items,
+  draw = false,
   className,
 }: {
   items: TimelineItem[];
+  /** The accent line draws with scroll (About's signature moment, §6.3). */
+  draw?: boolean;
   className?: string;
 }) {
+  const line =
+    "absolute top-2 bottom-2 left-[3px] w-px md:left-[calc(140px_+_1.5rem_+_3px)]";
   return (
     <ol className={cx("relative flex flex-col gap-10", className)}>
-      <span
-        aria-hidden="true"
-        className="absolute top-2 bottom-2 left-[3px] w-px bg-border md:left-[calc(140px_+_1.5rem_+_3px)]"
-      />
+      <span aria-hidden="true" className={cx(line, "bg-border")} />
+      {draw && <DrawLine className={line} />}
       {items.map((item) => (
         <li
           key={`${item.period} ${item.title}`}

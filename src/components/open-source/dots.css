@@ -1,0 +1,134 @@
+/* The open-source dot timeline (§6.3, cross-device §4). Every mark sits at
+   --at (0–1) along the axis; dots that merged within a few days stack
+   across it (--k). Vertical below 640 px, horizontal from there. */
+
+.os-axis {
+  position: relative;
+  height: 30rem;
+  margin-inline-start: 5.5rem;
+}
+
+.os-axis > * {
+  position: absolute;
+}
+
+.os-seg {
+  inset-inline-start: 0;
+  top: calc(var(--from) * 100%);
+  width: 1px;
+  height: calc(var(--len) * 100%);
+  background-color: var(--border-strong);
+}
+
+/* The axis break: two slashes in the gap between runs. */
+.os-break {
+  top: calc(var(--at) * 100%);
+  inset-inline-start: -6px;
+  width: 13px;
+  height: 6px;
+  margin-top: -3px;
+  border-block: 1px solid var(--fg-subtle);
+  transform: skewY(-20deg);
+}
+
+.os-tick {
+  top: calc(var(--at) * 100%);
+  inset-inline-end: calc(100% + 0.75rem);
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--fg-subtle);
+}
+
+.os-dot {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--accent);
+}
+
+/* LitmusChaos: a ring, so the project never rests on colour alone. */
+.os-dot-ring {
+  background-color: var(--bg);
+  border: 2px solid var(--accent);
+}
+
+.os-axis > .os-dot {
+  top: calc(var(--at) * 100%);
+  inset-inline-start: calc(8px + var(--k) * 14px);
+  margin-top: -5px;
+}
+
+@media (min-width: 640px) {
+  .os-axis {
+    height: 6.5rem;
+    margin-inline-start: 0;
+  }
+
+  .os-seg {
+    top: auto;
+    bottom: 2rem;
+    inset-inline-start: calc(var(--from) * 100%);
+    width: calc(var(--len) * 100%);
+    height: 1px;
+  }
+
+  .os-break {
+    top: auto;
+    bottom: calc(2rem - 6px);
+    inset-inline-start: calc(var(--at) * 100%);
+    width: 6px;
+    height: 13px;
+    margin: 0 0 0 -3px;
+    border-block: 0;
+    border-inline: 1px solid var(--fg-subtle);
+    transform: skewX(-20deg);
+  }
+
+  .os-tick {
+    top: auto;
+    bottom: 0;
+    inset-inline: calc(var(--at) * 100%) auto;
+    transform: none;
+  }
+
+  .os-tick::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 0;
+    bottom: calc(100% + 0.375rem);
+    width: 1px;
+    height: 0.375rem;
+    background-color: var(--border-strong);
+  }
+
+  .os-axis > .os-dot {
+    top: auto;
+    bottom: calc(2rem + 8px + var(--k) * 14px);
+    inset-inline-start: calc(var(--at) * 100%);
+    margin: 0 0 0 -5px;
+  }
+}
+
+/* They pop in by date, 75 ms apart, once the axis is in view. Reduced
+   motion and print show them all. */
+@media screen and (prefers-reduced-motion: no-preference) {
+  html.js [data-reveal="dots"]:not([data-revealed]) [data-dot] {
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  [data-reveal="dots"] [data-dot] {
+    transition:
+      opacity var(--duration-base) var(--ease-out),
+      transform var(--duration-base) var(--ease-out);
+    transition-delay: calc(var(--i) * var(--stagger));
+  }
+
+  [data-revealed="instant"] [data-dot] {
+    transition: none;
+  }
+}

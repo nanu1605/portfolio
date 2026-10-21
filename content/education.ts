@@ -10,6 +10,7 @@ export const education = z
     period: z.string(),
     years: z.string(),
     grade: z.string(),
+    courseworkLabel: z.string(),
     coursework: z.array(z.string()).min(1),
   })
   .parse({
@@ -20,6 +21,7 @@ export const education = z
     period: "Aug 2019 – Jun 2023",
     years: "2019 – 2023",
     grade: "CGPA 7.77/10, First Class with Distinction",
+    courseworkLabel: "Relevant coursework",
     coursework: [
       "Artificial Intelligence and Machine Learning",
       "Data Mining and Data Warehousing",

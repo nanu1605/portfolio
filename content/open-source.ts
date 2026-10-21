@@ -38,6 +38,19 @@ export const openSource = z
     homeCards: z
       .array(z.object({ title: z.string(), body: z.string() }))
       .length(2),
+    labels: z.object({
+      prs: z.string(),
+      timeline: z.string(),
+      caption: z.string(),
+      legend: z.object({ pecan: z.string(), litmus: z.string() }),
+      columns: z.object({
+        project: z.string(),
+        pr: z.string(),
+        title: z.string(),
+        opened: z.string(),
+        merged: z.string(),
+      }),
+    }),
   })
   .parse({
     title: "Open source",
@@ -105,4 +118,19 @@ export const openSource = z
         body: "A merged PR moving ChaosCenter's hard-coded UI text into its translation file.",
       },
     ],
+    // "What the PRs did" is A.6's; the rest are Phase 6 UI strings
+    // (docs/decisions.md).
+    labels: {
+      prs: "What the PRs did",
+      timeline: "Merged pull requests",
+      caption: "Each dot is one merged pull request, on the day it merged.",
+      legend: { pecan: "PEcAn", litmus: "LitmusChaos" },
+      columns: {
+        project: "Project",
+        pr: "PR",
+        title: "Title",
+        opened: "Opened",
+        merged: "Merged",
+      },
+    },
   });
