@@ -317,7 +317,9 @@ test("a /work cover morphs into its case-study hero from 768 px", async ({
   const morph = t!.animations.find(
     (a) => a.pseudo === "::view-transition-group(cover-baby)",
   );
-  if (wide) expect(morph?.props).toContain("transform");
+  // What the engine recorded, if this fails.
+  const seen = JSON.stringify(t!.animations.map((a) => a.pseudo));
+  if (wide) expect(morph?.props, seen).toContain("transform");
   else expect(morph).toBeUndefined();
 });
 
@@ -355,7 +357,9 @@ test("the theme and the Work filter run their own transitions", async ({
   await expect.poll(async () => (await transitions(page)).length).toBe(2);
   const theme = (await transitions(page))[1]!;
   expect(theme.kind).toBe("theme");
-  expect(theme.animations.every((a) => a.pseudo.endsWith("(root)"))).toBe(true);
+  expect(
+    theme.animations.map((a) => a.pseudo).filter((p) => !p.endsWith("(root)")),
+  ).toEqual([]);
 });
 
 // ── Small delights (§6.5) ────────────────────────────────────────────────
