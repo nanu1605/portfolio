@@ -67,7 +67,7 @@ export const company = z
         accent: "vyro",
         tagline: "Know your machine.",
         description:
-          "See what your Windows PC is doing right now on animated gauges: usage, clocks, temperatures, power and fan speeds, with seven days of history, health checks and alerts. Gamers also get frame rates, an overlay and replays of recent sessions.",
+          "See what your Windows PC is doing right now on animated gauges: usage, clocks, temperatures, power and fan speeds, with seven days of history, health checks and alerts. Gamers also get frame rates, an overlay and replays of recent sessions. A Pro edition is launching soon.",
         badges: ["Beta", "Free"],
         links: [
           {
