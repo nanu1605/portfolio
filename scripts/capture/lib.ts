@@ -62,17 +62,19 @@ export async function shoot(target: Locator, shot: Shot, shots: Shot[]) {
 
 /**
  * Replaces one project's entries in the manifest with what this run
- * captured, reading each PNG's size.
+ * captured, reading each PNG's size. A partial run replaces only the files
+ * it captured and keeps the project's other entries.
  */
 export async function updateManifest(
   project: string,
   build: string,
   shots: Shot[],
   videos: (Shot & { poster: string; durationSec: number; fps: number })[] = [],
+  partial = false,
 ) {
-  const manifest = ScreenManifest.parse(
-    JSON.parse(await readFile(MANIFEST, "utf8")),
-  );
+  // Validated, but kept as read, so untouched entries keep their key order.
+  const manifest: ScreenManifest = JSON.parse(await readFile(MANIFEST, "utf8"));
+  ScreenManifest.parse(manifest);
   const size = async (file: string): Promise<[number, number]> => {
     const meta = await sharp(`assets/source/screens/${file}`).metadata();
     return [meta.width!, meta.height!];
@@ -84,12 +86,15 @@ export async function updateManifest(
     build,
     size: await size(file),
   });
+  const fresh = new Set([...shots, ...videos].map((s) => s.file));
+  const keep = (s: { project: string; file: string }) =>
+    s.project !== project || (partial && !fresh.has(s.file));
   manifest.screens = [
-    ...manifest.screens.filter((s) => s.project !== project),
+    ...manifest.screens.filter(keep),
     ...(await Promise.all(shots.map((s) => entry(s)))),
   ];
   manifest.videos = [
-    ...manifest.videos.filter((v) => v.project !== project),
+    ...manifest.videos.filter(keep),
     ...(await Promise.all(
       videos.map(async (v) => ({
         ...(await entry(v, v.poster)),
