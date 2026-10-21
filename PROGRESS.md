@@ -138,14 +138,19 @@ Done when: the PDF downloads, has selectable text and fits on at most 2 pages; t
 
 ## Phase 7 — Polish and SEO
 
-- [ ] Page transitions (§6.2) and the command palette (§6.4).
-- [ ] "hey jarvis" toast and the console greeting.
-- [ ] Share images for every route, favicon and manifest, JSON-LD, sitemap and robots, canonical URLs.
-- [ ] Analytics events (§12).
-- [ ] ↔ React `<ViewTransition>` page cross-fade, skipped on `hasUAVisualTransition`; cover morph only at 768 px and up; theme cross-fade sets `data-theme` synchronously; palette full-screen on phones with the input focused in the tap handler.
-- [ ] ↔ Tests: page transitions on every engine; palette by keyboard and by touch.
+- [x] Page transitions (§6.2) and the command palette (§6.4).
+- [x] "hey jarvis" toast and the console greeting.
+- [x] Share images for every route, favicon and manifest, JSON-LD, sitemap and robots, canonical URLs.
+- [x] Analytics events (§12): Vercel Analytics and Speed Insights load on Vercel only, after the load event; events checked in e2e.
+- [x] ↔ React `<ViewTransition>` page cross-fade, skipped on `hasUAVisualTransition`; cover morph only at 768 px and up; theme cross-fade sets `data-theme` synchronously; palette full-screen on phones with the input focused in the tap handler.
+- [x] ↔ Tests: page transitions on every engine; palette by keyboard and by touch (`tests/e2e/polish.spec.ts`).
 
 Done when: the palette is fully keyboard accessible; every route has a share image; Lighthouse budgets met locally; Tanishq checks the Person/WebSite markup in Google's Rich Results Test.
+
+- [x] Palette fully keyboard accessible: combobox and listbox, arrows, Enter, Esc, focus returns; axe clean with it open, in both themes; by touch on phones and tablets.
+- [x] Every route has a 1200×630 share image (e2e checks each one's size and type).
+- [~] Lighthouse locally: accessibility, best practices and SEO 1 everywhere; Home performance 0.96–0.97 but LCP 2.03–2.08 s against 2.0 s (the Phase 6 build measured 2.08–2.15 s on this machine the same day); /work/vyro performance 0.88–0.92. Home JS 149.6 KB of 150 KB. Interaction budgets 17/17. CI gives the reference numbers.
+- [ ] Tanishq checks the Person/WebSite markup in Google's Rich Results Test (needs the live domain, or a pasted page source, in Phase 8).
 
 ## Phase 8 — Launch
 

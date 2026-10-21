@@ -257,7 +257,7 @@ These change or add to `PORTFOLIO_SPEC.md`; each is also in `docs/decisions.md`.
 ## 10. Defaults applied, open to change
 
 - 404 keyboard hint hidden when no fine pointer is available.
-- **Awaiting Tanishq:** an accessible name for the phone command palette's icon-only close button (proposed: "Close search"). Until approved, the button can't ship.
+- The phone command palette's close button is named "Close search" (new strings left to me, 21 Oct 2026).
 - Proof strip as five stacked rows on phones (not a swipe rail).
 - Baby router ladder collapsed to the fired rule on phones, full list in `<details>`.
 - Phone-landscape hero headline capped at the h1 size.

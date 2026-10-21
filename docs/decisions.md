@@ -76,7 +76,7 @@ Tanishq asked for the best UI/UX, with animation, on phones, tablets and PCs bef
 
 **Test matrix.** Playwright runs 4 device projects on every PR (desktop Chromium at 1440, Pixel 10, iPhone SE on WebKit, iPad Mini landscape on WebKit) and 8 on main and nightly (adds iPad Mini portrait, Galaxy Tab S9, desktop Safari and Firefox). An emulation guard fails if a touch project reports a fine pointer or vice versa. A width sweep checks for horizontal overflow from 320 to 1920 px (including 744, iPad mini portrait) and at 844×390. It fails whenever the document is wider than the viewport, even when no single element is to blame (overflowing text, pseudo-elements). CI runs nightly at 02:30 IST and always keeps the Playwright report.
 
-**Pending:** an accessible name for the phone command palette's icon-only close button (proposed "Close search").
+**Resolved (Phase 7):** the phone command palette's icon-only close button is named "Close search".
 
 ## Phase 1 — Content layer — 20 Oct 2026
 
@@ -958,3 +958,112 @@ Tanishq answered the Phase 5 questions and most placeholders.
   - every page: accessibility 100, best practices 96, SEO 100, CLS 0.
 - **Interaction budgets:** 17 passed.
 - **End-to-end:** the default device projects passed, except one known flake, which passes 20 times out of 20 when run alone. desktop-webkit, tablet-portrait-ios and tablet-android also passed the new specs. Firefox runs in CI.
+
+
+## Phase 7 — Polish and SEO — 21 Oct 2026
+
+**Page transitions (§6.2, cross-device §4).** Next 16.4 with React 19.3 has `<ViewTransition>` stable and needs no config, so the spec's first option applies.
+- **How:** `app/template.tsx` wraps each page in `<ViewTransition enter="page" exit="page" default="none">`; `app/work/template.tsx` re-exports it, so moving between case studies fades too. A template remounts when its segment changes, which is what fires enter and exit. A layout-level wrapper would "update" instead, and its group would slide from the old scroll position to the new one.
+- **The fade:** the old page fades out where it was and the new one fades in, opacity only, 150 ms (the fast token). The spec says 200 ms; 150 ms fits cross-device's reduced-motion cap, so one fade serves both. Under reduced motion the groups don't animate at all.
+- **Cover morph:** from 768 px with motion allowed, the Baby, VYRO and MenuMesh covers on /work morph into their case-study hero (250 ms). These are the three with both a cover screenshot and hero media. A cover with no partner fades with the page. The hero end drops its name while it's off-screen, so going back from a scrolled case study doesn't fly the cover in from outside the viewport. Phones get the plain fade.
+- **One set of names at a time:** `data-vt` on `<html>` says which same-page transition is running. The theme switch cross-fades the whole page (250 ms). The Work filter names its cards only while it runs. Route changes name only the covers. Before this, the cards were named all the time, so they would have faded on their own on every route change.
+- **iOS swipe-back:** a `popstate` with `hasUAVisualTransition` sets `data-vt="skip"`, and the next transition jumps to its end. React offers no handle on its transition, so the flag clears on a 1 s timer (a `ponytail:` note in the code).
+- **Unsupported browsers** swap instantly, as cross-device says.
+
+**Theme switch.** `src/lib/theme.ts` sets `data-theme` and `color-scheme` inside the transition's callback and then calls next-themes, so the new snapshot already has the new theme. The header toggle, the menu's toggle and the palette all use it. The toggles load it on the first click (Home's JS budget).
+
+**Command palette (§6.4).** No `cmdk`, although it's pre-approved.
+- **Why not cmdk:** cross-device needs the input focused inside the tap, before the palette's code loads, so iOS opens the keyboard on the first tap. cmdk renders its own input, so the input would change once cmdk arrived, and iOS would drop the keyboard.
+- **Instead, three parts:**
+  - `search.tsx` renders the dialog, the input and the close button as plain server HTML, so they cost Home no JS.
+  - `search-button.tsx` (0.4 KB) opens the dialog and focuses the input inside the tap, which is what lets iOS open the keyboard on the first tap.
+  - `palette.tsx` (lazy) does everything else: it reads the input, lists the results into the dialog through a portal, and handles the keys, the close button and Esc. It loads the first time the palette opens, or earlier, on hover or focus of the button. Text typed before it arrives is picked up.
+  - Ctrl K / ⌘K clicks the button (see "After the load event" below).
+- **Search:** a 40-line ranker in `src/lib/fuzzy.ts` (unit-tested). Every typed character must appear in order; runs and word starts score higher. It searches titles, plus a page's SEO title and a project's stack and filters. Groups are ordered by their best match, so the first option is always the best one.
+- **Accessibility:** a combobox with `aria-activedescendant` over a listbox of grouped options, so focus stays in the input. Arrows wrap. Enter follows the option. A polite status line gives the count, "Copied", or "No results". Esc or the close button closes it, and focus returns to the button that opened it.
+- **Layout:** phones get a full-screen dialog with the input pinned at the top and 48 px rows. From 768 px it's a 36 rem panel 12 svh from the top, at most 60 svh tall (cross-device says "centred": centred across, near the top, so it doesn't jump as results change).
+- **Actions:** "Copy email" shows "Copied" until the query changes. "Toggle theme" closes the palette and switches. The PDF and the profiles are real links (`download`, `target="_blank"`). Following any result closes the palette at once.
+- **Header:** the search button sits before the theme toggle at every width.
+
+**"hey jarvis" and the console (§6.5).**
+- **The toast:** the listener is in the after-load module, and the toast (`jarvis-toast.tsx`) comes with it. It's a light-dismiss popover, so Esc or a click elsewhere closes it, and there's no close button to label. It shows bottom right from 768 px and bottom centre, above the safe area, below that, and rises in, except under reduced motion. Its text is added once it's open, so the status role announces it. It doesn't listen inside inputs, text areas, selects or editable text, and only for unmodified keys. Keyboard only, as Tanishq decided. The orb is Baby's, static.
+- **The greeting:** A.13's words, logged once per page load, after the load event.
+
+**Share images (§11).**
+- **Generation:** next/og at build time, in the resume's TTFs, on the dark tokens. Each image has the TJ monogram and the domain, the page title, "Tanishq Jain · ML & systems engineer", and the signal line; Home has the name and "ML & systems engineer · Indore, India". Baby, VYRO and MenuMesh draw the line in their accent.
+- **Files:** one `opengraph-image.tsx` per §7 route (ten files of five lines), plus one for case studies through `generateImageMetadata`, which also gives each its alt text (`/work/<slug>/opengraph-image/share`).
+- **Meta:** Twitter's card is `summary_large_image`; Next copies the Open Graph fields into the Twitter ones. `pageMetadata()` and the case-study metadata now carry Open Graph, with `siteName`, `locale` (`en_IN`) and the full title. A page's `openGraph` replaces the layout's whole, so each carries all of it.
+
+**Icons and manifest.** `app/icon.tsx` draws the monogram at 32, 192 and 512 px (`/icon/32` and so on). `apple-icon.tsx` is 180 px. `manifest.webmanifest` uses `display: browser`, the dark `bg` for both colours, and the 192 and 512 icons. No `favicon.ico`: browsers use the `<link rel="icon">`.
+
+**Sitemap and robots.** Every §7 page and the nine case studies; no `lastModified`, because a build date on every page would claim changes that didn't happen. robots allows everything but `/api/` and points at the sitemap. `/styleguide` returns 404 in production, so it isn't listed.
+
+**JSON-LD (§11).**
+- **Site-wide graph** (root layout): Person, Organization and WebSite, linked by `@id`.
+  - **Person:** the image is the share photo, and `sameAs` includes X (Phase 6 answer).
+  - **Organization:** Jainav Infotech Private Limited, with `founder` pointing to the Person. Its `url` waits for the `jainavLive` flag.
+- **BreadcrumbList** on every inner page: Home → section → case study. A server component on each page renders it. A client component in the layout would have needed no page edits, but it cost Home JS.
+- **SoftwareSourceCode** for case studies with a public Source link.
+- **SoftwareApplication** for Baby and VYRO: Windows, `UtilitiesApplication`, the download URL, and an `offers` price of 0 INR only while the "Free" badge is shown (C.3: no prices otherwise). VYRO's repo isn't linked, so it has no source entry.
+- **Escaping:** the scripts escape `<`.
+
+**Analytics (§12).**
+- **Loading:** Vercel's plain-HTML setup, not the `@vercel/analytics` and `@vercel/speed-insights` packages, which were tried and removed. A layout ships every client component it imports, even one it doesn't render, so their React components cost Home about 2 KB everywhere.
+  - An inline script, rendered only when `VERCEL` is set, defines the two queues (`window.va`, `window.si`).
+  - The same script adds `/_vercel/insights/script.js` and `/_vercel/speed-insights/script.js` after the load event. Speed Insights still reads the earlier Web Vitals from the performance buffer.
+  - Both are same-origin, so the CSP is unchanged.
+  - Off Vercel the scripts would only 404 and log errors (Lighthouse's best-practices score counts those).
+- **Sending:** `src/lib/track.ts` makes the same `window.va("event", …)` call as the package's `track()`, in three lines.
+- **Events:** `src/lib/analytics.ts` catches three with delegated listeners after the load event, so no component needed wiring:
+  - `resume_download`: any link to `/resume.pdf`;
+  - `outbound_click`: told apart by URL — the profile links → `social`, `/releases` → `download`, jainavinfotech.in → `company`, github.com → `repo`, anything else → `live`;
+  - `centerpiece_interact {slug}`: the first click, key or input inside a loaded centerpiece, once per page view.
+- **Sent where they happen:** `palette_open`, `theme_toggle` and `contact_submit {status}`. A submit that fails field validation, or opens the mail app, isn't counted.
+- **Tests:** e2e stands in for Vercel's queue (`window.va`) and checks every event.
+
+**After the load event (`src/lib/after-load.ts`).** Enhancements imports this once the page has loaded, so none of it counts against Home's first-load JS (§13). It holds:
+- the Ctrl K / ⌘K shortcut, which clicks the search button, or closes the palette;
+- the "hey jarvis" listener and its toast;
+- the console greeting;
+- the delegated analytics listeners;
+- the iOS swipe-back check;
+- the Home bento demos' player (moved out of `touch-effects.ts`: the tiles sit below the fold).
+
+A shortcut or the phrase typed in the first moments after load does nothing. The header button works from hydration on.
+
+**Home's JS budget (§13).** Phase 6 left Home at 148.5 KB of 150 KB (150,000 bytes, the stricter reading). The first Phase 7 build was 154.5 KB. Now it's 149.6 KB:
+- the palette's markup moved to the server;
+- the toast, the deferred listeners and the theme cross-fade load later;
+- Vercel's React components went;
+- `structured-data.ts` stopped importing the case-study module, which had pulled its client component into every page.
+
+That leaves 0.4 KB, so the next addition to Home needs a cut elsewhere first. The next candidate is the mobile menu's markup, which could be server-rendered the same way.
+
+**New UI strings (Phase 7)** (new strings left to me, 21 Oct 2026):
+- "Close search": the phone palette's close button. Cross-device §10 proposed it, and it's used at every width.
+- "Home": the palette's and the breadcrumbs' name for `/`.
+- "1 result", "{n} results" and "No results": the palette's count.
+- The rest are A.13's: the placeholder, groups, actions, "Copied", the toast and the greeting.
+
+**Test notes.**
+- WebKit applies the page's `scroll-behavior: smooth` to Playwright's own scrolling, so a click far down the page can land mid-scroll. The transition test follows a link near the top instead. Real taps are unaffected.
+- The shortcut and the "hey jarvis" listener attach after the load event, so their tests retry until they respond.
+
+**Measured (local, 21 Oct 2026).**
+- **Home's first-load JS:** 149.6 KB of 150 KB (Phase 6: 148.5 KB).
+- **CPU per page load,** 4× slowdown, median of 8 loads against the Phase 6 build running next to it:
+  - /work/vyro: script time 194 → 207 ms;
+  - Home: script time 234 → 256 ms; task time unchanged.
+- **Lighthouse mobile** (devtools throttling, 3 runs each):
+  - Home: performance 0.96–0.97, LCP 2.03–2.08 s.
+    - LHCI's 2.0 s check fails locally, but the Phase 6 build measured 2.08–2.15 s on the same machine the same day; this machine is slower than in Phase 3.
+    - CI is the reference.
+  - /work: 0.93–0.97.
+  - /work/vyro: 0.88–0.92, with total blocking time 314–447 ms; the Phase 6 build measured 0.92–0.93 and 280–306 ms. Mostly run-to-run noise (see the CPU numbers above), but it sits at the 0.90 line.
+  - /work/mlops-drift-loop: 0.97–0.98.
+  - Everywhere: accessibility, best practices and SEO 1; CLS ≤ 0.001.
+- **Interaction budgets:** 17 passed.
+- **End-to-end:**
+  - the default device projects: 751 passed;
+  - `polish.spec.ts` also passed on desktop-webkit, tablet-portrait-ios and tablet-android.
+  - Firefox runs in CI.
