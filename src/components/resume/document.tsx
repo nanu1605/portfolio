@@ -1,4 +1,5 @@
 import "server-only";
+import path from "node:path";
 import {
   Document,
   Font,
@@ -13,8 +14,26 @@ import { resumeHeader, resumeSections, type Entry } from "@/lib/resume";
 import { colors } from "@/styles/tokens";
 
 // /resume.pdf (§8.10): A4, at most two pages, one column, real text. The
-// colours are the light theme's tokens.
+// colours are the light theme's tokens, and the fonts are the site's,
+// embedded (subset) from the static TTFs in assets/fonts (OFL).
 
+const file = (name: string) =>
+  path.join(process.cwd(), "assets/fonts", `${name}.ttf`);
+Font.register({
+  family: "Plus Jakarta Sans",
+  fonts: [
+    { src: file("PlusJakartaSans-Regular"), fontWeight: 400 },
+    { src: file("PlusJakartaSans-SemiBold"), fontWeight: 600 },
+    { src: file("PlusJakartaSans-Bold"), fontWeight: 700 },
+  ],
+});
+Font.register({
+  family: "JetBrains Mono",
+  fonts: [
+    { src: file("JetBrainsMono-Regular"), fontWeight: 400 },
+    { src: file("JetBrainsMono-Medium"), fontWeight: 500 },
+  ],
+});
 // Whole words only: hyphenated names and versions read badly.
 Font.registerHyphenationCallback((word) => [word]);
 
@@ -30,13 +49,13 @@ const s = StyleSheet.create({
   page: {
     paddingVertical: 36,
     paddingHorizontal: 44,
-    fontFamily: "Helvetica",
-    fontSize: 8.8,
+    fontFamily: "Plus Jakarta Sans",
+    fontSize: 8.6,
     lineHeight: 1.38,
     color: ink.muted,
   },
   name: {
-    fontFamily: "Helvetica-Bold",
+    fontWeight: 700,
     fontSize: 20,
     lineHeight: 1.2,
     color: ink.fg,
@@ -50,9 +69,10 @@ const s = StyleSheet.create({
   contact: { color: ink.muted, textDecoration: "none", marginRight: 12 },
   section: { marginTop: 12 },
   heading: {
-    fontFamily: "Helvetica-Bold",
-    fontSize: 7.6,
-    letterSpacing: 1.2,
+    fontFamily: "JetBrains Mono",
+    fontWeight: 500,
+    fontSize: 7.4,
+    letterSpacing: 0.8,
     textTransform: "uppercase",
     color: ink.accent,
     borderBottomWidth: 0.6,
@@ -63,15 +83,20 @@ const s = StyleSheet.create({
   note: { fontSize: 8.2, marginBottom: 4 },
   entry: { marginBottom: 6 },
   row: { flexDirection: "row", justifyContent: "space-between" },
-  title: { fontFamily: "Helvetica-Bold", color: ink.fg, flex: 1 },
+  title: { fontWeight: 600, color: ink.fg, flex: 1 },
   link: { color: ink.fg, textDecoration: "none" },
-  period: { fontSize: 8.2, color: ink.subtle, marginLeft: 12 },
+  period: {
+    fontFamily: "JetBrains Mono",
+    fontSize: 7.6,
+    color: ink.subtle,
+    marginLeft: 12,
+  },
   org: { color: ink.muted },
   bullet: { flexDirection: "row", marginTop: 1.5 },
   dot: { width: 9, color: ink.subtle },
   bulletText: { flex: 1 },
   line: { marginBottom: 2.5 },
-  label: { fontFamily: "Helvetica-Bold", color: ink.fg },
+  label: { fontWeight: 600, color: ink.fg },
 });
 
 const absolute = (href: string) =>

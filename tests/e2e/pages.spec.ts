@@ -226,8 +226,13 @@ test("/resume.pdf is a PDF of at most two A4 pages, with real text", async ({
   expect(pages).toBeLessThanOrEqual(2);
   // A4 is 595.28 × 841.89 pt.
   expect(raw).toMatch(/\/MediaBox \[0 0 595\.2\d* 841\.8\d*\]/);
-  // Text is drawn as text (BT … Tj/TJ) in a font, not as outlines.
-  expect(raw).toContain("/Type /Font");
+  // The site's fonts are embedded (subset), with maps back to Unicode so
+  // the text can be selected and copied; text is drawn as text (BT … TJ),
+  // not as outlines.
+  for (const face of ["PlusJakartaSans-Regular", "JetBrainsMono-Medium"])
+    expect(raw).toMatch(new RegExp(`/BaseFont /[A-Z]{6}[+]${face}`));
+  expect(raw).toContain("/FontFile2");
+  expect(raw).toContain("/ToUnicode");
   const streams = [...raw.matchAll(/stream\r?\n([^]*?)\r?\nendstream/g)].map(
     (m) => {
       try {
