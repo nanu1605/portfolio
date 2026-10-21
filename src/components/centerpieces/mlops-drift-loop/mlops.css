@@ -1,0 +1,91 @@
+/* §10.7 "Watch it recover" (cross-device §6). CSS picks the layout, so the
+   poster and the live chart match and nothing waits on JS.
+
+   From 768 × 600 the figure pins below the header while one viewport of
+   empty track scrolls past it; live.tsx turns that scroll into the drawn
+   line. Below that nothing pins and the chart's own scroll position draws
+   it. Reduced motion shows the final state, so nothing pins and there is
+   no track to scroll through. */
+
+/* Phones: the loop above the chart, so it's in view as the line reaches
+   the tick (the chart is drawn while it's fully in view). */
+.mlops-split {
+  display: flex;
+  flex-direction: column;
+}
+
+.mlops-loop {
+  order: -1;
+}
+
+.mlops-nodes {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* The plot always fits the viewport beside what shows with it. */
+.mlops-plot {
+  max-height: calc(100svh - var(--header-h) - 8rem);
+}
+
+/* Short screens shrink the plot; its labels stay legible. */
+@media (max-height: 500px) {
+  .mlops-plot {
+    --chart-font: 12px;
+  }
+}
+
+/* Tablets: the loop below the chart, in one row. */
+@media (min-width: 768px) {
+  .mlops-loop {
+    order: 0;
+  }
+
+  .mlops-nodes {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+/* Desktop, and tablets too short to stack: the loop beside the chart. */
+@media (min-width: 1024px), (min-width: 768px) and (max-height: 899px) {
+  .mlops-split {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .mlops-nodes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) and (min-height: 700px) {
+  .mlops-nodes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media screen and (min-width: 768px) and (min-height: 600px) {
+  .mlops-plot {
+    max-height: calc(100svh - var(--header-h) - 14rem);
+  }
+
+  /* Tall tablets stack the loop and the caption under the plot. */
+  @media (max-width: 1023px) and (min-height: 900px) {
+    .mlops-plot {
+      max-height: calc(100svh - var(--header-h) - 23rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .mlops-pin {
+      position: sticky;
+      top: calc(var(--header-h) + 1rem);
+    }
+
+    .mlops-track::after {
+      content: "";
+      display: block;
+      height: 100svh;
+    }
+  }
+}

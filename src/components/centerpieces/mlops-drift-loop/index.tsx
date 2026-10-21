@@ -1,14 +1,19 @@
-import { mlopsLoop } from "@content/charts";
+import { mlopsCopy as copy } from "@content/centerpieces/mlops-drift-loop";
+import { mlopsLoop, mlopsTimeline } from "@content/charts";
 import { Figure } from "@/components/ui/figure";
-import { Bars } from "@/components/viz/charts";
-import { Flow } from "@/components/viz/flow";
+import { ViewData } from "@/components/ui/view-data";
+import { captured } from "@/components/work/media";
 import { source } from "../shared";
+import { MlopsIsland } from "./island";
+import { MlopsView, steps, type MlopsData } from "./view";
+import "./mlops.css";
 
-// §10.7 "Watch it recover". The loop and the two documented F1 levels
-// until the per-batch series is in the repo (§10.7's export); intermediate
-// points are never drawn by hand.
+// §10.7 "Watch it recover": realized F1 per unseen batch from the repo's
+// export (content/data/mlops-timeline.json), drawn by scrolling, beside
+// the loop. The poster is the final step; the "View data" table has every
+// batch and the provenance.
 
-const loopSteps = ["Serve", "Monitor", "Detect", "Retrain", "Gate", "Reload"];
+// The Work card cover keeps the two documented levels (as the bento does).
 const f1 = mlopsLoop.documented_levels;
 export const f1Rows = [
   {
@@ -23,22 +28,62 @@ export const f1Rows = [
   },
 ];
 
+const { timeline } = mlopsTimeline;
+// The chart labels both events on one tick: the last v1 batch's.
+if (mlopsTimeline.drift_detected_t !== mlopsTimeline.promoted_t)
+  throw new Error(
+    "mlops-timeline.json: drift and promotion on different ticks",
+  );
+const tick = timeline.findIndex((b) => b.t === mlopsTimeline.promoted_t);
+const data: MlopsData = {
+  points: timeline.map((b) => ({ f1: b.f1, version: b.version })),
+  tick,
+  copy,
+};
+
+const t = new Intl.NumberFormat("en-GB", { maximumFractionDigits: 1 });
+
 export function Centerpiece() {
+  const { table, versions, events } = copy;
   return (
-    <div className="flex flex-col gap-6">
-      <Figure caption="The loop runs with no human in the path; it returns to Serve after each reload.">
-        <div className="bg-surface p-4">
-          <Flow steps={loopSteps.map((label) => ({ label }))} row />
+    <div className="flex flex-col gap-3">
+      <div className="mlops-track">
+        <div className="mlops-pin">
+          <Figure
+            caption={copy.caption}
+            label={copy.label}
+            source={source("mlops.f1")}
+          >
+            <MlopsIsland
+              name="mlops-drift-loop"
+              poster={<MlopsView data={data} state={{ step: steps(data) }} />}
+              data={data}
+            />
+          </Figure>
         </div>
-      </Figure>
-      <Figure
-        caption="Realized F1 on unseen batches: the stale champion on drifted traffic, then the promoted challenger. Only the two documented levels are shown."
-        source={source("mlops.f1")}
-      >
-        <div className="bg-surface p-4">
-          <Bars rows={f1Rows} max={1} highlight={1} />
-        </div>
-      </Figure>
+      </div>
+      <ViewData
+        caption={table.caption
+          .replace("{commit}", mlopsTimeline.commit)
+          .replace("{date}", captured(mlopsTimeline.exported))}
+        columns={[
+          { key: "batch", label: table.batch },
+          { key: "t", label: table.t, numeric: true },
+          { key: "f1", label: table.f1, numeric: true },
+          { key: "version", label: table.version },
+          { key: "event", label: table.event },
+        ]}
+        rows={timeline.map((b, i) => ({
+          batch: i + 1,
+          t: t.format(b.t),
+          f1: b.f1.toFixed(3),
+          version: `${versions[b.version].short} · ${versions[b.version].name}`,
+          event:
+            i === tick
+              ? `${events.drift}; ${events.promoted.toLowerCase()}, ${table.tick}`
+              : "",
+        }))}
+      />
     </div>
   );
 }
