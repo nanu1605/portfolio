@@ -394,7 +394,8 @@ export function MlopsView({
               </span>
               <span>
                 <span className="text-fg-subtle">{copy.table.f1}</span>{" "}
-                {p ? p.f1.toFixed(2) : "--"}
+                {/* Placeholders as wide as the values: nothing after moves. */}
+                {p ? p.f1.toFixed(2) : "-.--"}
               </span>
               <span>
                 {v ? v.short : "--"}
