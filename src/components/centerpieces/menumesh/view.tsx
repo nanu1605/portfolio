@@ -19,10 +19,18 @@ export type Shot = {
   webp: string;
   /** The part shown where room is short: [x, y, width, height] in pixels. */
   detail: readonly [number, number, number, number];
+  /** A staff screen captured at phone width: framed like the landscape ones. */
+  phone?: boolean;
 };
 
 export type MenumeshData = {
-  steps: { name: string; text: string; shot: Shot }[];
+  steps: {
+    name: string;
+    text: string;
+    shot: Shot;
+    /** The phone stepper's capture, when there is one at phone width. */
+    phone?: Shot;
+  }[];
   /** The Order step's menu in Hindi. */
   hindi: { step: number; shot: Shot };
   title: string;
@@ -46,7 +54,8 @@ type Live = {
 };
 
 const pad = (n: number) => String(n).padStart(2, "0");
-const portrait = (shot: Shot) => shot.height > shot.width;
+/** The guest phone: whole in the frame, a fading menu in the stepper. */
+const portrait = (shot: Shot) => !shot.phone && shot.height > shot.width;
 
 function Img({
   shot,
@@ -170,7 +179,8 @@ function Frame({ shots, shown }: { shots: Shot[]; shown: number }) {
 /**
  * The stepper's screens, stacked in one grid cell so the box takes the
  * tallest. Menus up to 16.25rem wide (cross-device §6: legible on a
- * 360 px phone); every detail fits the viewport's height.
+ * 360 px phone), the other screens the slide's width; every detail fits
+ * the viewport's height.
  */
 function Details({ shots, shown }: { shots: Shot[]; shown: number }) {
   return (
@@ -342,7 +352,9 @@ export function View({
                 <div className="flex flex-1 items-center justify-center rounded-md border border-border bg-bg bg-grid px-3 pt-4 pb-3">
                   <Details
                     shots={
-                      i === hindi.step ? [step.shot, hindi.shot] : [step.shot]
+                      i === hindi.step
+                        ? [step.shot, hindi.shot]
+                        : [step.phone ?? step.shot]
                     }
                     shown={i === hindi.step && state.hindiMenu ? 1 : 0}
                   />

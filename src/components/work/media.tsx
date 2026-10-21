@@ -6,13 +6,14 @@ import { Video } from "@/components/ui/video";
 // Product screens and recordings from assets/source/screens (§15.1), in a
 // plain window frame: rounded, a hairline border, never fake device chrome.
 
-export const captured = (iso: string) =>
+/** "20 Oct 2026", or a range ("20 – 21 Oct 2026") when `to` is later. */
+export const captured = (iso: string, to = iso) =>
   new Intl.DateTimeFormat("en-GB", {
     day: "numeric",
     month: "short",
     year: "numeric",
     timeZone: "UTC",
-  }).format(new Date(iso));
+  }).formatRange(new Date(iso), new Date(to));
 
 const caption = (s: { view: string; build: string; capturedOn: string }) =>
   `${s.view} · ${s.build} · ${captured(s.capturedOn)}`;
