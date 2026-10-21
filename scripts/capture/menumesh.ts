@@ -256,8 +256,8 @@ async function phoneDemo(page: Page) {
       frame(page, panels.kitchen),
       {
         file: file("menumesh-demo-ready-kitchen-phone"),
-        view: "Demo: kitchen, ready, phone",
-        alt: "MenuMesh kitchen screen on a phone: both dishes for table 5 are ready, with a Mark served button for each and a Mark all served button.",
+        view: "Demo: kitchen tablet, ready (phone width)",
+        alt: "MenuMesh kitchen tablet, at phone width: both dishes for table 5 are ready, with a Mark served button for each and a Mark all served button.",
         use: "Case study: table to bill (phone)",
       },
       shots,
@@ -273,8 +273,8 @@ async function phoneDemo(page: Page) {
       frame(page, panels.counter),
       {
         file: file("menumesh-demo-billed-counter-phone"),
-        view: "Demo: counter, billed, phone",
-        alt: "MenuMesh counter screen on a phone: the bill for table 5, one Paneer Tikka and two Butter Naan with CGST and SGST at 2.5% each and the grand total, and Cash, UPI and Card buttons to record the payment.",
+        view: "Demo: counter laptop, billed (phone width)",
+        alt: "MenuMesh counter laptop, at phone width: the bill for table 5, one Paneer Tikka and two Butter Naan with CGST and SGST at 2.5% each and the grand total, and Cash, UPI and Card buttons to record the payment.",
         use: "Case study: table to bill (phone)",
       },
       shots,
