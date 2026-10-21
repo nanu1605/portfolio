@@ -1066,4 +1066,9 @@ That leaves 0.4 KB, so the next addition to Home needs a cut elsewhere first. Th
 - **End-to-end:**
   - the default device projects: 751 passed;
   - `polish.spec.ts` also passed on desktop-webkit, tablet-portrait-ios and tablet-android.
-  - Firefox runs in CI.
+  - In CI (run 39662522676), 1,461 passed on every device project, Firefox included.
+    - One test was flaky: the known Firefox CSS-only layouts test.
+    - Lighthouse passed mobile and desktop with no warnings.
+- **Two CI fixes along the way:**
+  - **A race in `viewTransition()`:** a skipped transition cleared the flag of the one that replaced it, so the covers got named mid theme switch.
+  - **A test timing bug:** the tests read a recorded transition before its animations were known. Slower engines tripped it (Firefox, then WebKit).

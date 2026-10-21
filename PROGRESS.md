@@ -149,7 +149,8 @@ Done when: the palette is fully keyboard accessible; every route has a share ima
 
 - [x] Palette fully keyboard accessible: combobox and listbox, arrows, Enter, Esc, focus returns; axe clean with it open, in both themes; by touch on phones and tablets.
 - [x] Every route has a 1200×630 share image (e2e checks each one's size and type).
-- [~] Lighthouse locally: accessibility, best practices and SEO 1 everywhere; Home performance 0.96–0.97 but LCP 2.03–2.08 s against 2.0 s (the Phase 6 build measured 2.08–2.15 s on this machine the same day); /work/vyro performance 0.88–0.92. Home JS 149.6 KB of 150 KB. Interaction budgets 17/17. CI gives the reference numbers.
+- [x] Lighthouse: CI run 39662522676 passed mobile and desktop on /, /work, /work/vyro and /work/mlops-drift-loop with no warnings (LCP under 2.0 s, performance at least 0.95). Locally this machine runs slower: Home LCP 2.03–2.08 s, the same as the Phase 6 build there. Home JS 149.6 KB of 150 KB. Interaction budgets 17/17.
+- [x] CI run 39662522676: 1,461 end-to-end tests passed on every device project, Firefox included; 1 flaky (the known Firefox CSS-only layouts test); Vercel deployed.
 - [ ] Tanishq checks the Person/WebSite markup in Google's Rich Results Test (needs the live domain, or a pasted page source, in Phase 8).
 
 ## Phase 8 — Launch
