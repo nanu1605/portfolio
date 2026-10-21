@@ -3,5 +3,5 @@
     "stale_champion_f1": 0.27,
     "after_promotion_f1": 0.78
   },
-  "per_batch_series": "NOT YET EXPORTED - see spec §10.7: run the repo's `make experiment` with a one-line patch that writes `timeline` (list of {t, f1, version}) from src/mlops_drift/experiments/run.py to JSON. Never hand-draw intermediate points."
+  "per_batch_series": "Exported to content/data/mlops-timeline.json (spec §10.7): the repo's per-batch `timeline` (list of {t, f1, version}) with its commit, command and date. content/charts.ts fails the build unless its means round to the documented levels. Never hand-draw intermediate points."
 }

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import jainavJson from "./data/jainav-platform.json";
 import mlopsJson from "./data/mlops-drift-loop.json";
+import timelineJson from "./data/mlops-timeline.json";
 import forecastingJson from "./data/probabilistic-forecasting.json";
 import reservoirJson from "./data/reservoir-rl.json";
 import vyroJson from "./data/vyro.json";
@@ -147,7 +148,65 @@ export const mlopsLoop = z
       stale_champion_f1: z.number(),
       after_promotion_f1: z.number(),
     }),
-    // A note until the per-batch series is exported (§10.7); never hand-drawn.
+    // Where the per-batch series lives: mlops-timeline.json (§10.7's export).
     per_batch_series: z.string(),
   })
   .parse(mlopsJson);
+
+const mean = (values: number[]) =>
+  values.reduce((sum, v) => sum + v, 0) / values.length;
+const round2 = (v: number) => Math.round(v * 100) / 100;
+
+/**
+ * §10.7's export: the repo's per-batch `timeline` (realized F1 on each
+ * unseen batch, and the serving model version), with its provenance. Load
+ * fails unless the series agrees with the documented levels the headline
+ * quotes: the mean F1 up to and including promotion, and after it.
+ */
+export const mlopsTimeline = z
+  .strictObject({
+    source: z.url(),
+    commit: z.string().regex(/^[0-9a-f]{7,40}$/),
+    command: z.string(),
+    patch: z.string(),
+    data: z.string(),
+    exported: z.iso.date(),
+    drift_detected_t: z.number(),
+    promoted_t: z.number(),
+    // A.4.7: 20 batches of 400 rows.
+    timeline: z
+      .array(
+        z.strictObject({
+          t: z.number(),
+          f1: z.number().min(0).max(1),
+          version: z.enum(["1", "2"]),
+        }),
+      )
+      .length(20),
+  })
+  .superRefine((d, ctx) => {
+    const fail = (message: string) => ctx.addIssue({ code: "custom", message });
+    const { timeline } = d;
+    if (timeline.some((b, i) => i > 0 && b.t <= timeline[i - 1]!.t))
+      fail("timeline: t must increase");
+    if (d.drift_detected_t > d.promoted_t)
+      fail("drift must be detected before (or as) the challenger is promoted");
+    // Promotion happens at a batch's controller tick; v2 serves from the next.
+    const at = timeline.findIndex((b) => b.t === d.promoted_t);
+    if (at < 0) return fail("promoted_t isn't a batch's t");
+    if (timeline.some((b, i) => b.version !== (i <= at ? "1" : "2")))
+      fail("v1 must serve up to the promotion tick and v2 after it");
+    const f1 = timeline.map((b) => b.f1);
+    const levels = mlopsLoop.documented_levels;
+    const before = round2(mean(f1.slice(0, at + 1)));
+    const after = round2(mean(f1.slice(at + 1)));
+    if (before !== levels.stale_champion_f1)
+      fail(
+        `mean F1 up to promotion is ${before}, documented ${levels.stale_champion_f1}`,
+      );
+    if (after !== levels.after_promotion_f1)
+      fail(
+        `mean F1 after promotion is ${after}, documented ${levels.after_promotion_f1}`,
+      );
+  })
+  .parse(timelineJson);
