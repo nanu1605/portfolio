@@ -42,6 +42,11 @@ describe("every number traces to the spec", () => {
     menumesh: "10.4 MenuMesh",
     "reservoir-rl": "10.5 Reservoir RL",
     "probabilistic-forecasting": "10.6 Probabilistic forecasting",
+    "mlops-drift-loop": "10.7 MLOps loop",
+  };
+  // Projects whose Appendix B data has more than one file.
+  const moreData: Record<string, string[]> = {
+    "mlops-drift-loop": ["content/data/mlops-timeline.json"],
   };
   for (const [slug, heading] of Object.entries(subsection)) {
     it(`${slug}: the centerpiece copy uses only the spec's numbers`, () => {
@@ -49,12 +54,12 @@ describe("every number traces to the spec", () => {
       expect(start, heading).toBeGreaterThan(-1);
       const rest = spec.slice(start + 4);
       const p = projects.find((p) => p.slug === slug)!;
-      const data = `content/data/${slug}.json`;
+      const data = [`content/data/${slug}.json`, ...(moreData[slug] ?? [])];
       const allowed = numbers(
         [
           rest.slice(0, rest.search(/^#{2,3} /m)),
           a4(p.title),
-          existsSync(data) ? readFileSync(data, "utf8") : "",
+          ...data.map((f) => (existsSync(f) ? readFileSync(f, "utf8") : "")),
         ].join("\n"),
       );
       const source = readFileSync(`content/centerpieces/${slug}.ts`, "utf8")
