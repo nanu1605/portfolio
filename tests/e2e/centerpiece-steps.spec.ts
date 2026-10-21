@@ -570,13 +570,17 @@ test.describe("CSS-only flows", () => {
   test("layouts: phones down a rail, tablets in a grid, desktop in a row", async ({
     page,
   }) => {
+    // Four case-study loads: Firefox on a busy CI runner needs more than
+    // the default 30 s.
+    test.slow();
     // This project's viewport, then a 768 px tablet. A fresh page per load:
     // on Firefox repeated gotos on one page can stall on "navigation".
     for (const width of [page.viewportSize()!.width, 768]) {
       for (const flow of flows) {
         const tab = await page.context().newPage();
         if (width === 768) await tab.setViewportSize({ width, height: 1024 });
-        await tab.goto(`/work/${flow.slug}`);
+        // Layout only: no need to wait for every image and video poster.
+        await tab.goto(`/work/${flow.slug}`, { waitUntil: "domcontentloaded" });
         const box = root(tab, flow.slug);
         await box.scrollIntoViewIfNeeded();
         // offsetTop ignores the reveal's rise.
