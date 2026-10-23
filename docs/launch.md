@@ -10,6 +10,7 @@ The steps that need Tanishq's accounts, in order. Each one says what to tell me 
   - `www` CNAME to `@`;
   - `@` TXT `google-site-verification=…`: Search Console. **Keep it.**
   - No MX record. None is needed: the form sends from `contact@tanishq.website`, and replies go to the visitor's address.
+  - `_dmarc` TXT `v=DMARC1; p=quarantine; adkim=r; aspf=r; rua=mailto:dmarc_rua@onsecureserver.net;`: GoDaddy's default. **Keep it** (step 2).
 - The old site, https://tanishq-jain-portfolio.vercel.app (repo `nanu1605/my-portfolio`), is still live, including `/Tanishq_Jain_Resume.pdf`.
 
 ## 1. Turnstile (Cloudflare)
@@ -21,7 +22,9 @@ The steps that need Tanishq's accounts, in order. Each one says what to tell me 
 ## 2. Resend
 
 1. Resend → Domains → Add domain → `tanishq.website`.
-2. At GoDaddy (DNS → Manage), add exactly the records Resend shows: an MX and an SPF TXT record on `send`, and the DKIM TXT record on `resend._domainkey`. Optional but recommended: a TXT record on `_dmarc` with `v=DMARC1; p=none;`.
+2. At GoDaddy (DNS → Manage), add exactly the records Resend shows: an MX and an SPF TXT record on `send`, and the DKIM TXT record on `resend._domainkey`.
+   - **Don't add a `_dmarc` record**, even if Resend suggests one. GoDaddy's is already there, and a second one makes mail servers ignore both.
+   - The existing record works as it is: Resend's DKIM signature is for tanishq.website, and its relaxed alignment (`adkim=r`, `aspf=r`) accepts the `send` subdomain, so the form's mail passes DMARC.
 3. Click Verify in Resend and wait for "Verified".
 4. Resend → API Keys → Create: permission "Sending access", domain `tanishq.website`. Keep the key for step 3.
 
