@@ -1072,3 +1072,39 @@ That leaves 0.4 KB, so the next addition to Home needs a cut elsewhere first. Th
 - **Two CI fixes along the way:**
   - **A race in `viewTransition()`:** a skipped transition cleared the flag of the one that replaced it, so the covers got named mid theme switch.
   - **A test timing bug:** the tests read a recorded transition before its animations were known. Slower engines tripped it (Firefox, then WebKit).
+
+## Phase 8 — Launch — 23 Oct 2026
+
+**What needs Tanishq.** DNS at GoDaddy, the Resend and Turnstile keys, the Vercel domain and analytics settings, Search Console and LinkedIn. `docs/launch.md` lists them in order with the exact values. Nothing in the code changes at launch: `contactConfig()` moves from the mailto fallback to sending as soon as all five contact variables are set, and the contact page is static, so a redeploy picks them up.
+
+- **`NEXT_PUBLIC_SITE_URL` (§18) isn't used.** `site.url` in `content/site.ts` is the canonical host for `metadataBase`, the sitemap, JSON-LD and the resume links. Previews therefore also declare tanishq.website as canonical, which keeps them out of search results.
+- **Old site (§16.5):** option (a), a `vercel.json` with two permanent redirects committed to `nanu1605/my-portfolio`, is the recommendation. It sends `/Tanishq_Jain_Resume.pdf` straight to the new PDF and every other path to Home. Option (b), a domain redirect in the old project, keeps the path, so old paths would land on the 404 page. It goes in only after tanishq.website serves production, so it never points at GoDaddy's parking page.
+- **Profile README:** `docs/profile-readme.md`. It changes the role line, adds the website, moves LinkedIn to `/in/tanishqjain010/`, and points the resume link at `https://tanishq.website/resume` instead of the old Google Drive file. Everything else is as it was.
+
+**Production checks before the domain (Vercel production URL, 23 Oct).**
+- Redirects (`/Tanishq_Jain_Resume.pdf` and `/cv`, 308), `/resume.pdf` as `application/pdf`, sitemap, robots, manifest, share images, the 404 page and every §14 header: as built.
+- **Vercel Web Analytics is off:** `/_vercel/insights/script.js` returns 404, so no page views or events are counted yet, and the browser logs the 404 and a refused script on every page (best practices 96 instead of 100). Speed Insights is on. The fix is the Analytics tab's Enable button; the runbook has it.
+- **Placeholder report:** only `{{FOUNDED}}` (allow-listed) and `{{VDR_IMAGES}}` (hidden where used). No `{{` in any built page.
+
+**Lighthouse on production: §13 isn't met on mobile.**
+- **PageSpeed Insights, mobile** (Lighthouse 13.5, simulated Slow 4G, one run each):
+  - Home: performance 90 (budget 95). LCP 3.3 s, FCP 1.4 s, Speed Index 3.9 s, TBT 50 ms, CLS 0.
+  - /work/vyro: performance 87 (budget 90). LCP 3.8 s, Speed Index 4.1 s, TBT 30 ms, CLS 0.
+  - Both: accessibility 100, best practices 96, SEO 100.
+  - The automated PageSpeed API was over its shared daily quota, so these runs came from the PageSpeed website.
+- **Lighthouse locally against production** (simulated throttling, 3 runs per page): performance 0.95–0.99 on all four CI pages. LCP is 1.9–2.9 s, above 2.0 s on most runs.
+- **Why.** This is the Phase 3 finding, now on production.
+  - Lighthouse loads the page on a fast connection, then simulates Slow 4G from that trace.
+  - On a fast connection the async scripts (155 KB) arrive within about 20 ms of the stylesheet. They run before Chrome's first frame, so the photo, which loaded first, paints after them.
+  - The simulation then puts every script download and the hydration work ahead of the photo: PageSpeed reports an "element render delay" of 1.9 s after a photo that finished loading at 0.4 s.
+- **Reproduced locally** against `next start`, with the same settings:
+  - LCP 2.9–3.5 s;
+  - with all JS blocked, 2.55 s and performance 0.97;
+  - also blocking the two below-fold screenshots, the grain texture and the mono font that load before the photo paints: still 3.0–3.3 s.
+  - The JS is most of the gap. The rest is the bytes that must arrive before the photo (HTML, CSS, two fonts and the 71 KB photo), which at Slow 4G's 1.6 Mbps already cost about 2.5 s.
+- CI's Lighthouse uses applied throttling (decided in Phase 3) and passes. The two methods disagree on this page.
+- **Field data, not lab, is what §13's Core Web Vitals measure.** Speed Insights reports real visitors' LCP once the domain has traffic. On a real phone the photo (high priority) arrives before the low-priority scripts, which is the order the applied-throttling runs see.
+
+**CI.**
+- **The Firefox CSS-only layouts test** timed out on the last two nightly runs, on both attempts; before that it was flaky. It loaded the case study four times and scrolled smoothly with Lenis loading underneath. It now loads each flow once, resizes the page to 768 px for the tablet check, and jumps to the flow instantly.
+- **Job time limit 60 → 90 min.** One nightly spent 20 minutes installing browsers and was stopped at 60 minutes. A normal run takes about 50.

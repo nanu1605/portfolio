@@ -155,12 +155,17 @@ Done when: the palette is fully keyboard accessible; every route has a share ima
 
 ## Phase 8 — Launch
 
-- [ ] Production env vars, Resend domain verified, Turnstile for `tanishq.website`.
+Tanishq's steps, in order, are in `docs/launch.md`.
+
+- [ ] Production env vars, Resend domain verified, Turnstile for `tanishq.website`. Also enable Vercel Web Analytics: its script returned 404 on production (23 Oct).
 - [ ] Domain in Vercel, `www` redirect, HTTPS.
-- [ ] Redirect the old site (§16.5).
+- [ ] Redirect the old site (§16.5). The `vercel.json` for `nanu1605/my-portfolio` is drafted in `docs/launch.md`; it goes in after the domain works.
 - [~] Search Console verified (DNS TXT record, 21 Oct 2026); keep that record when adding Vercel's, and recreate it if the nameservers move to Vercel. Sitemap still to submit.
-- [ ] Lighthouse on production URLs; placeholder report empty or only allow-listed items.
-- [ ] Draft (don't push) the `nanu1605/nanu1605` profile README.
+- [~] Lighthouse on production URLs; placeholder report empty or only allow-listed items.
+  - Placeholder report: only `{{FOUNDED}}` (allow-listed, shows "2026") and `{{VDR_IMAGES}}` (hidden where used). No `{{` in any built page.
+  - Before the domain, on the Vercel production URL (23 Oct): PageSpeed Insights mobile gives Home 90 (LCP 3.3 s) and /work/vyro 87 (LCP 3.8 s), under §13's 95 and 90. Accessibility 100, best practices 96, SEO 100. See `docs/decisions.md`, Phase 8.
+  - Redirects, sitemap, robots, manifest, share images, 404 and the security headers all checked on that URL.
+- [x] Draft (don't push) the `nanu1605/nanu1605` profile README: `docs/profile-readme.md`.
 - [ ] Tanishq adds the site to LinkedIn.
 - [ ] ↔ Manual real-device checklist (`docs/cross-device.md` §8) on an iPhone, a mid-range Android phone and an iPad; Speed Insights split by device type.
 
