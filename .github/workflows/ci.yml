@@ -14,9 +14,9 @@ concurrency:
 jobs:
   checks:
     runs-on: ubuntu-latest
-    # Since Phase 5 the full matrix runs 20–27 min of e2e, then about
-    # 15 min of Lighthouse.
-    timeout-minutes: 60
+    # The full matrix runs 28–38 min of e2e, then about 15 min of
+    # Lighthouse. Browser installs have taken 20 min on a slow night.
+    timeout-minutes: 90
     env:
       # PRs run the default device projects; main and nightly run the full
       # matrix from docs/cross-device.md §8.
