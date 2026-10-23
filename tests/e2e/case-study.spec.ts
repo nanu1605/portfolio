@@ -198,4 +198,16 @@ test("videos: one at a time, Pause sticks, reduced motion keeps the poster", asy
   await expect(
     page.getByRole("button", { name: "Play" }).first(),
   ).toBeVisible();
+  // The poster is a lazy still under the transparent, unloaded video.
+  const still = page
+    .locator("video")
+    .first()
+    .locator("xpath=..")
+    .locator("img");
+  await still.scrollIntoViewIfNeeded();
+  await expect
+    .poll(() =>
+      still.evaluate((i: HTMLImageElement) => i.complete && i.naturalWidth > 0),
+    )
+    .toBe(true);
 });

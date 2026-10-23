@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { Pause, Play } from "lucide-react";
 import { cx } from "@/lib/cx";
 
@@ -26,11 +26,16 @@ function start(v: HTMLVideoElement) {
  * with a Pause/Play button. Under reduced motion, or when the browser
  * refuses autoplay (iOS Low Power Mode), the poster stays with the play
  * button. A non-looping video stops on its last frame.
+ *
+ * The poster is a lazy <Picture> under the video (`children`), not the
+ * `poster` attribute: browsers fetch that eagerly and at one size, and it
+ * delayed the first paint on phones. The video is transparent until its
+ * first frame, so the still shows through.
  */
 export function Video({
   webm,
   mp4,
-  poster,
+  children,
   width,
   height,
   label,
@@ -40,7 +45,8 @@ export function Video({
 }: {
   webm: string;
   mp4: string;
-  poster: string;
+  /** The poster still, in flow: it sizes the box. */
+  children: ReactNode;
   width: number;
   height: number;
   /** What the recording shows (manifest alt text). */
@@ -111,20 +117,20 @@ export function Video({
 
   return (
     <div className={cx("relative", className)}>
+      {children}
       <video
         ref={ref}
         muted
         playsInline
         loop={loop}
         preload="none"
-        poster={poster}
         width={width}
         height={height}
         aria-label={label}
         data-video={playing ? "playing" : "paused"}
         data-webm={webm}
         data-mp4={mp4}
-        className="block h-auto w-full bg-surface"
+        className="absolute inset-0 block size-full"
       />
       <button
         type="button"

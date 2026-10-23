@@ -50,21 +50,20 @@ export function ScreenVideo({
   loop?: boolean;
 }) {
   const v = video(file);
-  // A poster near the frame's width on most screens; the video replaces it.
-  const poster =
-    v.poster.variants.find((p) => p.width >= 1280) ?? v.poster.variants.at(-1)!;
   return (
     <Figure caption={caption(v)} bleed>
       <Video
         webm={v.sources.webm}
         mp4={v.sources.mp4}
-        poster={poster.webp}
         width={v.size[0]}
         height={v.size[1]}
         label={v.alt}
         loop={loop}
         labels={{ pause: microcopy.icons.pause, play: microcopy.icons.play }}
-      />
+      >
+        {/* The video's label describes it; the still is decoration. */}
+        <Picture image={v.poster} alt="" sizes={SIZES} />
+      </Video>
     </Figure>
   );
 }
