@@ -179,7 +179,9 @@ async function main() {
 
   // Film grain (§5.5): a static noise tile, rasterised here so the page runs
   // no feTurbulence filter (cross-device §7). Grey noise at ~3% opacity reads
-  // on both themes. Seeded, so re-runs write the same file.
+  // on both themes. Seeded, so re-runs write the same file. Nine grey
+  // levels are indistinguishable at that opacity and let the PNG use a
+  // palette: 1.8 KB instead of 7 KB, on every page's critical path.
   const grain = `${OUT}/grain.png`;
   if (force || !existsSync(grain)) {
     console.log("grain");
@@ -188,11 +190,12 @@ async function main() {
     let seed = 1;
     for (let i = 0; i < pixels.length; i += 4) {
       seed = (seed * 1103515245 + 12345) & 0x7fffffff;
-      pixels.fill((seed >>> 16) & 255, i, i + 3);
+      const level = Math.round((((seed >>> 16) & 255) * 8) / 255);
+      pixels.fill(Math.round((level * 255) / 8), i, i + 3);
       pixels[i + 3] = 8;
     }
     await sharp(pixels, { raw: { width: size, height: size, channels: 4 } })
-      .png({ compressionLevel: 9 })
+      .png({ palette: true, colours: 9, compressionLevel: 9 })
       .toFile(grain);
   }
 
