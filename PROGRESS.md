@@ -163,7 +163,9 @@ Tanishq's steps, in order, are in `docs/launch.md`.
 - [~] Search Console verified (DNS TXT record, 21 Oct 2026); keep that record when adding Vercel's, and recreate it if the nameservers move to Vercel. Sitemap still to submit.
 - [~] Lighthouse on production URLs; placeholder report empty or only allow-listed items.
   - Placeholder report: only `{{FOUNDED}}` (allow-listed, shows "2026") and `{{VDR_IMAGES}}` (hidden where used). No `{{` in any built page.
-  - Before the domain, on the Vercel production URL (23 Oct): PageSpeed Insights mobile gives Home 90 (LCP 3.3 s) and /work/vyro 87 (LCP 3.8 s), under §13's 95 and 90. Accessibility 100, best practices 96, SEO 100. See `docs/decisions.md`, Phase 8.
+  - Before the domain, on the Vercel production URL (23 Oct): PageSpeed Insights mobile first gave Home 90 and 92 and /work/vyro 87, under §13's 95 and 90.
+  - After a speed pass (lazy AVIF video stills, no hero preload hint, analytics after the first paint, a smaller grain tile): Home 90 / 99 / 96, median 96; /work/vyro 96 / 100. Accessibility 100, best practices 96 (the Web Analytics 404), SEO 100. See `docs/decisions.md`, Phase 8.
+  - To redo on tanishq.website after the domain move, with Speed Insights field data once there is traffic.
   - Redirects, sitemap, robots, manifest, share images, 404 and the security headers all checked on that URL.
 - [x] Draft (don't push) the `nanu1605/nanu1605` profile README: `docs/profile-readme.md`.
 - [ ] Tanishq adds the site to LinkedIn.

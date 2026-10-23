@@ -1086,24 +1086,35 @@ That leaves 0.4 KB, so the next addition to Home needs a cut elsewhere first. Th
 - **Vercel Web Analytics is off:** `/_vercel/insights/script.js` returns 404, so no page views or events are counted yet, and the browser logs the 404 and a refused script on every page (best practices 96 instead of 100). Speed Insights is on. The fix is the Analytics tab's Enable button; the runbook has it.
 - **Placeholder report:** only `{{FOUNDED}}` (allow-listed) and `{{VDR_IMAGES}}` (hidden where used). No `{{` in any built page.
 
-**Lighthouse on production: §13 isn't met on mobile.**
-- **PageSpeed Insights, mobile** (Lighthouse 13.5, simulated Slow 4G, one run each):
-  - Home: performance 90 (budget 95). LCP 3.3 s, FCP 1.4 s, Speed Index 3.9 s, TBT 50 ms, CLS 0.
-  - /work/vyro: performance 87 (budget 90). LCP 3.8 s, Speed Index 4.1 s, TBT 30 ms, CLS 0.
-  - Both: accessibility 100, best practices 96, SEO 100.
-  - The automated PageSpeed API was over its shared daily quota, so these runs came from the PageSpeed website.
-- **Lighthouse locally against production** (simulated throttling, 3 runs per page): performance 0.95–0.99 on all four CI pages. LCP is 1.9–2.9 s, above 2.0 s on most runs.
-- **Why.** This is the Phase 3 finding, now on production.
-  - Lighthouse loads the page on a fast connection, then simulates Slow 4G from that trace.
-  - On a fast connection the async scripts (155 KB) arrive within about 20 ms of the stylesheet. They run before Chrome's first frame, so the photo, which loaded first, paints after them.
-  - The simulation then puts every script download and the hydration work ahead of the photo: PageSpeed reports an "element render delay" of 1.9 s after a photo that finished loading at 0.4 s.
-- **Reproduced locally** against `next start`, with the same settings:
-  - LCP 2.9–3.5 s;
-  - with all JS blocked, 2.55 s and performance 0.97;
-  - also blocking the two below-fold screenshots, the grain texture and the mono font that load before the photo paints: still 3.0–3.3 s.
-  - The JS is most of the gap. The rest is the bytes that must arrive before the photo (HTML, CSS, two fonts and the 71 KB photo), which at Slow 4G's 1.6 Mbps already cost about 2.5 s.
-- CI's Lighthouse uses applied throttling (decided in Phase 3) and passes. The two methods disagree on this page.
-- **Field data, not lab, is what §13's Core Web Vitals measure.** Speed Insights reports real visitors' LCP once the domain has traffic. On a real phone the photo (high priority) arrives before the low-priority scripts, which is the order the applied-throttling runs see.
+**Lighthouse on production: §13's mobile scores, after a speed pass.**
+- **First PageSpeed Insights runs, mobile** (Lighthouse 13.5, simulated Slow 4G):
+  - Home: 90 and 92 (budget 95). LCP 3.2–3.3 s.
+  - /work/vyro: 87 (budget 90). LCP 3.8 s, Speed Index 4.1 s.
+  - Both: accessibility 100, best practices 96 (the Web Analytics 404 above), SEO 100.
+  - The PageSpeed API was over its shared daily quota, so the runs came from the PageSpeed website. Its reports carry the full Lighthouse JSON, which is where the numbers below come from.
+- **How the score is made** (Lighthouse's Lantern simulation, read from the source by a five-agent review):
+  - Lighthouse loads the page unthrottled, then simulates Slow 4G from that trace.
+  - The LCP estimate replays every request that finished before the observed paint, one after another, at about 4.9 ms per KB, plus 4× the CPU work.
+  - The exceptions are low-priority images, and scripts that only start running after the paint.
+  - So everything the page fetches before its first frame counts against the LCP, whether the photo needs it or not.
+- **What PageSpeed's machine does:**
+  - Its CPU benchmarks at 553, against about 5,000 here, so its unthrottled load is about ten times slower than a local one. One Home run: first paint at 1.23 s, photo loaded at 0.68 s.
+  - Whether the ~150 KB of framework scripts land in the estimate depends on whether they finished before that first frame, so single runs swing by ten points. The 1.9 s "element render delay" in the first report is a real observed delay on that machine. It is not a simulation artefact, as this entry first said.
+- **Fixes** (each also cuts bytes for real visitors):
+  - **Video posters:** the `poster` attribute fetched a 1280 px WebP eagerly for every video, 97 KB on the VYRO page before its first paint. The still is now a lazy AVIF `<Picture>` under the video, which is transparent until its first frame. §15.1 says `<video poster>`; this keeps the same still, the same box and the same no-JS and reduced-motion behaviour.
+  - **The hero's `preload()` hint is gone.** It travelled in Home's RSC payload, so every page that prefetched Home fetched the 70 KB photo. Home's `<img>` is already eager and high priority, and the CI LCP gate covers it.
+  - **Analytics and the after-load module wait for the first paint as well as the load event** (`window.__painted`, set by the inline head script from Paint Timing, with a 5 s fallback). On a fast connection the load event can come before the first paint.
+  - **The grain tile is a 9-colour palette PNG:** 1.8 KB instead of 7.1 KB, with no visible difference at 3% opacity.
+- **After, PageSpeed mobile on production:**
+  - Home: 90, 99, 96, median **96** (budget 95). LCP 3.2 / 2.0 / 2.8 s.
+  - /work/vyro: 96 and 100 (budget 90). LCP 2.7 / 1.5 s, Speed Index 2.3 s.
+  - Locally (Lighthouse 12.6.1, simulated, 5 runs): /work/vyro LCP 3.45 → 2.93 s; Home unchanged at 3.2 s, because locally the scripts always run before the first frame.
+- **Considered and not done:**
+  - **A patch to Next's compiled runtime** that would start the framework scripts after the first paint. It would make Home's score steady, but it edits a minified vendored file on every Next upgrade and delays hydration. Not worth it while the median meets the budget.
+  - **Lower-quality hero AVIFs** (−14 KB): the photo is the owner's call.
+  - **`prefetch={false}` on the wordmark:** it would also turn off hover prefetch.
+  - **Preloading or moving the mono font**, and **`inlineCss`**: rejected with measurements in the review.
+- **Field data is still the real test** of §13's Core Web Vitals: Speed Insights, once the domain has traffic.
 
 **CI.**
 - **The Firefox CSS-only layouts test** timed out on the last two nightly runs, on both attempts; before that it was flaky. It loaded the case study four times and scrolled smoothly with Lenis loading underneath. It now loads each flow once, resizes the page to 768 px for the tablet check, and jumps to the flow instantly.
