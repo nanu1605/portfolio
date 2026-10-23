@@ -1,4 +1,3 @@
-import { preload } from "react-dom";
 import { home } from "@content/home";
 import { media } from "@content/screens";
 import { SignalLine, TextReveal } from "@/components/motion/motion";
@@ -29,16 +28,6 @@ export function Hero({
   live: Awaited<ReturnType<typeof liveMetrics>>;
 }) {
   const { hero } = home;
-  const set = (format: "avif" | "webp") =>
-    photo.variants.map((v) => `${v[format]} ${v.width}w`).join(", ");
-  preload(photo.variants.at(-1)!.avif, {
-    as: "image",
-    type: "image/avif",
-    imageSrcSet: set("avif"),
-    imageSizes: sizes,
-    fetchPriority: "high",
-  });
-
   return (
     <HeroStage
       labelledBy="hero-title"
