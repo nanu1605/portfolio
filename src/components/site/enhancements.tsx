@@ -70,18 +70,21 @@ export function Enhancements({
   useEffect(() => startTouchEffects(), []);
 
   // Ctrl K, "hey jarvis", the greeting, analytics, the swipe-back check and
-  // the bento demos wait for the load event (src/lib/after-load.ts).
+  // the bento demos wait for the load event and the first paint
+  // (src/lib/after-load.ts, src/lib/reveal-script.ts).
   useEffect(() => {
     let stop = () => {};
     const start = () =>
-      void import("@/lib/after-load").then((m) => {
-        setToast(() => m.JarvisToast);
-        stop = m.start({
-          profiles,
-          greeting,
-          onJarvis: () => setHeard((n) => n + 1),
+      void window.__painted
+        .then(() => import("@/lib/after-load"))
+        .then((m) => {
+          setToast(() => m.JarvisToast);
+          stop = m.start({
+            profiles,
+            greeting,
+            onJarvis: () => setHeard((n) => n + 1),
+          });
         });
-      });
     if (document.readyState === "complete") start();
     else addEventListener("load", start, { once: true });
     return () => {
