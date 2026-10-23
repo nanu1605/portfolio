@@ -570,19 +570,24 @@ test.describe("CSS-only flows", () => {
   test("layouts: phones down a rail, tablets in a grid, desktop in a row", async ({
     page,
   }) => {
-    // Four case-study loads: Firefox on a busy CI runner needs more than
-    // the default 30 s.
+    // Firefox on a busy CI runner needs more than the default 30 s.
     test.slow();
-    // This project's viewport, then a 768 px tablet. A fresh page per load:
-    // on Firefox repeated gotos on one page can stall on "navigation".
-    for (const width of [page.viewportSize()!.width, 768]) {
-      for (const flow of flows) {
-        const tab = await page.context().newPage();
-        if (width === 768) await tab.setViewportSize({ width, height: 1024 });
-        // Layout only: no need to wait for every image and video poster.
-        await tab.goto(`/work/${flow.slug}`, { waitUntil: "domcontentloaded" });
-        const box = root(tab, flow.slug);
-        await box.scrollIntoViewIfNeeded();
+    const own = page.viewportSize()!.width;
+    // One load per flow, measured at this project's width and then resized
+    // to a 768 px tablet. A fresh page per flow: on Firefox repeated gotos on
+    // one page can stall on "navigation".
+    for (const flow of flows) {
+      const tab = await page.context().newPage();
+      // Layout only: no need to wait for every image and video poster.
+      await tab.goto(`/work/${flow.slug}`, { waitUntil: "domcontentloaded" });
+      const box = root(tab, flow.slug);
+      // An instant jump: scrollIntoViewIfNeeded rides the smooth scroll,
+      // which Lenis can take over halfway on desktop Firefox.
+      await box.evaluate((el) =>
+        el.scrollIntoView({ block: "center", behavior: "instant" }),
+      );
+      for (const width of [own, 768]) {
+        if (width !== own) await tab.setViewportSize({ width, height: 1024 });
         // offsetTop ignores the reveal's rise.
         const tops = await box
           .locator(flow.items)
@@ -591,8 +596,8 @@ test.describe("CSS-only flows", () => {
         expect(new Set(tops).size, `${flow.slug} at ${width}`).toBe(
           width >= 1024 ? 1 : width >= 768 ? flow.tablet : flow.count,
         );
-        await tab.close();
       }
+      await tab.close();
     }
   });
 });
