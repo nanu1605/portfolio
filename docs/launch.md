@@ -2,16 +2,16 @@
 
 The steps that need Tanishq's accounts, in order. Each one says what to tell me when it's done. Nothing here needs a code change: the contact form switches itself from the mailto fallback to sending through Resend as soon as all five contact variables are set (`src/lib/contact-server.ts`).
 
-## Where things stand (23 Oct 2026)
+## Where things stand (24 Oct 2026)
 
-- Production on Vercel: https://portfolio-eight-gamma-4x0xpdi5wk.vercel.app serves `main`.
+- **Step 4 is done.** https://tanishq.website serves production (`main`), with a Let's Encrypt certificate. `www` and `http://` redirect to it with a 308. The Vercel URL https://portfolio-eight-gamma-4x0xpdi5wk.vercel.app still works too.
 - DNS for tanishq.website is at GoDaddy (`ns61`/`ns62.domaincontrol.com`). Public DNS today:
-  - `@` A records `15.197.148.33` and `3.33.130.190`: GoDaddy's parking page;
-  - `www` CNAME to `@`;
+  - `@` A `216.198.79.1` and `www` CNAME `…vercel-dns-017.com`: Vercel;
   - `@` TXT `google-site-verification=…`: Search Console. **Keep it.**
   - No MX record. None is needed: the form sends from `contact@tanishq.website`, and replies go to the visitor's address.
-  - `_dmarc` TXT `v=DMARC1; p=quarantine; adkim=r; aspf=r; rua=mailto:dmarc_rua@onsecureserver.net;`: GoDaddy's default. **Keep it** (step 2).
-- The old site, https://tanishq-jain-portfolio.vercel.app (repo `nanu1605/my-portfolio`), is still live, including `/Tanishq_Jain_Resume.pdf`.
+  - No `_dmarc` record. GoDaddy's default one (`p=quarantine`) was there on 23 Oct and had gone by 24 Oct (see step 2).
+- Steps 1–3 aren't done yet: there are no Resend records, the contact form still shows the mailto fallback, and the Web Analytics script still returns 404.
+- The old site, https://tanishq-jain-portfolio.vercel.app (repo `nanu1605/my-portfolio`), is still live, including `/Tanishq_Jain_Resume.pdf`. Step 7 can go in now.
 
 ## 1. Turnstile (Cloudflare)
 
@@ -23,8 +23,8 @@ The steps that need Tanishq's accounts, in order. Each one says what to tell me 
 
 1. Resend → Domains → Add domain → `tanishq.website`.
 2. At GoDaddy (DNS → Manage), add exactly the records Resend shows: an MX and an SPF TXT record on `send`, and the DKIM TXT record on `resend._domainkey`.
-   - **Don't add a `_dmarc` record**, even if Resend suggests one. GoDaddy's is already there, and a second one makes mail servers ignore both.
-   - The existing record works as it is: Resend's DKIM signature is for tanishq.website, and its relaxed alignment (`adkim=r`, `aspf=r`) accepts the `send` subdomain, so the form's mail passes DMARC.
+   - Also add a TXT record on `_dmarc` with `v=DMARC1; p=none;`. Check first that GoDaddy doesn't already list one: there must be exactly one, because two make mail servers ignore both.
+   - Resend's DKIM signature is for tanishq.website, and DMARC's default relaxed alignment accepts the `send` subdomain, so the form's mail passes DMARC.
 3. Click Verify in Resend and wait for "Verified".
 4. Resend → API Keys → Create: permission "Sending access", domain `tanishq.website`. Keep the key for step 3.
 
@@ -67,7 +67,7 @@ Send one through https://tanishq.website/contact and check it reaches `tanishqja
 
 ## 6. Search Console
 
-The domain property is already verified. Sitemaps → submit `https://tanishq.website/sitemap.xml`. Then check the Person and WebSite markup at https://search.google.com/test/rich-results?url=https://tanishq.website (the Phase 7 item).
+The domain property is already verified. Sitemaps → submit `https://tanishq.website/sitemap.xml`. Then check the Person and WebSite markup at https://search.google.com/test/rich-results?url=https://tanishq.website (the Phase 7 item). That test needs a Google sign-in. On 24 Oct, schema.org's validator found no errors or warnings in the Person, Organization and WebSite markup on the live Home page.
 
 ## 7. The old site (§16.5)
 

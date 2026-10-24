@@ -1119,3 +1119,20 @@ That leaves 0.4 KB, so the next addition to Home needs a cut elsewhere first. Th
 **CI.**
 - **The Firefox CSS-only layouts test** timed out on the last two nightly runs, on both attempts; before that it was flaky. It loaded the case study four times and scrolled smoothly with Lenis loading underneath. It now loads each flow once, resizes the page to 768 px for the tablet check, and jumps to the flow instantly.
 - **Job time limit 60 → 90 min.** One nightly spent 20 minutes installing browsers and was stopped at 60 minutes. A normal run takes about 50.
+
+**On tanishq.website (24 Oct).**
+- **The domain went live** with Vercel's records at GoDaddy: `@` A `216.198.79.1`, `www` CNAME to Vercel. The certificate is from Let's Encrypt, and `www` and `http://` redirect to the apex with a 308.
+- Re-checked on the domain:
+  - the security headers, `robots.txt`, all 19 sitemap URLs (200);
+  - canonical and `og:url` on the apex;
+  - share images, icons and the manifest;
+  - the old resume path redirecting to `/resume.pdf`.
+- **PageSpeed mobile on the domain** (Lighthouse 13.5):
+  - Home 99, 96, 99 (median 99, LCP 1.7–2.8 s);
+  - /work/vyro 99;
+  - /work/mlops-drift-loop 100;
+  - every run: accessibility 100, best practices 96, SEO 100.
+  - The only best-practices miss is still the Web Analytics 404 in the console.
+  - These are better than the runs on the Vercel URL the day before. The build is the same, so the difference is PageSpeed's own run-to-run spread; nothing was changed for it.
+- **Structured data:** Google's Rich Results Test needs a sign-in, so it stays Tanishq's step. schema.org's validator found 0 errors and 0 warnings in the Person, Organization and WebSite markup on the live Home page.
+- **DMARC:** GoDaddy's default `_dmarc` record (`p=quarantine`, reports to GoDaddy) was in public DNS on 23 Oct and had gone on 24 Oct, probably removed along with the parking records. The runbook first said to keep it; it now says to add `v=DMARC1; p=none;` if no record exists, and never a second one.

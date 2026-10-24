@@ -151,22 +151,23 @@ Done when: the palette is fully keyboard accessible; every route has a share ima
 - [x] Every route has a 1200×630 share image (e2e checks each one's size and type).
 - [x] Lighthouse: CI run 39662522676 passed mobile and desktop on /, /work, /work/vyro and /work/mlops-drift-loop with no warnings (LCP under 2.0 s, performance at least 0.95). Locally this machine runs slower: Home LCP 2.03–2.08 s, the same as the Phase 6 build there. Home JS 149.6 KB of 150 KB. Interaction budgets 17/17.
 - [x] CI run 39662522676: 1,461 end-to-end tests passed on every device project, Firefox included; 1 flaky (the known Firefox CSS-only layouts test); Vercel deployed.
-- [ ] Tanishq checks the Person/WebSite markup in Google's Rich Results Test (needs the live domain, or a pasted page source, in Phase 8).
+- [ ] Tanishq checks the Person/WebSite markup in Google's Rich Results Test (it needs a Google sign-in). On 24 Oct schema.org's validator found 0 errors and 0 warnings on the live Home page.
 
 ## Phase 8 — Launch
 
 Tanishq's steps, in order, are in `docs/launch.md`.
 
 - [ ] Production env vars, Resend domain verified, Turnstile for `tanishq.website`. Also enable Vercel Web Analytics: its script returned 404 on production (23 Oct).
-- [ ] Domain in Vercel, `www` redirect, HTTPS.
-- [ ] Redirect the old site (§16.5). The `vercel.json` for `nanu1605/my-portfolio` is drafted in `docs/launch.md`; it goes in after the domain works.
+- [x] Domain in Vercel, `www` redirect, HTTPS (24 Oct 2026). https://tanishq.website serves production; `www` and `http://` 308 to it; Let's Encrypt certificate.
+- [ ] Redirect the old site (§16.5). The `vercel.json` for `nanu1605/my-portfolio` is drafted in `docs/launch.md`; the domain works, so it can go in.
 - [~] Search Console verified (DNS TXT record, 21 Oct 2026); keep that record when adding Vercel's, and recreate it if the nameservers move to Vercel. Sitemap still to submit.
-- [~] Lighthouse on production URLs; placeholder report empty or only allow-listed items.
+- [x] Lighthouse on production URLs; placeholder report empty or only allow-listed items.
+  - On tanishq.website (24 Oct), PageSpeed Insights mobile: Home 99 / 96 / 99 (median 99), /work/vyro 99, /work/mlops-drift-loop 100. Accessibility 100, best practices 96, SEO 100 on every run. §13 met. Headers, sitemap (19 URLs), share images, icons and redirects re-checked on the domain.
   - Placeholder report: only `{{FOUNDED}}` (allow-listed, shows "2026") and `{{VDR_IMAGES}}` (hidden where used). No `{{` in any built page.
   - Before the domain, on the Vercel production URL (23 Oct): PageSpeed Insights mobile first gave Home 90 and 92 and /work/vyro 87, under §13's 95 and 90.
   - After a speed pass (lazy AVIF video stills, no hero preload hint, analytics after the first paint, a smaller grain tile): Home 90 / 99 / 96, median 96; /work/vyro 96 / 100. Accessibility 100, best practices 96 (the Web Analytics 404), SEO 100. See `docs/decisions.md`, Phase 8.
-  - To redo on tanishq.website after the domain move, with Speed Insights field data once there is traffic.
   - Redirects, sitemap, robots, manifest, share images, 404 and the security headers all checked on that URL.
+  - Still to come: Speed Insights field data, once there is traffic.
 - [x] Draft (don't push) the `nanu1605/nanu1605` profile README: `docs/profile-readme.md`.
 - [ ] Tanishq adds the site to LinkedIn.
 - [ ] ↔ Manual real-device checklist (`docs/cross-device.md` §8) on an iPhone, a mid-range Android phone and an iPad; Speed Insights split by device type.
