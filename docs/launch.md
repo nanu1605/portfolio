@@ -73,7 +73,7 @@ The domain property is already verified. Sitemaps → submit `https://tanishq.we
 
 Only after step 4, so the redirect never lands on the parking page. Two ways:
 
-- **(a) Recommended:** commit this `vercel.json` to the root of `nanu1605/my-portfolio`. Vercel applies redirects before it serves files, and the first match wins, so the old resume path goes straight to the new PDF and everything else goes to the home page. I can make this commit if you say so.
+- **(a) Recommended:** commit this `vercel.json` to the root of `nanu1605/my-portfolio`. Vercel applies redirects before it serves files, and the first match wins, so the old resume path goes straight to the new PDF and everything else goes to the home page. On 24 Oct Tanishq decided not to have this committed to `nanu1605/my-portfolio` from here; changes to the old site are Tanishq's to make.
 
   ```json
   {

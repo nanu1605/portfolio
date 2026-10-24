@@ -159,7 +159,7 @@ Tanishq's steps, in order, are in `docs/launch.md`.
 
 - [ ] Production env vars, Resend domain verified, Turnstile for `tanishq.website`. Also enable Vercel Web Analytics: its script returned 404 on production (23 Oct).
 - [x] Domain in Vercel, `www` redirect, HTTPS (24 Oct 2026). https://tanishq.website serves production; `www` and `http://` 308 to it; Let's Encrypt certificate.
-- [ ] Redirect the old site (§16.5). The `vercel.json` for `nanu1605/my-portfolio` is drafted in `docs/launch.md`; the domain works, so it can go in.
+- [ ] Redirect the old site (§16.5). The `vercel.json` for `nanu1605/my-portfolio` is drafted in `docs/launch.md`. On 24 Oct Tanishq said not to commit to that repo from here, so it's Tanishq's to do or skip.
 - [~] Search Console verified (DNS TXT record, 21 Oct 2026); keep that record when adding Vercel's, and recreate it if the nameservers move to Vercel. Sitemap still to submit.
 - [x] Lighthouse on production URLs; placeholder report empty or only allow-listed items.
   - On tanishq.website (24 Oct), PageSpeed Insights mobile: Home 99 / 96 / 99 (median 99), /work/vyro 99, /work/mlops-drift-loop 100. Accessibility 100, best practices 96, SEO 100 on every run. §13 met. Headers, sitemap (19 URLs), share images, icons and redirects re-checked on the domain.
