@@ -1136,3 +1136,13 @@ That leaves 0.4 KB, so the next addition to Home needs a cut elsewhere first. Th
   - These are better than the runs on the Vercel URL the day before. The build is the same, so the difference is PageSpeed's own run-to-run spread; nothing was changed for it.
 - **Structured data:** Google's Rich Results Test needs a sign-in, so it stays Tanishq's step. schema.org's validator found 0 errors and 0 warnings in the Person, Organization and WebSite markup on the live Home page.
 - **DMARC:** GoDaddy's default `_dmarc` record (`p=quarantine`, reports to GoDaddy) was in public DNS on 23 Oct and had gone on 24 Oct, probably removed along with the parking records. The runbook first said to keep it; it now says to add `v=DMARC1; p=none;` if no record exists, and never a second one.
+- **Contact form live (24 Oct).**
+  - The first sends failed with Resend 403: "This API key is not authorized to send emails from gmail.com". `CONTACT_FROM_EMAIL` had been set to a gmail.com address.
+  - The route only logged `Resend 403`, and nothing at all for a Turnstile failure. It now logs Turnstile's `error-codes` and the first 500 characters of Resend's error body. Neither ever contains a key.
+  - With the sender on tanishq.website, the test message arrived:
+    - in Gmail's Updates tab, not spam;
+    - DKIM passed for tanishq.website (selector `resend`);
+    - SPF passed for `rsend.tanishq.website`, Resend's return path through SES in ap-northeast-1;
+    - Reply-To was the visitor's address.
+  - Gmail showed no DMARC result, because no `_dmarc` record exists yet.
+- **Web Analytics on:** `/_vercel/insights/script.js` returns 200, and Home's best practices went from 96 to 100.

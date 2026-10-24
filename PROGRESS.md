@@ -157,12 +157,15 @@ Done when: the palette is fully keyboard accessible; every route has a share ima
 
 Tanishq's steps, in order, are in `docs/launch.md`.
 
-- [ ] Production env vars, Resend domain verified, Turnstile for `tanishq.website`. Also enable Vercel Web Analytics: its script returned 404 on production (23 Oct).
+- [x] Production env vars, Resend domain verified, Turnstile for `tanishq.website`, Vercel Web Analytics on (24 Oct 2026).
+- [x] A real contact message arrived (24 Oct): in the inbox, not spam; DKIM (tanishq.website) and SPF pass; Reply-To is the visitor's address. The first tries failed because `CONTACT_FROM_EMAIL` was a gmail.com address; the API now logs Turnstile's error codes and Resend's error body.
+- [ ] Add a `_dmarc` TXT record (`v=DMARC1; p=none;`); there's none since the parking records went.
 - [x] Domain in Vercel, `www` redirect, HTTPS (24 Oct 2026). https://tanishq.website serves production; `www` and `http://` 308 to it; Let's Encrypt certificate.
 - [ ] Redirect the old site (§16.5). The `vercel.json` for `nanu1605/my-portfolio` is drafted in `docs/launch.md`. On 24 Oct Tanishq said not to commit to that repo from here, so it's Tanishq's to do or skip.
 - [~] Search Console verified (DNS TXT record, 21 Oct 2026); keep that record when adding Vercel's, and recreate it if the nameservers move to Vercel. Sitemap still to submit.
 - [x] Lighthouse on production URLs; placeholder report empty or only allow-listed items.
-  - On tanishq.website (24 Oct), PageSpeed Insights mobile: Home 99 / 96 / 99 (median 99), /work/vyro 99, /work/mlops-drift-loop 100. Accessibility 100, best practices 96, SEO 100 on every run. §13 met. Headers, sitemap (19 URLs), share images, icons and redirects re-checked on the domain.
+  - On tanishq.website (24 Oct), PageSpeed Insights mobile: Home 99 / 96 / 99, /work/vyro 99, /work/mlops-drift-loop 100. Accessibility 100, best practices 96, SEO 100 on every run. §13 met. Headers, sitemap (19 URLs), share images, icons and redirects re-checked on the domain.
+  - After Web Analytics was switched on: Home 90 / 100 / 100 / 100 (performance, accessibility, best practices, SEO). That 90 is PageSpeed's slow mode (LCP 3.2 s); Home's four runs have a median of 97.5.
   - Placeholder report: only `{{FOUNDED}}` (allow-listed, shows "2026") and `{{VDR_IMAGES}}` (hidden where used). No `{{` in any built page.
   - Before the domain, on the Vercel production URL (23 Oct): PageSpeed Insights mobile first gave Home 90 and 92 and /work/vyro 87, under §13's 95 and 90.
   - After a speed pass (lazy AVIF video stills, no hero preload hint, analytics after the first paint, a smaller grain tile): Home 90 / 99 / 96, median 96; /work/vyro 96 / 100. Accessibility 100, best practices 96 (the Web Analytics 404), SEO 100. See `docs/decisions.md`, Phase 8.

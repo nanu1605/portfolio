@@ -10,7 +10,9 @@ The steps that need Tanishq's accounts, in order. Each one says what to tell me 
   - `@` TXT `google-site-verification=…`: Search Console. **Keep it.**
   - No MX record. None is needed: the form sends from `contact@tanishq.website`, and replies go to the visitor's address.
   - No `_dmarc` record. GoDaddy's default one (`p=quarantine`) was there on 23 Oct and had gone by 24 Oct (see step 2).
-- Steps 1–3 aren't done yet: there are no Resend records, the contact form still shows the mailto fallback, and the Web Analytics script still returns 404.
+- **Steps 1–3 and 5 are done** (later on 24 Oct): Turnstile, Resend (its records are CNAMEs on `send` and `rsend` to Resend's servers, plus the DKIM key), the environment variables and Web Analytics. A test message reached the inbox with DKIM and SPF passing.
+- If the form fails, Vercel → portfolio → Logs, search `contact:`. The line gives Turnstile's error code or Resend's error message. `CONTACT_FROM_EMAIL` must be on tanishq.website: Resend refuses a gmail.com sender.
+- Still to do: the `_dmarc` record (step 2), steps 6 and 8, and step 7 if wanted.
 - The old site, https://tanishq-jain-portfolio.vercel.app (repo `nanu1605/my-portfolio`), is still live, including `/Tanishq_Jain_Resume.pdf`. Step 7 can go in now.
 
 ## 1. Turnstile (Cloudflare)
