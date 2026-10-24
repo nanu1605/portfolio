@@ -45,9 +45,16 @@ async function human(token: string, secret: string, ip: string) {
         signal: AbortSignal.timeout(8000),
       },
     );
-    const data = (await res.json()) as { success?: boolean };
+    const data = (await res.json()) as {
+      success?: boolean;
+      "error-codes"?: string[];
+    };
+    // Cloudflare's codes say whether it was the token or our secret.
+    if (data.success !== true)
+      console.warn("contact: turnstile failed", data["error-codes"]);
     return data.success === true;
-  } catch {
+  } catch (error) {
+    console.error("contact: turnstile unreachable", error);
     return false;
   }
 }
@@ -120,7 +127,12 @@ export async function POST(req: Request) {
       }),
       signal: AbortSignal.timeout(10_000),
     });
-    if (!res.ok) throw new Error(`Resend ${res.status}`);
+    // Resend's error body names the problem (an unverified domain, a bad
+    // sender); it never echoes the key.
+    if (!res.ok)
+      throw new Error(
+        `Resend ${res.status}: ${(await res.text()).slice(0, 500)}`,
+      );
   } catch (error) {
     console.error("contact: send failed", error);
     return reply({ error: "send" }, 502);
