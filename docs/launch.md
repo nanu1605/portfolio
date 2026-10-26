@@ -12,8 +12,10 @@ The steps that need Tanishq's accounts, in order. Each one says what to tell me 
   - No `_dmarc` record. GoDaddy's default one (`p=quarantine`) was there on 23 Oct and had gone by 24 Oct (see step 2).
 - **Steps 1–3 and 5 are done** (later on 24 Oct): Turnstile, Resend (its records are CNAMEs on `send` and `rsend` to Resend's servers, plus the DKIM key), the environment variables and Web Analytics. A test message reached the inbox with DKIM and SPF passing.
 - If the form fails, Vercel → portfolio → Logs, search `contact:`. The line gives Turnstile's error code or Resend's error message. `CONTACT_FROM_EMAIL` must be on tanishq.website: Resend refuses a gmail.com sender.
-- Still to do: the `_dmarc` record (step 2), steps 6 and 8, and step 7 if wanted.
-- The old site, https://tanishq-jain-portfolio.vercel.app (repo `nanu1605/my-portfolio`), is still live, including `/Tanishq_Jain_Resume.pdf`. Step 7 can go in now.
+- Still to do: the `_dmarc` record (step 2), and steps 6 and 8.
+- **Step 7 is done** (26 Oct): the old site, https://tanishq-jain-portfolio.vercel.app (repo `nanu1605/my-portfolio`), redirects to tanishq.website.
+  - That project deploys only its `production` branch. An Ignored Build Step skips builds of `main`.
+  - So the redirect went to `main` and then into `production` through PR #11, the way that repo's earlier changes went.
 
 ## 1. Turnstile (Cloudflare)
 
@@ -75,7 +77,7 @@ The domain property is already verified. Sitemaps → submit `https://tanishq.we
 
 Only after step 4, so the redirect never lands on the parking page. Two ways:
 
-- **(a) Recommended:** commit this `vercel.json` to the root of `nanu1605/my-portfolio`. Vercel applies redirects before it serves files, and the first match wins, so the old resume path goes straight to the new PDF and everything else goes to the home page. On 24 Oct Tanishq decided not to have this committed to `nanu1605/my-portfolio` from here; changes to the old site are Tanishq's to make.
+- **(a) Recommended:** commit this `vercel.json` to the root of `nanu1605/my-portfolio`. Vercel applies redirects before it serves files, and the first match wins, so the old resume path goes straight to the new PDF and everything else goes to the home page. Done on 26 Oct, at Tanishq's request.
 
   ```json
   {
