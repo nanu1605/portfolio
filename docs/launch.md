@@ -9,10 +9,10 @@ The steps that need Tanishq's accounts, in order. Each one says what to tell me 
   - `@` A `216.198.79.1` and `www` CNAME `…vercel-dns-017.com`: Vercel;
   - `@` TXT `google-site-verification=…`: Search Console. **Keep it.**
   - No MX record. None is needed: the form sends from `contact@tanishq.website`, and replies go to the visitor's address.
-  - No `_dmarc` record. GoDaddy's default one (`p=quarantine`) was there on 23 Oct and had gone by 24 Oct (see step 2).
+  - `_dmarc` TXT `v=DMARC1; p=none;` (26 Oct). GoDaddy's default one (`p=quarantine`) had gone with the parking records.
 - **Steps 1–3 and 5 are done** (later on 24 Oct): Turnstile, Resend (its records are CNAMEs on `send` and `rsend` to Resend's servers, plus the DKIM key), the environment variables and Web Analytics. A test message reached the inbox with DKIM and SPF passing.
 - If the form fails, Vercel → portfolio → Logs, search `contact:`. The line gives Turnstile's error code or Resend's error message. `CONTACT_FROM_EMAIL` must be on tanishq.website: Resend refuses a gmail.com sender.
-- Still to do: the `_dmarc` record (step 2), and steps 6 and 8.
+- **The `_dmarc` record is live** (26 Oct). **Step 6 and LinkedIn are done**, as Tanishq reports; Search Console and LinkedIn need a sign-in, so they weren't re-checked here. Still to do: the GitHub profile README (step 8).
 - **Step 7 is done** (26 Oct): the old site, https://tanishq-jain-portfolio.vercel.app (repo `nanu1605/my-portfolio`), redirects to tanishq.website.
   - That project deploys only its `production` branch. An Ignored Build Step skips builds of `main`.
   - So the redirect went to `main` and then into `production` through PR #11, the way that repo's earlier changes went.

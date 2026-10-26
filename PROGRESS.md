@@ -151,7 +151,7 @@ Done when: the palette is fully keyboard accessible; every route has a share ima
 - [x] Every route has a 1200×630 share image (e2e checks each one's size and type).
 - [x] Lighthouse: CI run 39662522676 passed mobile and desktop on /, /work, /work/vyro and /work/mlops-drift-loop with no warnings (LCP under 2.0 s, performance at least 0.95). Locally this machine runs slower: Home LCP 2.03–2.08 s, the same as the Phase 6 build there. Home JS 149.6 KB of 150 KB. Interaction budgets 17/17.
 - [x] CI run 39662522676: 1,461 end-to-end tests passed on every device project, Firefox included; 1 flaky (the known Firefox CSS-only layouts test); Vercel deployed.
-- [ ] Tanishq checks the Person/WebSite markup in Google's Rich Results Test (it needs a Google sign-in). On 24 Oct schema.org's validator found 0 errors and 0 warnings on the live Home page.
+- [x] Tanishq checked the Person/WebSite markup in Google's Rich Results Test (26 Oct, as Tanishq reports; it needs a Google sign-in, so not re-checked here). On 24 Oct schema.org's validator found 0 errors and 0 warnings on the live Home page.
 
 ## Phase 8 — Launch
 
@@ -159,10 +159,10 @@ Tanishq's steps, in order, are in `docs/launch.md`.
 
 - [x] Production env vars, Resend domain verified, Turnstile for `tanishq.website`, Vercel Web Analytics on (24 Oct 2026).
 - [x] A real contact message arrived (24 Oct): in the inbox, not spam; DKIM (tanishq.website) and SPF pass; Reply-To is the visitor's address. The first tries failed because `CONTACT_FROM_EMAIL` was a gmail.com address; the API now logs Turnstile's error codes and Resend's error body.
-- [ ] Add a `_dmarc` TXT record (`v=DMARC1; p=none;`); there's none since the parking records went.
+- [x] `_dmarc` TXT record `v=DMARC1; p=none;` in public DNS (26 Oct).
 - [x] Domain in Vercel, `www` redirect, HTTPS (24 Oct 2026). https://tanishq.website serves production; `www` and `http://` 308 to it; Let's Encrypt certificate.
 - [x] Redirect the old site (§16.5), at Tanishq's request on 26 Oct. The `vercel.json` from `docs/launch.md` is on `nanu1605/my-portfolio`'s `main` (132d9894). It was merged into `production`, the branch that project's Vercel builds (main builds are skipped by its Ignored Build Step), in PR #11.
-- [~] Search Console verified (DNS TXT record, 21 Oct 2026); keep that record when adding Vercel's, and recreate it if the nameservers move to Vercel. Sitemap still to submit.
+- [x] Search Console verified (DNS TXT record, 21 Oct 2026); keep that record, and recreate it if the nameservers move to Vercel. Sitemap submitted (26 Oct, as Tanishq reports; Search Console needs a sign-in, so not re-checked here).
 - [x] Lighthouse on production URLs; placeholder report empty or only allow-listed items.
   - On tanishq.website (24 Oct), PageSpeed Insights mobile: Home 99 / 96 / 99, /work/vyro 99, /work/mlops-drift-loop 100. Accessibility 100, best practices 96, SEO 100 on every run. §13 met. Headers, sitemap (19 URLs), share images, icons and redirects re-checked on the domain.
   - After Web Analytics was switched on: Home 90 / 100 / 100 / 100 (performance, accessibility, best practices, SEO). That 90 is PageSpeed's slow mode (LCP 3.2 s); Home's four runs have a median of 97.5.
@@ -172,7 +172,8 @@ Tanishq's steps, in order, are in `docs/launch.md`.
   - Redirects, sitemap, robots, manifest, share images, 404 and the security headers all checked on that URL.
   - Still to come: Speed Insights field data, once there is traffic.
 - [x] Draft (don't push) the `nanu1605/nanu1605` profile README: `docs/profile-readme.md`.
-- [ ] Tanishq adds the site to LinkedIn.
+- [x] Tanishq added the site to LinkedIn (26 Oct, as Tanishq reports; LinkedIn's profile needs a sign-in, so not re-checked here).
+- [ ] Tanishq updates the `nanu1605/nanu1605` profile README from `docs/profile-readme.md`. On 26 Oct GitHub still showed the old one ("DevOps Engineer", a Google Drive resume link, an older LinkedIn URL).
 - [ ] ↔ Manual real-device checklist (`docs/cross-device.md` §8) on an iPhone, a mid-range Android phone and an iPad; Speed Insights split by device type.
 
 Done when: `https://tanishq.website` serves production; the old URL redirects; a contact message arrives; mobile budgets met on production; no `{{` visible anywhere.
