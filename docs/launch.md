@@ -12,7 +12,7 @@ The steps that need Tanishq's accounts, in order. Each one says what to tell me 
   - `_dmarc` TXT `v=DMARC1; p=none;` (26 Oct). GoDaddy's default one (`p=quarantine`) had gone with the parking records.
 - **Steps 1–3 and 5 are done** (later on 24 Oct): Turnstile, Resend (its records are CNAMEs on `send` and `rsend` to Resend's servers, plus the DKIM key), the environment variables and Web Analytics. A test message reached the inbox with DKIM and SPF passing.
 - If the form fails, Vercel → portfolio → Logs, search `contact:`. The line gives Turnstile's error code or Resend's error message. `CONTACT_FROM_EMAIL` must be on tanishq.website: Resend refuses a gmail.com sender.
-- **The `_dmarc` record is live** (26 Oct). **Step 6 and LinkedIn are done**, as Tanishq reports; Search Console and LinkedIn need a sign-in, so they weren't re-checked here. Still to do: the GitHub profile README (step 8).
+- **The `_dmarc` record is live** (26 Oct). **Step 6 and LinkedIn are done**, as Tanishq reports; Search Console and LinkedIn need a sign-in, so they weren't re-checked here. The GitHub profile README is live too (step 8).
 - **Step 7 is done** (26 Oct): the old site, https://tanishq-jain-portfolio.vercel.app (repo `nanu1605/my-portfolio`), redirects to tanishq.website.
   - That project deploys only its `production` branch. An Ignored Build Step skips builds of `main`.
   - So the redirect went to `main` and then into `production` through PR #11, the way that repo's earlier changes went.
@@ -100,5 +100,5 @@ Only after step 4, so the redirect never lands on the parking page. Two ways:
 
 ## 8. Profiles
 
-- GitHub profile README: the draft is in [`docs/profile-readme.md`](profile-readme.md). Paste it into `nanu1605/nanu1605`'s `README.md`, or tell me to commit it there.
+- GitHub profile README: the draft is in [`docs/profile-readme.md`](profile-readme.md). Committed to `nanu1605/nanu1605` on 26 Oct (08e2a44), at Tanishq's request.
 - LinkedIn: add https://tanishq.website as the website on your profile.

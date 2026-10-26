@@ -173,7 +173,7 @@ Tanishq's steps, in order, are in `docs/launch.md`.
   - Still to come: Speed Insights field data, once there is traffic.
 - [x] Draft (don't push) the `nanu1605/nanu1605` profile README: `docs/profile-readme.md`.
 - [x] Tanishq added the site to LinkedIn (26 Oct, as Tanishq reports; LinkedIn's profile needs a sign-in, so not re-checked here).
-- [ ] Tanishq updates the `nanu1605/nanu1605` profile README from `docs/profile-readme.md`. On 26 Oct GitHub still showed the old one ("DevOps Engineer", a Google Drive resume link, an older LinkedIn URL).
+- [x] Profile README live on `nanu1605/nanu1605` (08e2a44, 26 Oct, at Tanishq's request): the draft from `docs/profile-readme.md`, which changes only the role line, the website and resume links and the LinkedIn URL.
 - [ ] ↔ Manual real-device checklist (`docs/cross-device.md` §8) on an iPhone, a mid-range Android phone and an iPad; Speed Insights split by device type.
 
 Done when: `https://tanishq.website` serves production; the old URL redirects; a contact message arrives; mobile budgets met on production; no `{{` visible anywhere.
